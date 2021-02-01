@@ -36,7 +36,7 @@ setup(
         "colorkeys",
     ],
     install_requires = [
-	"cv2",
+	"opencv-python",
         "engcommon @ git+https://github.com/JustAddRobots/engcommon.git@{0}".format(
             engcommon_branch
         ),
