@@ -1,0 +1,8 @@
+*.py[cod]
+**/__pycache__
+*.pytest_cache
+*.retry
+*.sw*
+*.svn
+venv
+colorkeys-samples
