@@ -46,9 +46,16 @@ def get_command(args):
         "-l", "--logid",
         action = "store",
         type = str,
-        help = "force runtime log indentifier",
+        help = "set runtime log indentifier",
         required = False,
     )    
+    parser.add_argument(
+        "-p", "--prefix",
+        action = "store",
+        type = str,
+        default = "/tmp/logs",
+        help = "set log directory prefix",
+    )
     parser.add_argument(
         "-v", "--version",
         action = "version",
