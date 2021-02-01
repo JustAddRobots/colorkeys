@@ -46,7 +46,7 @@ def get_hist_bar(hist, clust):
     return hist_bar
 
 
-def plot_hist_bar(img, hist_bar)
+def plot_hist_bar(img, hist_bar):
     pyplot.figure(figsize=(10,10))
     pyplot.subplot(121)
     pyplot.imshow(img)
