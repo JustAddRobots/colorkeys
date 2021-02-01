@@ -13,6 +13,7 @@ import sys
 from colorkeys import kmeans
 from engcommon import clihelper
 from engcommon import formattext
+from engcommon import testvar
 
 def get_command(args):
     """Get command args.
