@@ -43,6 +43,13 @@ def get_command(args):
         help = "set number of cluster centroids",
     )
     parser.add_argument(
+        "-l", "--logid",
+        action = "store",
+        type = str,
+        help = "force runtime log indentifier",
+        required = False,
+    )    
+    parser.add_argument(
         "-v", "--version",
         action = "version",
         version = pkg_resources.get_distribution(parser.prog).version
