@@ -13,6 +13,7 @@ import sys
 from colorkeys import kmeans
 from engcommon import clihelper
 from engcommon import formattext
+from engcommon import testvar
 
 def get_command(args):
     """Get command args.
@@ -41,6 +42,20 @@ def get_command(args):
         action = "store",
         type = int,
         help = "set number of cluster centroids",
+    )
+    parser.add_argument(
+        "-l", "--logid",
+        action = "store",
+        type = str,
+        help = "set runtime log indentifier",
+        required = False,
+    )    
+    parser.add_argument(
+        "-p", "--prefix",
+        action = "store",
+        type = str,
+        default = "/tmp/logs",
+        help = "set log directory prefix",
     )
     parser.add_argument(
         "-v", "--version",
