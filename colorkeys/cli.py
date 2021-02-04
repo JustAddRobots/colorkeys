@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-This module is the CLI front-end for the standardised XHPL Stress Test.
+This module is the CLI front-end for the colorkeys analysis tool.
 """
 
 import argparse
@@ -24,7 +24,7 @@ def get_command(args):
         args (dict): Arguments.
     """
     parser = argparse.ArgumentParser(
-        description = "XHPL Stress Test"
+        description = "Colorkeys Palette Analysis Tool"
     )
     parser.add_argument(
         "-d", "--debug",
@@ -32,16 +32,31 @@ def get_command(args):
         help = "print debug information",
     )
     parser.add_argument(
+        "-a", "--algos",
+        action = "store",
+        choices = [
+            "kmeans",
+            "hac"
+        ],
+        default = [
+            "kmeans",
+            "hac"
+        ],
+        help = "set clustering algorithm",
+    )
+    parser.add_argument(
         "-i", "--image",
         action = "store",
         type = str,
         help = "set image",
+        required = True
     )
     parser.add_argument(
-        "-k", "--kmeans",
+        "-n", "--num_clusters",
         action = "store",
         type = int,
         help = "set number of cluster centroids",
+        required = True
     )
     parser.add_argument(
         "-l", "--logid",
@@ -81,19 +96,15 @@ def run(args):
     my_cli.print_versions()
 
     imgfile = args["image"]
-    k = args["kmeans"]
+    num_clusters = args["num_clusters"]
+    algos = args["algos"]
 
-    img = kmeans.get_img_rgb(imgfile)
-    clust = kmeans.get_clusters(k, img)
-    img_reshape = img.reshape(img.shape[0] * img.shape[1], img.shape[2])
-    logger.debug(img_reshape.shape)
+    art = ColorKey(filename, num_clusters, algos)
+    
+    for algo, h in art.hists.items():
+        logger.debug(testvar.get_debug(h.hist))
 
-    clust.fit(img_reshape)
-    hist = kmeans.get_cluster_histogram(clust)
-    logger.debug(testvar.get_debug(hist))
-
-    hist_bar = kmeans.get_hist_bar(hist, clust)
-    kmeans.plot_hist_bar(img, hist_bar)
+    art.show_palettes()
 
     return None
 
