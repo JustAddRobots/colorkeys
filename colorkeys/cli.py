@@ -10,10 +10,10 @@ import os
 import pkg_resources
 import sys
 
-from colorkeys import kmeans
+from colorkeys import ColorKey
 from engcommon import clihelper
-from engcommon import formattext
 from engcommon import testvar
+
 
 def get_command(args):
     """Get command args.
@@ -64,7 +64,7 @@ def get_command(args):
         type = str,
         help = "set runtime log indentifier",
         required = False,
-    )    
+    )
     parser.add_argument(
         "-p", "--prefix",
         action = "store",
@@ -99,8 +99,8 @@ def run(args):
     num_clusters = args["num_clusters"]
     algos = args["algos"]
 
-    art = ColorKey(filename, num_clusters, algos)
-    
+    art = ColorKey(imgfile, num_clusters, algos)
+
     for algo, h in art.hists.items():
         logger.debug(testvar.get_debug(h.hist))
 
@@ -108,10 +108,12 @@ def run(args):
 
     return None
 
+
 def main():
     args = sys.argv[1:]
     d = get_command(args)
     run(d)
+
 
 if __name__ == "__main__":
     try:
@@ -120,4 +122,3 @@ if __name__ == "__main__":
         logging.exception("Exceptions Found")
         logging.critical("Exiting.")
         sys.exit()
-

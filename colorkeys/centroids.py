@@ -23,4 +23,4 @@ class Clust:
             clust = cluster.KMeans(n_clusters=n)
         elif algo == "hac":  # Heirarchical Agglomerative Clustering
             clust = cluster.AgglomerativeCluster(n_clusters=n)
-    return clust
+        return clust
