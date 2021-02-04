@@ -6,6 +6,7 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
+
 class Hist:
 
     def __init__(self, clust, img_width):
@@ -25,16 +26,16 @@ class Hist:
         return self._hist_bar
 
     def _get_hist(self):
-    	num_labels = np.arange(0, len(np.unique(self._clust.labels_)) + 1)
-    	(hist, _) = np.histogram(self._clust.labels_, bins=num_labels)
-    	hist = hist.astype("float")
-    	hist /= hist.sum()
-    	return hist
+        num_labels = np.arange(0, len(np.unique(self._clust.labels_)) + 1)
+        (hist, _) = np.histogram(self._clust.labels_, bins=num_labels)
+        hist = hist.astype("float")
+        hist /= hist.sum()
+        return hist
 
-    def _get_hist_bar(img_width):
+    def _get_hist_bar(self, img_width):
         num_channels = 3
         hist_bar = np.zeros(
-            (self._hist_bar_height, img_width, num_channels), 
+            (self._hist_bar_height, img_width, num_channels),
             dtype = "uint8",
         )
         start_x = 0
@@ -42,7 +43,7 @@ class Hist:
             end_x = start_x + (percent * img_width)
             cv2.rectangle(
                 hist_bar,
-                (int(start_x), 0), 
+                (int(start_x), 0),
                 (int(end_x), self._hist_bar_height),
                 color.astype("uint8").tolist(),
                 -1,

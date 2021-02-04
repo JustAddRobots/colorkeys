@@ -27,7 +27,7 @@ class Artwork:
         return self._colorspace
 
     @property
-    def img(self)
+    def img(self):
         "Image matrix"
         return self._img
 
@@ -49,14 +49,14 @@ class Artwork:
     def _get_filename(self, filename):
         if not os.path.exists(filename):
             raise FileNotFoundError(
-                errno.ENOENT, 
-                os.strerror(errno.ENOENT), 
+                errno.ENOENT,
+                os.strerror(errno.ENOENT),
                 filename
             )
         return filename
 
     def _get_color_space(self, kwargs):
-	colorspace = kwargs.setdefault("colorspace", "RGB")
+        colorspace = kwargs.setdefault("colorspace", "RGB")
         if not isinstance(colorspace, str):
             raise TypeError("colorspace must be a string")
         return colorspace

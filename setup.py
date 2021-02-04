@@ -36,13 +36,13 @@ setup(
         "colorkeys",
     ],
     install_requires = [
-	"opencv-python",
+        "opencv-python",
         "engcommon @ git+https://github.com/JustAddRobots/engcommon.git@{0}".format(
             engcommon_branch
         ),
-	"matplotlib",
+        "matplotlib",
         "numpy",
-	"sklearn"
+        "sklearn"
     ],
     entry_points = {
         "console_scripts": [
