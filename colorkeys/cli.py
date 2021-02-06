@@ -105,11 +105,13 @@ def run(args):
     logger = my_cli.logger
     my_cli.print_versions()
 
+    # Get CLI args
     imgfile = args["image"]
     colorspace = args["colorspace"]
     num_clusters = args["num_clusters"]
     algos = args["algos"]
 
+    # Create image matrix, run clustering algorithms
     time_start = time()
     art = ColorKey(imgfile, num_clusters, algos, colorspace=colorspace)
     time_end = time()

@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 
+"""
+This module creates and displays color keys (palettes) from a requested image.
+
+    Typical Usage:
+
+    my_colorkey = ColorKey("my_image_file.png", 5, ["kmeans"])
+    my_colorkey.show_palettes()
+"""
+
 import cv2
 import logging
 
@@ -14,10 +23,24 @@ logger = logging.getLogger(__name__)
 
 
 class ColorKey(Artwork):
+    """A class for loading, generating, and displaying image color keys.
 
+    Attributes:
+        hists (dict): colorkeys.histogram.Hist(s) keyed by requested algorithm.
+        show_palettes (None): Display image(s) and palette(s).
+    """
     def __init__(self, filename, num_clusters, algos, **kwargs):
         super().__init__(filename, **kwargs)
+        """Init ColorKey.
 
+        The number of color keys (palettes) generated for each image:
+            len(algos) * len(colorspace).
+
+        Args:
+            filename (str): Image filename.
+            num_clusters (int): Number of clusters requested.
+            algos (list): Algorithms requested.
+        """
         self._hists = self._get_hists(num_clusters, algos)
         self._figure_size = (8.00, 4.50)  # (x100) px
 
@@ -32,6 +55,15 @@ class ColorKey(Artwork):
         return self._show_palettes()
 
     def _get_hists(self, num_clusters, algos):
+        """Get histogram information for each algorithm requested.
+
+        Args:
+            num_clusters (int): Number of clusters requested.
+            alogs (list): Algorithms requested.
+
+        Returns:
+            hists (dict): colorkeys.histogram.Hist(s) keyed by algorithm.
+        """
         hists = {}
         for algo in algos:
             c = Clust(self.img, num_clusters, algo)
@@ -49,13 +81,26 @@ class ColorKey(Artwork):
         return None
 
     def _show_palettes(self):
+        """Show image and palette(s).
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        # create blank grey canvas
         canvas = plt.figure(
             figsize = self._figure_size,
             facecolor = "grey",
             tight_layout = True
         )
+
+        # get histogram bar height from any Hist (fixed for all)
         hbar_height = next(iter(self.hists.values())).hist_bar_height
         total_rows = len(self.hists) + 1
+
+        # create gridspec to include both img and histogram bar
         spec = gridspec.GridSpec(
             ncols = 1,
             nrows = total_rows,
@@ -65,9 +110,11 @@ class ColorKey(Artwork):
                 (hbar_height / (self.img_height + hbar_height)),
             ]
         )
+
+        # add image to canvas
         screenshot = canvas.add_subplot(spec[0])
         screenshot.grid(color="red", linestyle="-", linewidth=1)
-        plt.axis("off")
+        plt.axis("off")  # used for troubleshooting grid
         screenshot.imshow(self.img, aspect="equal")
         screenshot.set_title(
             label = "{0}, {1} x {2} px".format(
@@ -77,6 +124,8 @@ class ColorKey(Artwork):
             ),
             loc = "left",
         )
+
+        # add palettes to canvas
         palettes = {}
         for algo, h in self._hists.items():
             i = 1
@@ -89,5 +138,5 @@ class ColorKey(Artwork):
                 loc="left"
             )
             i += 1
-        plt.show()
+        _ = plt.show()
         return None
