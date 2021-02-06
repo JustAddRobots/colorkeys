@@ -10,9 +10,10 @@ import os
 import pkg_resources
 import sys
 
-from colorkeys import ColorKey
+from colorkeys.colorkeys import ColorKey
 from engcommon import clihelper
 from engcommon import testvar
+from time import time
 
 
 def get_command(args):
@@ -40,9 +41,18 @@ def get_command(args):
         ],
         default = [
             "kmeans",
-            "hac"
         ],
         help = "set clustering algorithm",
+    )
+    parser.add_argument(
+        "-c", "--colorspace",
+        action = "store",
+        choices = [
+            "RGB",
+            "HSV"
+        ],
+        default = "RGB",
+        help = "set color space",
     )
     parser.add_argument(
         "-i", "--image",
@@ -96,13 +106,19 @@ def run(args):
     my_cli.print_versions()
 
     imgfile = args["image"]
+    colorspace = args["colorspace"]
     num_clusters = args["num_clusters"]
     algos = args["algos"]
 
-    art = ColorKey(imgfile, num_clusters, algos)
+    time_start = time()
+    art = ColorKey(imgfile, num_clusters, algos, colorspace=colorspace)
+    time_end = time()
+    time_duration = time_end - time_start
 
+    logger.debug("time: {0:.2f}s".format(float(testvar.get_debug(time_duration))))
+    logger.debug("shape: {0}".format(testvar.get_debug(art.img.shape)))
     for algo, h in art.hists.items():
-        logger.debug(testvar.get_debug(h.hist))
+        logger.debug("histogram: {0}".format(testvar.get_debug(h.hist)))
 
     art.show_palettes()
 

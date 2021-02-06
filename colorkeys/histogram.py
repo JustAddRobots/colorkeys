@@ -9,11 +9,16 @@ logger = logging.getLogger(__name__)
 
 class Hist:
 
-    def __init__(self, clust, img_width):
-        self._hist_bar_height = 60
+    def __init__(self, clust, num_clusters, img_width):
         self._clust = clust
+        self._num_clusters = num_clusters
+        self._hist_bar_height = 60
         self._hist = self._get_hist()
         self._hist_bar = self._get_hist_bar(img_width)
+
+    @property
+    def num_clusters(self):
+        return self._num_clusters
 
     @property
     def hist(self):
@@ -24,6 +29,11 @@ class Hist:
     def hist_bar(self):
         "Get histogram bar"
         return self._hist_bar
+
+    @property
+    def hist_bar_height(self):
+        "Get histogram bar"
+        return self._hist_bar_height
 
     def _get_hist(self):
         num_labels = np.arange(0, len(np.unique(self._clust.labels_)) + 1)
