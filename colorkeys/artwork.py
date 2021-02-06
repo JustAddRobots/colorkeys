@@ -12,9 +12,9 @@ class Artwork:
 
     def __init__(self, filename, **kwargs):
         self._filename = self._get_filename(filename)
-        self._colorspace = self._get_color_space(kwargs)
+        self._colorspace = self._get_colorspace(kwargs)
         self._img = self._get_img()
-        self._height, self._width, self._num_channels = self._img.shape()
+        self._img_height, self._img_width, self._num_channels = self._img.shape
 
     @property
     def filename(self):
@@ -22,7 +22,7 @@ class Artwork:
         return self._filename
 
     @property
-    def color_space(self):
+    def colorspace(self):
         "Image color space"
         return self._colorspace
 
@@ -32,19 +32,23 @@ class Artwork:
         return self._img
 
     @property
-    def height(self):
+    def img_height(self):
         "Image height"
-        return self._height
+        return self._img_height
 
     @property
-    def width(self):
+    def img_width(self):
         "Image width"
-        return self._width
+        return self._img_width
 
     @property
     def num_channels(self):
         "Image number of channels"
         return self._num_channels
+
+    @property
+    def show_debug(self):
+        return self._show_debug()
 
     def _get_filename(self, filename):
         if not os.path.exists(filename):
@@ -55,7 +59,7 @@ class Artwork:
             )
         return filename
 
-    def _get_color_space(self, kwargs):
+    def _get_colorspace(self, kwargs):
         colorspace = kwargs.setdefault("colorspace", "RGB")
         if not isinstance(colorspace, str):
             raise TypeError("colorspace must be a string")
@@ -70,3 +74,10 @@ class Artwork:
         img_BGR = cv2.imread(self._filename)
         img = cv2.cvtColor(img_BGR, cnv)
         return img
+
+    def _show_debug(self):
+        attrs = vars(self)
+        for k, v in attrs.items():
+            if k.startswith("_"):
+                logger.debug("{0}: {1}".format(k, v))
+        return None

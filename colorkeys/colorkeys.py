@@ -19,16 +19,15 @@ class ColorKey(Artwork):
         super().__init__(filename, **kwargs)
 
         self._hists = self._get_hists(num_clusters, algos)
+        self._figure_size = (8.00, 4.50)  # (x100) px
 
     @property
     def hists(self):
         return self._hists
 
-    @property
     def show_img(self):
         return self._show_img()
 
-    @property
     def show_palettes(self):
         return self._show_palettes()
 
@@ -36,7 +35,7 @@ class ColorKey(Artwork):
         hists = {}
         for algo in algos:
             c = Clust(self.img, num_clusters, algo)
-            h = Hist(c.clust, self.width)
+            h = Hist(c.clust, num_clusters, self.img_width)
             hists[algo] = h
         return hists
 
@@ -51,28 +50,44 @@ class ColorKey(Artwork):
 
     def _show_palettes(self):
         canvas = plt.figure(
-            figsize = (12.80, 7.20),
+            figsize = self._figure_size,
             facecolor = "grey",
             tight_layout = True
         )
-        total_rows = len(self._hists) + 1
-        spec = gridspec.GridSpec(ncols=1, nrows=total_rows, figure=canvas)
+        hbar_height = next(iter(self.hists.values())).hist_bar_height
+        total_rows = len(self.hists) + 1
+        spec = gridspec.GridSpec(
+            ncols = 1,
+            nrows = total_rows,
+            figure = canvas,
+            height_ratios = [
+                (self.img_height / (self.img_height + hbar_height)),
+                (hbar_height / (self.img_height + hbar_height)),
+            ]
+        )
         screenshot = canvas.add_subplot(spec[0])
+        screenshot.grid(color="red", linestyle="-", linewidth=1)
         plt.axis("off")
         screenshot.imshow(self.img, aspect="equal")
-        for i in range(1, len(self._hists) + 1):
-            canvas.add_subplot(spec[i])
+        screenshot.set_title(
+            label = "{0}, {1} x {2} px".format(
+                self.filename,
+                self.img_width,
+                self.img_height,
+            ),
+            loc = "left",
+        )
+        palettes = {}
+        for algo, h in self._hists.items():
+            i = 1
+            palettes[algo] = canvas.add_subplot(spec[i])
+            palettes[algo].grid(color="red", linestyle="-", linewidth=1)
             plt.axis("off")
-            plt.gca().set_box_aspect(self.height / self.width)
+            palettes[algo].imshow(h.hist_bar, aspect="equal")
+            palettes[algo].set_title(
+                label = "{0}, n_clusters = {1}".format(algo, h.num_clusters),
+                loc="left"
+            )
+            i += 1
         plt.show()
-
-#         palette = canvas.add_subplot(spec[1])
-#         plt.axis("off")
-#         screenshot.imshow(img, aspect="equal")
-#         palette.imshow(hist_bar, aspect="equal")
-#         plt.gca().set_box_aspect(img_height/img_width)
-#         pos0 = palette.get_position()
-#         pos1 = [pos0.x0, pos0.y0 - 0.18, pos0.width, pos0.height]
-#         palette.set_position(pos1)
-#         plt.show()
         return None
