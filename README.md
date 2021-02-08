@@ -5,7 +5,7 @@ Color Key Analysis in Film and Art.
 
 This repository contains tools for color extraction from input images.
 
-It is part of my exploration of colour palette analysis in film and art. It is 
+It is part of my exploration of color palette analysis in film and art. It is 
 part-exercise and part-foundational project for building data analysis and machine 
 learning tools for content creation.
 
@@ -13,11 +13,11 @@ There is **no support** for this project.
 
 ## Background
 
-As both creator and consumer, I'm interested in the role of colours and colour palettes
+As both creator and consumer, I'm interested in the role of colors and color palettes
 in narrative. One of the goals of this project is to detect underlying color patterns 
 in sequential narrative and see how they correlate with story structure.
 
-The first step is the detection of colours within a single frame/image. For this task,
+The first step is the detection of colors within a single frame/image. For this task,
 this repo uses the _k-means_ clustering algorithm. An exploration of alternative
 algorithms including _heirarchical agglomerative clustering_, will follow later.
 
@@ -77,17 +77,17 @@ optional arguments:
 ### Uniqueness
 
 The _k-means_ algorithm divides an image into _k_ groups (clusters) whose mean is a
-coordinate value with a corresponding colour value. It does a good job detecting
- colours that represent significant proportions of the image.
+coordinate value with a corresponding color value. It does a good job detecting
+ colors that represent significant proportions of the image.
 
 <P align="center">
     <IMG src="./readme/colorkeys-n7-01.png" />
 </P>
 
 
-But scant--yet prominent--colours often go undetected unless larger numbers of 
+But scant--yet prominent--colors often go undetected unless larger numbers of 
 clusters are requested. For example, this still from the film _Yesterday_ shows 
-some eye-catching colours that aren't detected.
+some eye-catching colors that aren't detected.
 
 <P align="center">
     <IMG src="./readme/Yesterday-n7-01.png" />
@@ -96,7 +96,7 @@ some eye-catching colours that aren't detected.
 
 ### Red
 
-A related challenge involves prioritising the colour _red_. Significant
+A related challenge involves prioritising the color _red_. Significant
 social, cultural, and evolutionary reasons cause red to immediately draw our eyes.
 Therefore, even small proportions of red may need to factor into the palette 
 detection.
@@ -108,9 +108,9 @@ detection.
 
 ### Medium
 
-K-means seems proficient on my favourite style of comics (inked, flat colour), even 
-with a relatively small number of requested clusters (though adjuments will be needed
-to handle the "analagous split-complementary" colour schemes prevalent many works). 
+K-means seems proficient on my favourite style of comics (inked, flat color), even 
+with a relatively small number of requested clusters (though adjustments will be needed
+to handle the "analagous split-complementary" color schemes prevalent many works). 
 This may mean a generalised algorithm for different mediums may be challenging.
 
 <P align="center">
@@ -121,7 +121,7 @@ This may mean a generalised algorithm for different mediums may be challenging.
 ## Todo
 
 Many of these challenges will be addressed in experiments with the clustering
-algorithm (k-means v. heirarchical agglomerative clustering) and colour space
+algorithm (k-means v. heirarchical agglomerative clustering) and color space
 (RGB v. HSV).
 
 
