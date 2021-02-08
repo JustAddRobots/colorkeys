@@ -20,6 +20,8 @@ from colorkeys.centroids import Clust
 from colorkeys.histogram import Hist
 
 logger = logging.getLogger(__name__)
+mpl_logger = logging.getLogger("matplotlib")
+mpl_logger.setLevel(logging.WARNING)
 
 
 class ColorKey(Artwork):
@@ -100,7 +102,7 @@ class ColorKey(Artwork):
         hbar_height = next(iter(self.hists.values())).hist_bar_height
         total_rows = len(self.hists) + 1
 
-        # create gridspec to include both img and histogram bar
+        # create gridspec to include both img and histogram bar palettes
         spec = gridspec.GridSpec(
             ncols = 1,
             nrows = total_rows,
@@ -122,7 +124,7 @@ class ColorKey(Artwork):
                 self.img_width,
                 self.img_height,
             ),
-            loc = "left",
+            loc = "center",
         )
 
         # add palettes to canvas
@@ -135,7 +137,7 @@ class ColorKey(Artwork):
             palettes[algo].imshow(h.hist_bar, aspect="equal")
             palettes[algo].set_title(
                 label = "{0}, n_clusters = {1}".format(algo, h.num_clusters),
-                loc="left"
+                loc="center"
             )
             i += 1
         _ = plt.show()
