@@ -37,7 +37,7 @@ def get_command(args):
         action = "store",
         choices = [
             "kmeans",
-            "hac"
+            # "hac"
         ],
         default = [
             "kmeans",
@@ -49,7 +49,7 @@ def get_command(args):
         action = "store",
         choices = [
             "RGB",
-            "HSV"
+            # "HSV"
         ],
         default = "RGB",
         help = "set color space",
