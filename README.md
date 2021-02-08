@@ -21,14 +21,12 @@ The first step is the detection of colours within a single frame/image. For this
 this repo uses the _k-means_ clustering algorithm. An exploration of alternative
 algorithms including _heirarchical agglomerative clustering_, will follow later.
 
-For more information, see:
-
 https://en.wikipedia.org/wiki/K-means_clustering
 
 ## Installing
 
 ```
-python3 -m pip install git+https://github.com/JustAddRobots/colorkeys.git
+❯ python3 -m pip install git+https://github.com/JustAddRobots/colorkeys.git
 ```
 
 ## Usage
@@ -82,31 +80,39 @@ The _k-means_ algorithm divides an image into _k_ groups (clusters) whose mean i
 coordinate value with a corresponding colour value. It does a good job detecting
  colours that represent significant proportions of the image.
 
+<span style="display:block;text-align:center">
 ![Dominant colur palettes](./readme/colorkeys-n7-01.png)
+</span>
 
-
-_Moonlight_, (DP: James Laxton)
-_Blade Runner 2049_, (DP: Roger Deakins)
-_In the Mood for Love_, (DP: Christopher Doyle)
-_2001: A Space Oddessy_, (DP: Geoffrey Unsworth)
+<span style="font-size:smaller;">
+_Moonlight_, (DP: James Laxton)  
+_Blade Runner 2049_, (DP: Roger Deakins)  
+_In the Mood for Love_, (DP: Christopher Doyle)  
+_2001: A Space Oddessy_, (DP: Geoffrey Unsworth)  
+</span>
 
 But scant--yet prominent--colours often go undetected unless larger numbers of 
 clusters are requested. For example, this still from the film _Yesterday_ 
-(DP: Christopher Ross) shows some eye-catching colours that aren't detected.
+<span style="font-size:smaller;">(DP: Christopher Ross)</span> shows some eye-catching colours that aren't detected.
 
+<span style="display:block;text-align:center">
 ![Undetected colors](./readme/Yesterday-n7-01.png)
+</span>
 
-
-### Red
+### <span style="color:red">Red</span>
 
 A related challenge involves prioritising the colour _red_. Significant
 social, cultural, and evolutionary reasons cause red to immediately draw our eyes.
 Therefore, even small proportions of red may need to factor into the palette 
 detection.
 
+<span style="display:block;text-align:center">
 ![Undetected red](./readme/Matrix-n7-01.png)
+</span>
 
-_The Matrix_, (DP: Bill Pope).
+<span style="font-size:smaller;">
+_The Matrix_, (DP: Bill Pope).  
+</span>
 
 ### Medium
 
@@ -115,22 +121,25 @@ with a relatively small number of requested clusters (though adjuments will be n
 to handle the "analagous split-complementary" colour schemes prevalent many works). 
 This may mean a generalised algorithm for different mediums may be challenging.
 
+<span style="display:block;text-align:center">
 ![Comics Palettes](./readme/Comics-n5-01.png)
+</span>
 
-_Paper Girls_, (Colorist: Matt Wilson)
-_The Divine_, (Colorist: Tomer Hanuka)
+<span style="font-size:smaller;">
+_Paper Girls_, (Colorist: Matt Wilson)  
+_The Divine_, (Colorist: Tomer Hanuka)  
+</span>
 
-### Todo
+## Todo
 
 Many of these challenges will be addressed in experiments with the clustering
 algorithm (k-means v. heirarchical agglomerative clustering) and colour space
 (RGB v. HSV).
 
 
-https://en.wikipedia.org/wiki/HSL_and_HSV
-
-https://en.wikipedia.org/wiki/Hierarchical_clustering
+https://en.wikipedia.org/wiki/HSL_and_HSV  
+https://en.wikipedia.org/wiki/Hierarchical_clustering  
 
 ## License
 
-Licensed under GNU GPL v3. See ***LICENSE.md**
+Licensed under GNU GPL v3. See **LICENSE.md**
