@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-This module is the CLI front-end for the standardised XHPL Stress Test.
+This module is the CLI front-end for the colorkeys analysis tool.
 """
 
 import argparse
@@ -10,9 +10,11 @@ import os
 import pkg_resources
 import sys
 
-from colorkeys import kmeans
+from colorkeys.colorkeys import ColorKey
 from engcommon import clihelper
-from engcommon import formattext
+from engcommon import testvar
+from time import time
+
 
 def get_command(args):
     """Get command args.
@@ -23,7 +25,7 @@ def get_command(args):
         args (dict): Arguments.
     """
     parser = argparse.ArgumentParser(
-        description = "XHPL Stress Test"
+        description = "Colorkeys Palette Analysis Tool"
     )
     parser.add_argument(
         "-d", "--debug",
@@ -31,16 +33,54 @@ def get_command(args):
         help = "print debug information",
     )
     parser.add_argument(
+        "-a", "--algos",
+        action = "store",
+        choices = [
+            "kmeans",
+            # "hac"
+        ],
+        default = [
+            "kmeans",
+        ],
+        help = "set clustering algorithm",
+    )
+    parser.add_argument(
+        "-c", "--colorspace",
+        action = "store",
+        choices = [
+            "RGB",
+            # "HSV"
+        ],
+        default = "RGB",
+        help = "set color space",
+    )
+    parser.add_argument(
         "-i", "--image",
         action = "store",
         type = str,
         help = "set image",
+        required = True
     )
     parser.add_argument(
-        "-k", "--kmeans",
+        "-n", "--num_clusters",
         action = "store",
         type = int,
         help = "set number of cluster centroids",
+        required = True
+    )
+    parser.add_argument(
+        "-l", "--logid",
+        action = "store",
+        type = str,
+        help = "set runtime log indentifier",
+        required = False,
+    )
+    parser.add_argument(
+        "-p", "--prefix",
+        action = "store",
+        type = str,
+        default = "/tmp/logs",
+        help = "set log directory prefix",
     )
     parser.add_argument(
         "-v", "--version",
@@ -65,27 +105,33 @@ def run(args):
     logger = my_cli.logger
     my_cli.print_versions()
 
+    # Get CLI args
     imgfile = args["image"]
-    k = args["kmeans"]
+    colorspace = args["colorspace"]
+    num_clusters = args["num_clusters"]
+    algos = args["algos"]
 
-    img = kmeans.get_img_rgb(imgfile)
-    clust = kmeans.get_clusters(k, img)
-    img_reshape = img.reshape(img.shape[0] * img.shape[1], img.shape[2])
-    logger.debug(img_reshape.shape)
+    # Create image matrix, run clustering algorithms
+    time_start = time()
+    art = ColorKey(imgfile, num_clusters, algos, colorspace=colorspace)
+    time_end = time()
+    time_duration = time_end - time_start
 
-    clust.fit(img_reshape)
-    hist = kmeans.get_cluster_histogram(clust)
-    logger.debug(testvar.get_debug(hist))
+    logger.debug("time: {0:.2f}s".format(float(testvar.get_debug(time_duration))))
+    logger.debug("shape: {0}".format(testvar.get_debug(art.img.shape)))
+    for algo, h in art.hists.items():
+        logger.debug("histogram: {0}".format(testvar.get_debug(h.hist)))
 
-    hist_bar = kmeans.get_hist_bar(hist, clust)
-    kmeans.plot_hist_bar(img, hist_bar)
+    art.show_palettes()
 
     return None
+
 
 def main():
     args = sys.argv[1:]
     d = get_command(args)
     run(d)
+
 
 if __name__ == "__main__":
     try:
@@ -94,4 +140,3 @@ if __name__ == "__main__":
         logging.exception("Exceptions Found")
         logging.critical("Exiting.")
         sys.exit()
-
