@@ -85,11 +85,6 @@ coordinate value with a corresponding colour value. It does a good job detecting
 </P>
 
 
-_Moonlight_, (DP: James Laxton)  
-_Blade Runner 2049_, (DP: Roger Deakins)  
-_In the Mood for Love_, (DP: Christopher Doyle)  
-_2001: A Space Oddessy_, (DP: Geoffrey Unsworth)  
-
 But scant--yet prominent--colours often go undetected unless larger numbers of 
 clusters are requested. For example, this still from the film _Yesterday_ shows 
 some eye-catching colours that aren't detected.
@@ -98,8 +93,6 @@ some eye-catching colours that aren't detected.
     <IMG src="./readme/Yesterday-n7-01.png" />
 </P>
 
-
-_Yesterday_, (DP: Christopher Ross)
 
 ### Red
 
@@ -113,8 +106,6 @@ detection.
 </P>
 
 
-_The Matrix_, (DP: Bill Pope)  
-
 ### Medium
 
 K-means seems proficient on my favourite style of comics (inked, flat colour), even 
@@ -125,10 +116,6 @@ This may mean a generalised algorithm for different mediums may be challenging.
 <P align="center">
     <IMG src="./readme/Comics-n5-01.png" />
 </P>
-
-
-_Paper Girls_, (Colorist: Matt Wilson)  
-_The Divine_, (Colorist: Tomer Hanuka)  
 
 
 ## Todo
