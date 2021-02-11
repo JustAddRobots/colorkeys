@@ -12,10 +12,12 @@ import cv2
 import logging
 import numpy as np
 
+from colorkeys.centroids import Clust
+
 logger = logging.getLogger(__name__)
 
 
-class Hist:
+class Hist(Clust):
     """A class for generating histogram and histogram bar information based on
     input clusters/centroids. In other words, this generates the color palette
     bar.
@@ -26,24 +28,22 @@ class Hist:
         hist_bar (numpy.ndarray): Normalized histogram bar scaled to image width.
         hist_bar_height (int): histogram bar height.
     """
-    def __init__(self, clust, num_clusters, img_width):
+    def __init__(self, img, algo, num_clusters, img_width):
+        super().__init__(img, algo, num_clusters)
         """Init Hist.
 
         Args:
-            clust (sklearn.cluster): Clusters/centroids generated.
             num_clusters (int): Number of clusters/centroids requested.
             img_width (int): Width of image used for cluster generation (used
                 to define width for histogram bar).
         """
-        self._clust = clust
-        self._num_clusters = num_clusters
         self._hist_bar_height = 60
         self._hist = self._get_hist()
         self._hist_bar = self._get_hist_bar(img_width)
 
-    @property
-    def num_clusters(self):
-        return self._num_clusters
+#    @property
+#    def num_clusters(self):
+#        return self._num_clusters
 
     @property
     def hist(self):
@@ -73,8 +73,8 @@ class Hist:
         Returns:
             hist (numpy.ndarray): Normalized histogram.
         """
-        num_labels = np.arange(0, len(np.unique(self._clust.labels_)) + 1)
-        (hist, _) = np.histogram(self._clust.labels_, bins=num_labels)
+        num_labels = np.arange(0, len(np.unique(self.clust.labels_)) + 1)
+        (hist, _) = np.histogram(self.clust.labels_, bins=num_labels)
         hist = hist.astype("float")
         hist /= hist.sum()
         return hist
@@ -101,7 +101,7 @@ class Hist:
 
         # build the bar each centroid/color at a time.
         start_x = 0
-        for (percent, color) in zip(self._hist, self._clust.cluster_centers_):
+        for (percent, color) in zip(self._hist, self.clust.cluster_centers_):
             end_x = start_x + (percent * img_width)
             cv2.rectangle(
                 hist_bar,
