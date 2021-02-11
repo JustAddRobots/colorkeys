@@ -52,7 +52,7 @@ def get_command(args):
             # "HSV"
         ],
         default = "RGB",
-        help = "set color space",
+        help = "set image color space",
     )
     parser.add_argument(
         "-i", "--image",

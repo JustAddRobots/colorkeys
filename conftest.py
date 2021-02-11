@@ -32,7 +32,7 @@ def myclust():
 @pytest.fixture(scope="session")
 def myhist():
     a = Artwork(testimg)
-    return Hist(a.img, "kmeans", 5, a.img_width)
+    return Hist(a.img, "kmeans", 5, "RGB", a.img_width)
 
 
 @pytest.fixture(scope="session")
