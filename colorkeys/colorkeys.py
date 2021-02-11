@@ -16,7 +16,7 @@ from matplotlib import gridspec
 from matplotlib import pyplot as plt
 
 from colorkeys.artwork import Artwork
-from colorkeys.centroids import Clust
+# from colorkeys.centroids import Clust
 from colorkeys.histogram import Hist
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ class ColorKey(Artwork):
         hists (dict): colorkeys.histogram.Hist(s) keyed by requested algorithm.
         show_palettes (None): Display image(s) and palette(s).
     """
-    def __init__(self, filename, num_clusters, algos, **kwargs):
+    def __init__(self, filename, algos, num_clusters, **kwargs):
         super().__init__(filename, **kwargs)
         """Init ColorKey.
 
@@ -43,7 +43,7 @@ class ColorKey(Artwork):
             num_clusters (int): Number of clusters requested.
             algos (list): Algorithms requested.
         """
-        self._hists = self._get_hists(num_clusters, algos)
+        self._hists = self._get_hists(algos, num_clusters)
         self._figure_size = (8.00, 4.50)  # (x100) px
 
     @property
@@ -56,7 +56,7 @@ class ColorKey(Artwork):
     def show_palettes(self):
         return self._show_palettes()
 
-    def _get_hists(self, num_clusters, algos):
+    def _get_hists(self, algos, num_clusters):
         """Get histogram information for each algorithm requested.
 
         Args:
@@ -68,8 +68,8 @@ class ColorKey(Artwork):
         """
         hists = {}
         for algo in algos:
-            c = Clust(self.img, num_clusters, algo)
-            h = Hist(c.clust, num_clusters, self.img_width)
+            # c = Clust(self.img, num_clusters, algo)
+            h = Hist(self.img, algo, num_clusters, self.img_width)
             hists[algo] = h
         return hists
 
@@ -98,7 +98,7 @@ class ColorKey(Artwork):
             tight_layout = True
         )
 
-        # get histogram bar height from any Hist (fixed for all)
+        # get histogram bar height from any Hist instance (fixed for all)
         hbar_height = next(iter(self.hists.values())).hist_bar_height
         total_rows = len(self.hists) + 1
 

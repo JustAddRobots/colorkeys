@@ -26,7 +26,7 @@ class Clust:
         clust (sklearn.cluster): Cluster generated.
         num_clusters (int): Number of clusters/centroids requested.
     """
-    def __init__(self, img, num_clusters, algo):
+    def __init__(self, img, algo, num_clusters):
         """Init Clust.
 
         Args:
@@ -36,7 +36,7 @@ class Clust:
         """
         # Convert 2D array to 1D for cluster generation.
         img_reshape = img.reshape(img.shape[0] * img.shape[1], img.shape[2])
-        self._clust = self._get_clust(img_reshape, num_clusters, algo)
+        self._clust = self._get_clust(img_reshape, algo, num_clusters)
         self._num_clusters = num_clusters
 
     @property
@@ -47,7 +47,7 @@ class Clust:
     def num_clusters(self):
         return self._num_clusters
 
-    def _get_clust(self, img, n, algo):
+    def _get_clust(self, img, algo, n):
         """Get cluster.
 
         Args:
