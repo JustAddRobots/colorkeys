@@ -113,7 +113,7 @@ def run(args):
 
     # Create image matrix, run clustering algorithms
     time_start = time()
-    art = ColorKey(imgfile, num_clusters, algos, colorspace=colorspace)
+    art = ColorKey(imgfile, algos, num_clusters, colorspace=colorspace)
     time_end = time()
     time_duration = time_end - time_start
 
