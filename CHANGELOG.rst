@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.3.0 (2021-02-11)
+------------------
+- ISSUE-020: Refactored Hist as derived from Clust. (2b39237) [JustAddRobots]
+- ISSUE-020: Refactored Hist as derived from Clust. (c3980b5) [JustAddRobots]
+
 0.2.0 (2021-02-08)
 ------------------
 - ISSUE-017: Changed color to American spelling, fixed typos. (7b0a4f8) [JustAddRobots]
