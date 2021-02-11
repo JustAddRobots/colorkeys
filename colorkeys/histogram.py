@@ -12,6 +12,7 @@ import cv2
 import logging
 import numpy as np
 
+from skimage import color as skicolor
 from colorkeys.centroids import Clust
 
 logger = logging.getLogger(__name__)
@@ -28,7 +29,7 @@ class Hist(Clust):
         hist_bar (numpy.ndarray): Normalized histogram bar scaled to image width.
         hist_bar_height (int): histogram bar height.
     """
-    def __init__(self, img, algo, num_clusters, img_width):
+    def __init__(self, img, algo, num_clusters, clrspace, img_width):
         super().__init__(img, algo, num_clusters)
         """Init Hist.
 
@@ -37,13 +38,10 @@ class Hist(Clust):
             img_width (int): Width of image used for cluster generation (used
                 to define width for histogram bar).
         """
+        self._hist_colorspace = clrspace
         self._hist_bar_height = 60
         self._hist = self._get_hist()
         self._hist_bar = self._get_hist_bar(img_width)
-
-#    @property
-#    def num_clusters(self):
-#        return self._num_clusters
 
     @property
     def hist(self):
@@ -99,9 +97,15 @@ class Hist(Clust):
             dtype = "uint8",
         )
 
-        # build the bar each centroid/color at a time.
+        # build the bar each centroid color at a time.
         start_x = 0
-        for (percent, color) in zip(self._hist, self.clust.cluster_centers_):
+
+        if self._hist_colorspace == "HSV":
+            centers = skicolor.hsv2rgb(self.clust.cluster_centers_)
+        elif self._hist_colorspace == "RGB":
+            centers = self.clust.cluster_centers_
+
+        for (percent, color) in zip(self._hist, centers):
             end_x = start_x + (percent * img_width)
             cv2.rectangle(
                 hist_bar,

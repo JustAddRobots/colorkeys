@@ -119,14 +119,15 @@ class Artwork:
         colorspace = kwargs.setdefault("colorspace", "RGB")
         if not isinstance(colorspace, str):
             raise TypeError("colorspace must be a string")
+        if colorspace not in ["RGB", "HSV"]:
+            raise ValueError("Invalid value for colorspace: {0}".format(colorspace))
         return colorspace
 
     def _get_img(self):
         """Get image matrix for the requested color space.
 
         cv2 automatically reads the image as BGR, so it must be converted to the
-        correct color space. For now, assume all images will be RBG. HSV will be
-        used for algorithm testing at a later date.
+        correct color space.
 
         Args:
             None
