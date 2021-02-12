@@ -14,7 +14,6 @@ import logging
 
 from matplotlib import gridspec
 from matplotlib import pyplot as plt
-from skimage import color as skicolor
 
 from colorkeys.artwork import Artwork
 from colorkeys.histogram import Hist
@@ -70,16 +69,12 @@ class ColorKey(Artwork):
         hist_colorspaces = ["RGB", "HSV"]
         for algo in algos:
             h_dict = {}
-            for clrspace in hist_colorspaces:
-                if clrspace == "HSV":
-                    img = skicolor.rgb2hsv(self.img)
-                elif clrspace == "RGB":
-                    img = self.img
-                h_dict[clrspace] = Hist(
-                    img,
+            for hist_colorspace in hist_colorspaces:
+                h_dict[hist_colorspace] = Hist(
+                    self.img,
                     algo,
                     num_clusters,
-                    clrspace,
+                    hist_colorspace,
                     self.img_width
                 )
             hists[algo] = h_dict
@@ -111,15 +106,16 @@ class ColorKey(Artwork):
         )
 
         # get histogram bar height from any Hist instance (fixed for all)
-        hbar_height = next(iter(self.hists.values())).hist_bar_height
+        any_h_clrspace = next(iter(self.hists.values()))
+        hbar_height = next(iter(any_h_clrspace.values())).hist_bar_height
 
         # set height ratios for img and histogram bars
         total_hbar_rows = len(self.hists) + len(self.hists.values())
         subplot_height_ratios = [
-            (hbar_height / (self.img_height + hbar_height))
+            (hbar_height / (self.img_height + hbar_height * total_hbar_rows))
         ] * total_hbar_rows
         subplot_height_ratios.insert(
-            0, (self.img_height / (self.img_height + hbar_height))
+            0, (self.img_height / (self.img_height + hbar_height * total_hbar_rows))
         )
 
         # create gridspec to include both img and histogram bar palettes
@@ -146,18 +142,18 @@ class ColorKey(Artwork):
 
         # add histogram bar palettes to canvas
         palettes = {}
+        i = 1
         for algo, h_colorspaces in self._hists.items():
             for colorspace, h in h_colorspaces.items():
                 algo_cs = "{0}-{1}".format(algo, colorspace)
-                i = 1
                 palettes[algo_cs] = canvas.add_subplot(spec[i])
                 palettes[algo_cs].grid(color="red", linestyle="-", linewidth=1)
                 plt.axis("off")
                 palettes[algo_cs].imshow(h.hist_bar, aspect="equal")
                 palettes[algo_cs].set_title(
-                    label = "{0}, {1} n_clusters = {2}".format(
-                        colorspace,
+                    label = "{0}, {1}, n_clusters = {2}".format(
                         algo,
+                        colorspace,
                         h.num_clusters
                     ),
                     loc="center"

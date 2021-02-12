@@ -119,8 +119,12 @@ def run(args):
 
     logger.debug("time: {0:.2f}s".format(float(testvar.get_debug(time_duration))))
     logger.debug("shape: {0}".format(testvar.get_debug(art.img.shape)))
-    for algo, h in art.hists.items():
-        logger.debug("histogram: {0}".format(testvar.get_debug(h.hist)))
+    for algo, h_dict in art.hists.items():
+        for h_colorspace, h in h_dict.items():
+            logger.debug("histogram, {0}: {1}".format(
+                h_colorspace,
+                testvar.get_debug(h.hist)
+            ))
 
     art.show_palettes()
 
