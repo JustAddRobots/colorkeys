@@ -11,7 +11,10 @@ This module facilitates the creating image histogram data.
 import cv2
 import logging
 import numpy as np
+import operator
 
+from skimage import color as skicolor
+from skimage import util as skiutil
 from colorkeys.centroids import Clust
 
 logger = logging.getLogger(__name__)
@@ -25,40 +28,72 @@ class Hist(Clust):
     Attributes:
         num_clusters (int): Number of clusters/centroids requested.
         hist (numpy.ndarray): Normalized histogram of centroids.
+        hist_colorspace (str): Histogram color space
         hist_bar (numpy.ndarray): Normalized histogram bar scaled to image width.
         hist_bar_height (int): histogram bar height.
     """
-    def __init__(self, img, algo, num_clusters, img_width):
-        super().__init__(img, algo, num_clusters)
+    def __init__(self, img, algo, num_clusters, h_colorspace, img_width):
         """Init Hist.
 
         Args:
-            num_clusters (int): Number of clusters/centroids requested.
+            img (np.ndarray): Image array.
+            algo (str): Clustering algorithm requested.
+            num_clusters (int): Requested Number of clusters/centroids.
+            h_colorspace (str): Requested Color space of histogram.
             img_width (int): Width of image used for cluster generation (used
                 to define width for histogram bar).
         """
+        self._hist_colorspace = self._get_colorspace(h_colorspace)
+        img = self._preprocess(img)
+        super().__init__(img, algo, num_clusters)
+
         self._hist_bar_height = 60
         self._hist = self._get_hist()
         self._hist_bar = self._get_hist_bar(img_width)
 
-#    @property
-#    def num_clusters(self):
-#        return self._num_clusters
-
     @property
     def hist(self):
-        "Get histogram"
+        """Get histogram."""
         return self._hist
 
     @property
+    def hist_colorspace(self):
+        """Get histogram color space."""
+        return self._hist_colorspace
+
+    @property
     def hist_bar(self):
-        "Get histogram bar"
+        """Get histogram bar."""
         return self._hist_bar
 
     @property
     def hist_bar_height(self):
-        "Get histogram bar"
+        """Get histogram bar."""
         return self._hist_bar_height
+
+    def _get_colorspace(self, colorspace):
+        """Get colorspace."""
+        if colorspace not in ["RGB", "HSV"]:
+            raise ValueError("Invalid histogram colorspace: {0}".format(colorspace))
+        return colorspace
+
+    def _preprocess(self, img):
+        """Prepare image array for processing.
+
+        Convert to float for better precision, convert to the color space of histogram.
+
+        Args:
+            img (np.ndarray): Image array.
+
+        Returns:
+            img (np.ndarray): Image array.
+        """
+        img = skiutil.img_as_float(img)
+        if self._hist_colorspace == "HSV":
+            img = skicolor.rgb2hsv(img)
+        elif self._hist_colorspace == "RGB":
+            pass
+        return img
 
     def _get_hist(self):
         """Get histogram from generated cluster.
@@ -75,7 +110,7 @@ class Hist(Clust):
         """
         num_labels = np.arange(0, len(np.unique(self.clust.labels_)) + 1)
         (hist, _) = np.histogram(self.clust.labels_, bins=num_labels)
-        hist = hist.astype("float")
+        hist = skiutil.img_as_float(hist)
         hist /= hist.sum()
         return hist
 
@@ -94,20 +129,31 @@ class Hist(Clust):
             hist_bar (numpy.ndarray): Histogram bar.
         """
         num_channels = 3
+        # Start with zeroed histogram
         hist_bar = np.zeros(
             (self._hist_bar_height, img_width, num_channels),
             dtype = "uint8",
         )
 
-        # build the bar each centroid/color at a time.
+        # Convert cluster to RGB
+        if self._hist_colorspace == "HSV":
+            centers = skicolor.hsv2rgb(self.clust.cluster_centers_)
+        elif self._hist_colorspace == "RGB":
+            centers = self.clust.cluster_centers_
+
+        # Sort centroids descending by percentage
+        zipped = zip(self._hist, centers)
+        centroids = sorted(zipped, key=operator.itemgetter(0), reverse=True)
+
+        # build the bar each centroid color at a time.
         start_x = 0
-        for (percent, color) in zip(self._hist, self.clust.cluster_centers_):
+        for (percent, color) in centroids:
             end_x = start_x + (percent * img_width)
             cv2.rectangle(
                 hist_bar,
                 (int(start_x), 0),
                 (int(end_x), self._hist_bar_height),
-                color.astype("uint8").tolist(),
+                skiutil.img_as_ubyte(color).tolist(),
                 -1,
             )
             start_x = end_x

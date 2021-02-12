@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.4.0 (2021-02-12)
+------------------
+- ISSUE-007: Fixed HSV histogram bar generation. (69cffb8) [JustAddRobots]
+- ISSUE-007: Added HSV conversion, palette handling. (30f6357) [JustAddRobots]
+
 0.3.0 (2021-02-11)
 ------------------
 - ISSUE-020: Refactored Hist as derived from Clust. (2b39237) [JustAddRobots]

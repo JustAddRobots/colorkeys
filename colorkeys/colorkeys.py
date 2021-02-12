@@ -16,7 +16,6 @@ from matplotlib import gridspec
 from matplotlib import pyplot as plt
 
 from colorkeys.artwork import Artwork
-# from colorkeys.centroids import Clust
 from colorkeys.histogram import Hist
 
 logger = logging.getLogger(__name__)
@@ -57,7 +56,7 @@ class ColorKey(Artwork):
         return self._show_palettes()
 
     def _get_hists(self, algos, num_clusters):
-        """Get histogram information for each algorithm requested.
+        """Get RGB and HSV histogram information for each algorithm requested.
 
         Args:
             num_clusters (int): Number of clusters requested.
@@ -67,10 +66,18 @@ class ColorKey(Artwork):
             hists (dict): colorkeys.histogram.Hist(s) keyed by algorithm.
         """
         hists = {}
+        hist_colorspaces = ["RGB", "HSV"]
         for algo in algos:
-            # c = Clust(self.img, num_clusters, algo)
-            h = Hist(self.img, algo, num_clusters, self.img_width)
-            hists[algo] = h
+            h_dict = {}
+            for hist_colorspace in hist_colorspaces:
+                h_dict[hist_colorspace] = Hist(
+                    self.img,
+                    algo,
+                    num_clusters,
+                    hist_colorspace,
+                    self.img_width
+                )
+            hists[algo] = h_dict
         return hists
 
     def _show_img(self):
@@ -99,18 +106,24 @@ class ColorKey(Artwork):
         )
 
         # get histogram bar height from any Hist instance (fixed for all)
-        hbar_height = next(iter(self.hists.values())).hist_bar_height
-        total_rows = len(self.hists) + 1
+        any_h_clrspace = next(iter(self.hists.values()))
+        hbar_height = next(iter(any_h_clrspace.values())).hist_bar_height
+
+        # set height ratios for img and histogram bars
+        total_hbar_rows = len(self.hists) + len(self.hists.values())
+        subplot_height_ratios = [
+            (hbar_height / (self.img_height + hbar_height * total_hbar_rows))
+        ] * total_hbar_rows
+        subplot_height_ratios.insert(
+            0, (self.img_height / (self.img_height + hbar_height * total_hbar_rows))
+        )
 
         # create gridspec to include both img and histogram bar palettes
         spec = gridspec.GridSpec(
             ncols = 1,
-            nrows = total_rows,
+            nrows = 1 + total_hbar_rows,
             figure = canvas,
-            height_ratios = [
-                (self.img_height / (self.img_height + hbar_height)),
-                (hbar_height / (self.img_height + hbar_height)),
-            ]
+            height_ratios = subplot_height_ratios
         )
 
         # add image to canvas
@@ -127,18 +140,24 @@ class ColorKey(Artwork):
             loc = "center",
         )
 
-        # add palettes to canvas
+        # add histogram bar palettes to canvas
         palettes = {}
-        for algo, h in self._hists.items():
-            i = 1
-            palettes[algo] = canvas.add_subplot(spec[i])
-            palettes[algo].grid(color="red", linestyle="-", linewidth=1)
-            plt.axis("off")
-            palettes[algo].imshow(h.hist_bar, aspect="equal")
-            palettes[algo].set_title(
-                label = "{0}, n_clusters = {1}".format(algo, h.num_clusters),
-                loc="center"
-            )
-            i += 1
+        i = 1
+        for algo, h_colorspaces in self._hists.items():
+            for colorspace, h in h_colorspaces.items():
+                algo_cs = "{0}-{1}".format(algo, colorspace)
+                palettes[algo_cs] = canvas.add_subplot(spec[i])
+                palettes[algo_cs].grid(color="red", linestyle="-", linewidth=1)
+                plt.axis("off")
+                palettes[algo_cs].imshow(h.hist_bar, aspect="equal")
+                palettes[algo_cs].set_title(
+                    label = "{0}, {1}, n_clusters = {2}".format(
+                        algo,
+                        colorspace,
+                        h.num_clusters
+                    ),
+                    loc="center"
+                )
+                i += 1
         _ = plt.show()
         return None
