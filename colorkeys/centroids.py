@@ -11,6 +11,7 @@ This module facilitates cluster creation.
 import logging
 
 from sklearn import cluster
+from sklearn import neighbors
 
 logger = logging.getLogger(__name__)
 
@@ -37,11 +38,16 @@ class Clust:
         # Convert 2D array to 1D for cluster generation.
         img_reshape = img.reshape(img.shape[0] * img.shape[1], img.shape[2])
         self._clust = self._get_clust(img_reshape, algo, num_clusters)
+        self._centroids = self._get_centroids(img_reshape, algo)
         self._num_clusters = num_clusters
 
     @property
     def clust(self):
         return self._clust
+
+    @property
+    def centroids(self):
+        return self._centroids
 
     @property
     def num_clusters(self):
@@ -62,5 +68,15 @@ class Clust:
             clust = cluster.KMeans(n_clusters=n)
         elif algo == "hac":  # Heirarchical Agglomerative Clustering
             clust = cluster.AgglomerativeClustering(n_clusters=n)
-        clust.fit(img)
         return clust
+
+    def _get_centroids(self, img, algo):
+        if algo == "kmeans":
+            self._clust.fit(img)
+            centroids = self._clust.cluster_centers_
+        elif algo == "hac":
+            predict = self._clust.fit_predict(img)
+            clf = neighbors.NearestCentroid()
+            clf.fit(img, predict)
+            centroids = clf.centroids_
+        return centroids

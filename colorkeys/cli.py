@@ -11,6 +11,7 @@ import pkg_resources
 import sys
 
 from colorkeys.colorkeys import ColorKey
+from colorkeys import imagepath
 from engcommon import clihelper
 from engcommon import testvar
 from time import time
@@ -55,10 +56,10 @@ def get_command(args):
         help = "set image color space",
     )
     parser.add_argument(
-        "-i", "--image",
-        action = "store",
+        "-i", "--images",
+        action = "append",
         type = str,
-        help = "set image",
+        help = "set images",
         required = True
     )
     parser.add_argument(
@@ -106,27 +107,28 @@ def run(args):
     my_cli.print_versions()
 
     # Get CLI args
-    imgfile = args["image"]
+    imgpaths = args["images"]
     colorspace = args["colorspace"]
     num_clusters = args["num_clusters"]
     algos = args["algos"]
 
-    # Create image matrix, run clustering algorithms
-    time_start = time()
-    art = ColorKey(imgfile, algos, num_clusters, colorspace=colorspace)
-    time_end = time()
-    time_duration = time_end - time_start
+    imgfiles = imagepath.get_imagefiles(imgpaths)
 
-    logger.debug("time: {0:.2f}s".format(float(testvar.get_debug(time_duration))))
-    logger.debug("shape: {0}".format(testvar.get_debug(art.img.shape)))
-    for algo, h_dict in art.hists.items():
-        for h_colorspace, h in h_dict.items():
-            logger.debug("histogram, {0}: {1}".format(
-                h_colorspace,
-                testvar.get_debug(h.hist)
-            ))
+    for imgfile in imgfiles:
+        time_start = time()
+        art = ColorKey(imgfile, algos, num_clusters, colorspace=colorspace)
+        time_end = time()
+        time_duration = time_end - time_start
 
-    art.show_palettes()
+        logger.debug("time: {0:.2f}s".format(float(testvar.get_debug(time_duration))))
+        logger.debug("shape: {0}".format(testvar.get_debug(art.img.shape)))
+        for algo, h_dict in art.hists.items():
+            for h_colorspace, h in h_dict.items():
+                logger.debug("histogram, {0}: {1}".format(
+                    h_colorspace,
+                    testvar.get_debug(h.hist)
+                ))
+        art.show_palettes()
 
     return None
 

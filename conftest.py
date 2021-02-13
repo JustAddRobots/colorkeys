@@ -15,7 +15,12 @@ testimg = "tests/fixture-01.png"
 
 @pytest.fixture(scope="session")
 def myargs():
-    return cli.get_command(shlex.split("-d -n 5 -i {0}".format(testimg)))
+    return cli.get_command(shlex.split("-d -n 5 -i {0} -i {0}".format(testimg)))
+
+
+@pytest.fixture(scope="session")
+def myimagepaths():
+    return (["tests"], ["tests/*.png"], ["tests/fixture*"], ["tests/fixture-01.jpg"])
 
 
 @pytest.fixture(scope="session")

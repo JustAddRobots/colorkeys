@@ -137,17 +137,17 @@ class Hist(Clust):
 
         # Convert cluster to RGB
         if self._hist_colorspace == "HSV":
-            centers = skicolor.hsv2rgb(self.clust.cluster_centers_)
+            cents = skicolor.hsv2rgb(self.centroids)
         elif self._hist_colorspace == "RGB":
-            centers = self.clust.cluster_centers_
+            cents = self.centroids
 
         # Sort centroids descending by percentage
-        zipped = zip(self._hist, centers)
-        centroids = sorted(zipped, key=operator.itemgetter(0), reverse=True)
+        zipped = zip(self._hist, cents)
+        centroids_sorted = sorted(zipped, key=operator.itemgetter(0), reverse=True)
 
         # build the bar each centroid color at a time.
         start_x = 0
-        for (percent, color) in centroids:
+        for (percent, color) in centroids_sorted:
             end_x = start_x + (percent * img_width)
             cv2.rectangle(
                 hist_bar,
