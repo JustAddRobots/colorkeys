@@ -11,6 +11,7 @@ This module creates and displays color keys (palettes) from a requested image.
 
 import cv2
 import logging
+import os.path
 
 from matplotlib import gridspec
 from matplotlib import pyplot as plt
@@ -137,7 +138,7 @@ class ColorKey(Artwork):
                 "color": "black"
             },
             label = "{0}, {1} x {2} px".format(
-                self.filename,
+                os.path.basename(self.filename),
                 self.img_width,
                 self.img_height,
             ),
