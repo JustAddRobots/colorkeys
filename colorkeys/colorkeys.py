@@ -132,6 +132,10 @@ class ColorKey(Artwork):
         plt.axis("off")  # used for troubleshooting grid
         screenshot.imshow(self.img, aspect="equal")
         screenshot.set_title(
+            fontdict = {
+                "fontsize": "medium",
+                "color": "black"
+            },
             label = "{0}, {1} x {2} px".format(
                 self.filename,
                 self.img_width,
@@ -159,5 +163,6 @@ class ColorKey(Artwork):
                     loc="center"
                 )
                 i += 1
-        _ = plt.show()
+        plt.ioff()
+        _ = plt.show(block=False)
         return None
