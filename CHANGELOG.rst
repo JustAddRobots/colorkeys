@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.5.0 (2021-02-15)
+------------------
+- ISSUE-011: Removed diff patch bits. (a71ac88) [JustAddRobots]
+- ISSUE-025: Fixed multiple file handing, added non-blocking plot exit. (e73de4f) [JustAddRobots]
+- ISSUE-025: Added basename extraction for figure title. (06b7dde) [JustAddRobots]
+- ISSUE-025: Added multiple file handling. (8376b98) [JustAddRobots]
+- ISSUE-025: Added NearestCentroid for AgglomerativeClustering. (fca008d) [JustAddRobots]
+
 0.4.0 (2021-02-12)
 ------------------
 - ISSUE-007: Fixed HSV histogram bar generation. (69cffb8) [JustAddRobots]
