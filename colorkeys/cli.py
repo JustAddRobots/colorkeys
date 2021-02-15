@@ -10,10 +10,13 @@ import os
 import pkg_resources
 import sys
 
+from matplotlib import pyplot as plt
+from time import time
+
 from colorkeys.colorkeys import ColorKey
+from colorkeys import imagepath
 from engcommon import clihelper
 from engcommon import testvar
-from time import time
 
 
 def get_command(args):
@@ -30,7 +33,7 @@ def get_command(args):
     parser.add_argument(
         "-d", "--debug",
         action = "store_true",
-        help = "print debug information",
+        help = "Print debug information",
     )
     parser.add_argument(
         "-a", "--algos",
@@ -42,37 +45,37 @@ def get_command(args):
         default = [
             "kmeans",
         ],
-        help = "set clustering algorithm",
+        help = "Set clustering algorithm",
     )
     parser.add_argument(
         "-c", "--colorspace",
         action = "store",
         choices = [
             "RGB",
-            # "HSV"
         ],
         default = "RGB",
-        help = "set image color space",
+        help = "Set input image color space",
     )
     parser.add_argument(
-        "-i", "--image",
-        action = "store",
+        "-i", "--images",
+        action = "append",
         type = str,
-        help = "set image",
+        nargs = "+",
+        help = "set images",
         required = True
     )
     parser.add_argument(
         "-n", "--num_clusters",
         action = "store",
         type = int,
-        help = "set number of cluster centroids",
+        help = "Set number of clusters to detect",
         required = True
     )
     parser.add_argument(
         "-l", "--logid",
         action = "store",
         type = str,
-        help = "set runtime log indentifier",
+        help = "Set runtime log indentifier",
         required = False,
     )
     parser.add_argument(
@@ -99,35 +102,41 @@ def run(args):
     Returns:
         None
     """
-    # Standardised CLI bits
+    # Standardised CLI bits.
     project_name = (os.path.dirname(__file__).split("/")[-1])
     my_cli = clihelper.CLI(project_name, args)
     logger = my_cli.logger
     my_cli.print_versions()
 
-    # Get CLI args
-    imgfile = args["image"]
+    # Get CLI args.
+    imgpaths = args["images"]
     colorspace = args["colorspace"]
     num_clusters = args["num_clusters"]
     algos = args["algos"]
 
-    # Create image matrix, run clustering algorithms
-    time_start = time()
-    art = ColorKey(imgfile, algos, num_clusters, colorspace=colorspace)
-    time_end = time()
-    time_duration = time_end - time_start
+    imgfiles = imagepath.get_imagefiles(imgpaths)
 
-    logger.debug("time: {0:.2f}s".format(float(testvar.get_debug(time_duration))))
-    logger.debug("shape: {0}".format(testvar.get_debug(art.img.shape)))
-    for algo, h_dict in art.hists.items():
-        for h_colorspace, h in h_dict.items():
-            logger.debug("histogram, {0}: {1}".format(
-                h_colorspace,
-                testvar.get_debug(h.hist)
-            ))
+    plt.show()
+    for imgfile in imgfiles:
+        time_start = time()
+        art = ColorKey(imgfile, algos, num_clusters, colorspace=colorspace)
+        time_end = time()
+        time_duration = time_end - time_start
 
-    art.show_palettes()
-
+        logger.debug("file: {0}".format(os.path.basename(imgfile)))
+        logger.debug("image shape: {0}".format(testvar.get_debug(art.img.shape)))
+        logger.debug("render shape: {0}".format(testvar.get_debug(art.render.shape)))
+        logger.debug("aspect ratio: {0:.2f}".format(art.aspect_ratio))
+        logger.debug("time: {0:.2f}s".format(float(testvar.get_debug(time_duration))))
+        for algo, h_dict in art.hists.items():
+            for h_colorspace, h in h_dict.items():
+                logger.debug("histogram, {0}: {1}".format(
+                    h_colorspace,
+                    testvar.get_debug(h.hist)
+                ))
+        art.show_palettes()
+        plt.pause(0.001)
+    input("\nPress [Return] to exit.")
     return None
 
 
@@ -141,6 +150,6 @@ if __name__ == "__main__":
     try:
         main()
     except Exception:
-        logging.exception("Exceptions Found")
+        logging.exception("Exceptions Detected.")
         logging.critical("Exiting.")
         sys.exit()

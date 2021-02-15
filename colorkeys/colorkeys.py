@@ -11,6 +11,7 @@ This module creates and displays color keys (palettes) from a requested image.
 
 import cv2
 import logging
+import os.path
 
 from matplotlib import gridspec
 from matplotlib import pyplot as plt
@@ -44,6 +45,7 @@ class ColorKey(Artwork):
         """
         self._hists = self._get_hists(algos, num_clusters)
         self._figure_size = (8.00, 4.50)  # (x100) px
+        self._figure_name = os.path.basename(self.filename)
 
     @property
     def hists(self):
@@ -75,7 +77,7 @@ class ColorKey(Artwork):
                     algo,
                     num_clusters,
                     hist_colorspace,
-                    self.img_width
+                    self.render_width,
                 )
             hists[algo] = h_dict
         return hists
@@ -98,49 +100,58 @@ class ColorKey(Artwork):
         Returns:
             None
         """
-        # create blank grey canvas
+        # Create blank grey canvas.
         canvas = plt.figure(
+            num = self._figure_name,
             figsize = self._figure_size,
             facecolor = "grey",
-            tight_layout = True
+            tight_layout = {
+                "rect": (0, 0, 1, 1),
+            }
         )
 
-        # get histogram bar height from any Hist instance (fixed for all)
+        # Get histogram bar height from any Hist instance (fixed for all).
         any_h_clrspace = next(iter(self.hists.values()))
         hbar_height = next(iter(any_h_clrspace.values())).hist_bar_height
 
-        # set height ratios for img and histogram bars
+        # Set height ratios for img and histogram bars.
         total_hbar_rows = len(self.hists) + len(self.hists.values())
         subplot_height_ratios = [
-            (hbar_height / (self.img_height + hbar_height * total_hbar_rows))
+            (hbar_height / (self.render_height + hbar_height * total_hbar_rows))
         ] * total_hbar_rows
         subplot_height_ratios.insert(
-            0, (self.img_height / (self.img_height + hbar_height * total_hbar_rows))
+            0, (self.render_height / (self.render_height + hbar_height * total_hbar_rows))
         )
 
-        # create gridspec to include both img and histogram bar palettes
+        # Create gridspec to include both img and histogram bar palettes.
         spec = gridspec.GridSpec(
             ncols = 1,
             nrows = 1 + total_hbar_rows,
             figure = canvas,
-            height_ratios = subplot_height_ratios
+            height_ratios = subplot_height_ratios,
         )
 
-        # add image to canvas
+        titlefont = {
+            "fontsize": "medium",
+            "color": "black"
+        }
+
+        # Add image to canvas.
         screenshot = canvas.add_subplot(spec[0])
         screenshot.grid(color="red", linestyle="-", linewidth=1)
-        plt.axis("off")  # used for troubleshooting grid
-        screenshot.imshow(self.img, aspect="equal")
+        plt.axis("off")  # Switch on to troubleshoot layout.
+        screenshot.imshow(self.render, aspect="equal")
         screenshot.set_title(
+            fontdict = titlefont,
             label = "{0}, {1} x {2} px".format(
-                self.filename,
+                os.path.basename(self.filename),
                 self.img_width,
                 self.img_height,
             ),
             loc = "center",
         )
 
-        # add histogram bar palettes to canvas
+        # Add histogram bar palettes to canvas.
         palettes = {}
         i = 1
         for algo, h_colorspaces in self._hists.items():
@@ -151,6 +162,7 @@ class ColorKey(Artwork):
                 plt.axis("off")
                 palettes[algo_cs].imshow(h.hist_bar, aspect="equal")
                 palettes[algo_cs].set_title(
+                    fontdict = titlefont,
                     label = "{0}, {1}, n_clusters = {2}".format(
                         algo,
                         colorspace,
@@ -159,5 +171,4 @@ class ColorKey(Artwork):
                     loc="center"
                 )
                 i += 1
-        _ = plt.show()
         return None
