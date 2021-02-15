@@ -6,7 +6,7 @@ def test_get_command(myargs):
         "algos": ["kmeans"],
         "colorspace": "RGB",
         "debug": True,
-        "images": ["tests/fixture-01.png", "tests/fixture-01.png"],
+        "images": [["tests/fixture-01.png"], ["tests/fixture-01.png"]],
         "logid": None,
         "num_clusters": 5,
         "prefix": "/tmp/logs",

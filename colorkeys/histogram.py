@@ -32,7 +32,7 @@ class Hist(Clust):
         hist_bar (numpy.ndarray): Normalized histogram bar scaled to image width.
         hist_bar_height (int): histogram bar height.
     """
-    def __init__(self, img, algo, num_clusters, h_colorspace, img_width):
+    def __init__(self, img, algo, num_clusters, h_colorspace, render_width):
         """Init Hist.
 
         Args:
@@ -47,9 +47,9 @@ class Hist(Clust):
         img = self._preprocess(img)
         super().__init__(img, algo, num_clusters)
 
-        self._hist_bar_height = 60
+        self._hist_bar_height = 30
         self._hist = self._get_hist()
-        self._hist_bar = self._get_hist_bar(img_width)
+        self._hist_bar = self._get_hist_bar(render_width)
 
     @property
     def hist(self):
@@ -114,7 +114,7 @@ class Hist(Clust):
         hist /= hist.sum()
         return hist
 
-    def _get_hist_bar(self, img_width):
+    def _get_hist_bar(self, render_width):
         """Get histogram bar from histogram.
 
         Generate a histogram bar using centroids. The sklearn.cluster generated
@@ -123,32 +123,32 @@ class Hist(Clust):
         by image width) that the centroid occupies in the normalised histogram.
 
         Args:
-            img_width (int): Width of image used to generate cluster.
+            render_width (int): Width of rescaled image, used for histogram bar width.
 
         Returns:
             hist_bar (numpy.ndarray): Histogram bar.
         """
         num_channels = 3
-        # Start with zeroed histogram
+        # Start with zeroed histogram.
         hist_bar = np.zeros(
-            (self._hist_bar_height, img_width, num_channels),
+            (self._hist_bar_height, render_width, num_channels),
             dtype = "uint8",
         )
 
-        # Convert cluster to RGB
+        # Convert cluster to RGB.
         if self._hist_colorspace == "HSV":
             cents = skicolor.hsv2rgb(self.centroids)
         elif self._hist_colorspace == "RGB":
             cents = self.centroids
 
-        # Sort centroids descending by percentage
+        # Sort centroids descending by percentage.
         zipped = zip(self._hist, cents)
         centroids_sorted = sorted(zipped, key=operator.itemgetter(0), reverse=True)
 
-        # build the bar each centroid color at a time.
+        # Build the bar each centroid color at a time.
         start_x = 0
         for (percent, color) in centroids_sorted:
-            end_x = start_x + (percent * img_width)
+            end_x = start_x + (percent * render_width)
             cv2.rectangle(
                 hist_bar,
                 (int(start_x), 0),
