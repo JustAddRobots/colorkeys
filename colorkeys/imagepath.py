@@ -5,10 +5,22 @@ import logging
 import os
 import os.path
 
+from collections import Iterable
+
 logger = logging.getLogger(__name__)
 
 
+def gen_flat(list_):
+    for i in list_:
+        if isinstance(i, Iterable) and not isinstance(i, str):
+            for x in gen_flat(i):
+                yield x
+        else:
+            yield i
+
+
 def get_imagefiles(imgpaths):
+    imgpaths = list(gen_flat(imgpaths))
     imgs = []
     for imgpath in imgpaths:
         if "*" in imgpath:
@@ -36,6 +48,6 @@ def get_imagefiles(imgpaths):
 def filter_images(imgs):
     img_ext = ["png", "jpg"]
     for img in imgs:
-        if (os.path.splitext(img)[1][1:]).lower() not in img_ext:
+        if (os.path.splitext(img)[1].lstrip(".")).lower() not in img_ext:
             imgs.remove(img)
     return imgs

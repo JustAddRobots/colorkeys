@@ -20,4 +20,4 @@ def test_hist_bar(myhist):
 
 
 def test_hist_bar_height(myhist):
-    assert myhist.hist_bar_height == 60
+    assert myhist.hist_bar_height == 30

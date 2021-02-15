@@ -12,6 +12,7 @@ import cv2
 import errno
 import logging
 import os
+import skimage.transform as skitransform
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +42,15 @@ class Artwork:
         self._colorspace = self._get_colorspace(kwargs)
         self._img = self._get_img()
         self._img_height, self._img_width, self._num_channels = self._img.shape
+        self._aspect_ratio = self._img_width / self._img_height
+        self._render_height = 400
+        self._render_width = int(self.aspect_ratio * self._render_height)
+        self._render = skitransform.rescale(
+            self.img,
+            (self.render_width / self.img_width),
+            multichannel = True,
+            anti_aliasing = True,
+        )
 
     @property
     def filename(self):
@@ -71,6 +81,26 @@ class Artwork:
     def num_channels(self):
         "Image number of channels"
         return self._num_channels
+
+    @property
+    def aspect_ratio(self):
+        "Image aspect ratio."
+        return self._aspect_ratio
+
+    @property
+    def render(self):
+        "Image matrix rescaled and for display"
+        return self._render
+
+    @property
+    def render_height(self):
+        "Image height"
+        return self._render_height
+
+    @property
+    def render_width(self):
+        "Image width"
+        return self._render_width
 
     def show_debug(self):
         "Show class attribute debug information."
