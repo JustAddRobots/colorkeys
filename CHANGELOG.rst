@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.5.1 (2021-02-16)
+------------------
+- ISSUE-011: Updated docstrings, added imagepath pytest. (942c3d6) [JustAddRobots]
+- ISSUE-011: Disabled HAC algorithm (too slow) (6fb26fc) [JustAddRobots]
+
 0.5.0 (2021-02-15)
 ------------------
 - ISSUE-011: Removed diff patch bits. (a71ac88) [JustAddRobots]
