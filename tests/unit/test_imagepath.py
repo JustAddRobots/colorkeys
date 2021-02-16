@@ -27,3 +27,10 @@ def test_get_imagefiles_3(myimagepaths):
     assert imagepath.get_imagefiles(myimagepaths[3]) == [
         "tests/fixture-01.jpg",
     ]
+
+
+def test_get_imagefiles(myimagepaths):
+    assert imagepath.get_imagefiles([myimagepaths]) == [
+        "tests/fixture-01.jpg",
+        "tests/fixture-01.png",
+    ]
