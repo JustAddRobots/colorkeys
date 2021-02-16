@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.5.2 (2021-02-16)
+------------------
+- ISSUE-033: Update README. (d53a9a5) [JustAddRobots]
+- ISSUE-033: Added header image. (938a0b6) [JustAddRobots]
+
 0.5.1 (2021-02-16)
 ------------------
 - ISSUE-011: Updated docstrings, added imagepath pytest. (942c3d6) [JustAddRobots]

@@ -1,6 +1,10 @@
 # colorkeys
 Color Key Analysis in Film and Art.
 
+<P align="center">
+    <IMG src="./readme/colorkeys-header-n7-01.png" />
+</P>
+
 ## About
 
 This repository contains tools for color extraction from input images.
@@ -32,24 +36,24 @@ https://en.wikipedia.org/wiki/K-means_clustering
 ## Usage
 
 ```
-usage: colorkeys [-h] [-d] [-a {kmeans}] [-c {RGB}] -i IMAGE -n NUM_CLUSTERS [-l LOGID]
-                 [-p PREFIX] [-v]
+usage: colorkeys [-h] [-d] [-a {kmeans} [{kmeans} ...]] [-c {RGB}] -i IMAGES [IMAGES ...] -n
+                 NUM_CLUSTERS [-l LOGID] [-p PREFIX] [-v]
 
 Colorkeys Palette Analysis Tool
 
 optional arguments:
   -h, --help            show this help message and exit
-  -d, --debug           print debug information
-  -a {kmeans}, --algos {kmeans}
-                        set clustering algorithm
+  -d, --debug           Print debug information
+  -a {kmeans} [{kmeans} ...], --algos {kmeans} [{kmeans} ...]
+                        Set clustering algorithm
   -c {RGB}, --colorspace {RGB}
-                        set color space
-  -i IMAGE, --image IMAGE
-                        set image
+                        Set input image color space
+  -i IMAGES [IMAGES ...], --images IMAGES [IMAGES ...]
+                        set images
   -n NUM_CLUSTERS, --num_clusters NUM_CLUSTERS
-                        set number of cluster centroids
+                        Set number of clusters to detect
   -l LOGID, --logid LOGID
-                        set runtime log indentifier
+                        Set runtime log indentifier
   -p PREFIX, --prefix PREFIX
                         set log directory prefix
   -v, --version         show program's version number and exit
@@ -57,19 +61,27 @@ optional arguments:
 
 ## Example
 ```
-❯ colorkeys -d -n 7 -i "vlcsnap-Moonlight.m4v-00_17_40-2021-02-06-22h44m00s410.png"
-2021-02-06 23:37:18 - INFO [clihelper]: colorkeys v: 0.1.0
-2021-02-06 23:37:18 - DEBUG [clihelper]: engcommon v: 0.6.3
-2021-02-06 23:37:18 - DEBUG [clihelper]: {'algos': ['kmeans'],
+❯ colorkeys -d -n 7 -i vlcsnap-Oblivion.mkv-00_05_13-2021-02-15-22h39m50s388.png
+2021-02-16 12:59:35 - INFO [clihelper]: colorkeys v: 0.5.1
+2021-02-16 12:59:35 - DEBUG [clihelper]: engcommon v: 0.6.3
+2021-02-16 12:59:35 - DEBUG [clihelper]: {'algos': ['kmeans'],
  'colorspace': 'RGB',
  'debug': True,
- 'image': 'vlcsnap-Moonlight.m4v-00_17_40-2021-02-06-22h44m00s410.png',
+ 'images': [['vlcsnap-Oblivion.mkv-00_05_13-2021-02-15-22h39m50s388.png']],
  'log_id': None,
  'num_clusters': 7,
  'prefix': '/tmp/logs'}
-2021-02-06 23:37:26 - DEBUG [cli]: time: 7.55s
-2021-02-06 23:37:26 - DEBUG [cli]: shape: (808, 1920, 3)
-2021-02-06 23:37:26 - DEBUG [cli]: histogram: array([0.24788508, 0.10517353, 0.10802973, 0.07232751, 0.14564382, 0.07213284, 0.2488075 ])
+2021-02-16 12:59:47 - DEBUG [cli]: file: vlcsnap-Oblivion.mkv-00_05_13-2021-02-15-22h39m50s388.png
+2021-02-16 12:59:47 - DEBUG [cli]: image shape: (804, 1920, 3)
+2021-02-16 12:59:47 - DEBUG [cli]: render shape: (400, 955, 3)
+2021-02-16 12:59:47 - DEBUG [cli]: aspect ratio: 2.39
+2021-02-16 12:59:47 - DEBUG [cli]: time: 12.56s
+2021-02-16 12:59:47 - DEBUG [cli]: histogram, kmeans RGB: array([0.15495242, 0.1548993 , 0.08119378, 0.16197588, 0.15542078,
+       0.09826723, 0.19329059])
+2021-02-16 12:59:47 - DEBUG [cli]: histogram, kmeans HSV: array([0.18257013, 0.19726421, 0.13087948, 0.23403794, 0.05324505,
+       0.11968548, 0.08231772])
+
+Press [Return] to exit.
 ```
 
 ## Challenges
