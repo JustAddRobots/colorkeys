@@ -40,12 +40,14 @@ def get_command(args):
         action = "store",
         choices = [
             "kmeans",
-            # "hac"
+            # "hac",  # HAC is too slow on sklearn
         ],
         default = [
             "kmeans",
         ],
         help = "Set clustering algorithm",
+        nargs = "+",
+        type = str,
     )
     parser.add_argument(
         "-c", "--colorspace",
@@ -59,31 +61,31 @@ def get_command(args):
     parser.add_argument(
         "-i", "--images",
         action = "append",
-        type = str,
-        nargs = "+",
         help = "set images",
-        required = True
+        nargs = "+",
+        required = True,
+        type = str,
     )
     parser.add_argument(
         "-n", "--num_clusters",
         action = "store",
-        type = int,
         help = "Set number of clusters to detect",
-        required = True
+        required = True,
+        type = int,
     )
     parser.add_argument(
         "-l", "--logid",
         action = "store",
-        type = str,
         help = "Set runtime log indentifier",
         required = False,
+        type = str,
     )
     parser.add_argument(
         "-p", "--prefix",
         action = "store",
-        type = str,
         default = "/tmp/logs",
         help = "set log directory prefix",
+        type = str,
     )
     parser.add_argument(
         "-v", "--version",
@@ -130,7 +132,8 @@ def run(args):
         logger.debug("time: {0:.2f}s".format(float(testvar.get_debug(time_duration))))
         for algo, h_dict in art.hists.items():
             for h_colorspace, h in h_dict.items():
-                logger.debug("histogram, {0}: {1}".format(
+                logger.debug("histogram, {0} {1}: {2}".format(
+                    algo,
                     h_colorspace,
                     testvar.get_debug(h.hist)
                 ))

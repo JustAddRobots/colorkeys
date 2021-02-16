@@ -1,18 +1,27 @@
 #!/usr/bin/env python3
 
+import collections
 import glob
 import logging
 import os
 import os.path
 
-from collections import Iterable
-
 logger = logging.getLogger(__name__)
 
 
 def gen_flat(list_):
+    """Create a flattened generator from list of nested iterables.
+
+    This is useful, for nested lists of files.
+
+    Args:
+        list_ (list): Iterables to flatten.
+
+    Yields:
+        i (generator): Flattened iterator.
+    """
     for i in list_:
-        if isinstance(i, Iterable) and not isinstance(i, str):
+        if isinstance(i, collections.Iterable) and not isinstance(i, str):
             for x in gen_flat(i):
                 yield x
         else:
@@ -20,6 +29,17 @@ def gen_flat(list_):
 
 
 def get_imagefiles(imgpaths):
+    """Get image filenames from CLI arguments.
+
+    Handles globbing of files and directories for quoted CLI arguments. Be aware
+    the shell will automatically expand wildcard arguments without quotes.
+
+    Args:
+        imgpaths (list): Wildcards and or lists of files.
+
+    Returns:
+        imgs (list): Sorted and expanded file list.
+    """
     imgpaths = list(gen_flat(imgpaths))
     imgs = []
     for imgpath in imgpaths:
@@ -41,11 +61,19 @@ def get_imagefiles(imgpaths):
         else:
             raise ValueError("Unhandled image path: {0}".format(imgpath))
 
-    imgs = filter_images(sorted(imgs))
+    imgs = sorted(filter_images(list(set(imgs))))
     return imgs
 
 
 def filter_images(imgs):
+    """Filter out image filenames based on extension.
+
+    Args:
+        imgs (list): Filenames.
+
+    Returns:
+        imgs (list): Image filenames.
+    """
     img_ext = ["png", "jpg"]
     for img in imgs:
         if (os.path.splitext(img)[1].lstrip(".")).lower() not in img_ext:
