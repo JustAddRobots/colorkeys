@@ -27,6 +27,10 @@ class Artwork:
         img_height (int): Height of image.
         img_width (int): Width of image.
         num_channels (int): Number of channels in image.
+        aspect_ratio (float): Aspect ratio of image.
+        render (numpy.ndarray): Matrix of image rescaled for display.
+        render_height (int): Height of display image.
+        render_width (int): Width of display image.
     """
 
     def __init__(self, filename, **kwargs):
@@ -173,10 +177,3 @@ class Artwork:
         img_BGR = cv2.imread(self._filename)
         img = cv2.cvtColor(img_BGR, cnv)
         return img
-
-    def _show_debug(self):
-        attrs = vars(self)
-        for k, v in attrs.items():
-            if k.startswith("_"):
-                logger.debug("{0}: {1}".format(k, v))
-        return None

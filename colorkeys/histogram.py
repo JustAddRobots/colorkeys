@@ -5,7 +5,7 @@ This module facilitates the creating image histogram data.
 
     Typical Usage:
 
-    my_histogram = Hist(clusters, 5, "720")
+    my_histogram = Hist(img, "kmeans", 5, "RGB", "720")
 """
 
 import cv2
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 class Hist(Clust):
     """A class for generating histogram and histogram bar information based on
-    input clusters/centroids. In other words, this generates the color palette
+    input clusters. In other words, this generates the color palette
     bar.
 
     Attributes:
@@ -39,9 +39,8 @@ class Hist(Clust):
             img (np.ndarray): Image array.
             algo (str): Clustering algorithm requested.
             num_clusters (int): Requested Number of clusters/centroids.
-            h_colorspace (str): Requested Color space of histogram.
-            img_width (int): Width of image used for cluster generation (used
-                to define width for histogram bar).
+            h_colorspace (str): Requested color space of histogram.
+            img_width (int): Width of image (used to define width for histogram bar).
         """
         self._hist_colorspace = self._get_colorspace(h_colorspace)
         img = self._preprocess(img)

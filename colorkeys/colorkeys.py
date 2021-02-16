@@ -5,7 +5,7 @@ This module creates and displays color keys (palettes) from a requested image.
 
     Typical Usage:
 
-    my_colorkey = ColorKey("my_image_file.png", 5, ["kmeans"])
+    my_colorkey = ColorKey("my_image_file.png", ["kmeans"], 5)
     my_colorkey.show_palettes()
 """
 
@@ -65,7 +65,9 @@ class ColorKey(Artwork):
             alogs (list): Algorithms requested.
 
         Returns:
-            hists (dict): colorkeys.histogram.Hist(s) keyed by algorithm.
+            hists (dict): Nested dict containing colorkeys.histogram.Hist objects.
+            Ex:
+                hists["kmeans"]["RGB"] = colorkeys.histogram.Hist
         """
         hists = {}
         hist_colorspaces = ["RGB", "HSV"]

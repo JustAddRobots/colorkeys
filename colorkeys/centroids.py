@@ -5,7 +5,7 @@ This module facilitates cluster creation.
 
     Typical Usage:
 
-    my_cluster = Clust(img_matrix, 5, "kmeans")
+    my_cluster = Clust(img_matrix, "kmeans", 5)
 """
 
 import logging
@@ -25,6 +25,7 @@ class Clust:
 
     Attributes:
         clust (sklearn.cluster): Cluster generated.
+        centroids (numpy.ndarray): Centroids generated.
         num_clusters (int): Number of clusters/centroids requested.
     """
     def __init__(self, img, algo, num_clusters):
@@ -32,8 +33,8 @@ class Clust:
 
         Args:
             img (numpy.ndarray): Matrix of image data.
-            num_clusters (int): Number of clusters/centroids requested.
             algo (str): Algorithm requested for clusters/centroids generated.
+            num_clusters (int): Number of clusters/centroids requested.
         """
         # Convert 2D array to 1D for cluster generation.
         img_reshape = img.reshape(img.shape[0] * img.shape[1], img.shape[2])
@@ -58,11 +59,11 @@ class Clust:
 
         Args:
             img (numpy.ndarray): Matrix of image data.
+            algo (str): Algorithm requested for clusters generated.
             n (int): Number of clusters/centroids requested.
-            algo (str): Algorithm requested for clusters/centroids generated.
 
         Returns:
-            clust (sklearn.cluster): Generated clusters/centroids.
+            clust (sklearn.cluster): Generated cluster.
         """
         if algo == "kmeans":  # K-Means Clustering
             clust = cluster.KMeans(n_clusters=n)
@@ -71,6 +72,15 @@ class Clust:
         return clust
 
     def _get_centroids(self, img, algo):
+        """Get centroids from cluster.
+
+        Args:
+            img (numpy.ndarray): Matrix of image data.
+            algo (str): Algorithm requested for centroids generated.
+
+        Returns:
+            centroids (numpy.ndarray): Array of centroids.
+        """
         if algo == "kmeans":
             self._clust.fit(img)
             centroids = self._clust.cluster_centers_
