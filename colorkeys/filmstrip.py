@@ -12,6 +12,21 @@ logger = logging.getLogger(__name__)
 
 
 def extract_frames(video_file, start, end, out_dir, spf=1):
+    """Extract frames from video file to output directory.
+
+    Extract frames using start and end timecodes. Uses ffmpeg to extract
+    frames to PNG format.
+
+    Args:
+        video_file (str): Input video file name.
+        start (str): Timecode to start the extraction in HH:MM:SS.
+        end (str): Timecode to end the extraction in HH:MM:SS.
+        out_dir (str): Output directory for extracted frames.
+        spf (int): Seconds per frame; seconds between frame extraction.
+
+    Returns:
+        None
+    """
     dt = datetime.datetime.now()
     timestamp = "{0}.{1:02d}.{2:02d}-{3:02d}{4:02d}{5:02d}".format(
         dt.year,
@@ -48,6 +63,14 @@ def extract_frames(video_file, start, end, out_dir, spf=1):
 
 
 def get_seconds(timecode):
+    """Convert timecode to seconds.
+
+    Args:
+        timecode (str): Timecode in HH:MM:SS format.
+
+    Returns:
+        secs (int): Timecode in total seconds.
+    """
     conv = [3600, 60, 1]  # H:M:S conversion
     secs = sum(
         [a * b for a, b in zip(
@@ -58,6 +81,7 @@ def get_seconds(timecode):
 
 
 def get_framerate(filename):
+    """Get framerate from file information."""
     cmd = (
         "ffprobe -v error -select_streams v -of default=noprint_wrappers=1:nokey=1 "
         "-show_entries stream=r_frame_rate {0}".format(filename)
