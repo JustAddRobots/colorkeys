@@ -128,7 +128,7 @@ def run(args):
         logger.debug(f"file: {imgfile}")
         logger.debug(f"image shape: {art.img.shape}")
         logger.debug(f"render shape: {art.render.shape}")
-        logger.debug(f"aspect ratio: {art.aspect_ratio}")
+        logger.debug(f"aspect ratio: {art.aspect_ratio:.2f}")
         logger.debug(f"time: {time_duration:.2f}s")
 
         for algo, h_dict in art.hists.items():

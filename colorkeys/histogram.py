@@ -73,7 +73,7 @@ class Hist(Clust):
     def _get_colorspace(self, colorspace):
         """Get colorspace."""
         if colorspace not in ["RGB", "HSV"]:
-            raise ValueError("Invalid histogram colorspace: {0}".format(colorspace))
+            raise ValueError(f"Invalid histogram colorspace: {colorspace}")
         return colorspace
 
     def _preprocess(self, img):
