@@ -28,13 +28,9 @@ def extract_frames(video_file, start, end, out_dir, spf=1):
         None
     """
     dt = datetime.datetime.now()
-    timestamp = "{0}.{1:02d}.{2:02d}-{3:02d}{4:02d}{5:02d}".format(
-        dt.year,
-        dt.month,
-        dt.day,
-        dt.hour,
-        dt.minute,
-        dt.second
+    timestamp = (
+        f"{dt.year}.{dt.month:02d}.{dt.day:02d}-"
+        f"{dt.hour:02d}{dt.minute:02d}{dt.second:02d}"
     )
     secs_start = get_seconds(start)
     secs_end = get_seconds(end)
@@ -45,20 +41,17 @@ def extract_frames(video_file, start, end, out_dir, spf=1):
         decimals = 3
     ).tolist()
     filmtitle = os.path.splitext(os.path.basename(video_file))[0]
-    extract_dir = "{0}/{1}/{2}".format(out_dir, filmtitle, timestamp)
+    extract_dir = f"{out_dir}/{filmtitle}/{timestamp}"
     os.makedirs(extract_dir)
-    logger.debug("Extracting {0} to {1}".format(video_file, extract_dir))
+    logger.debug(f"Extracting {video_file} to {extract_dir}")
     for pos in seek_positions:
-        cmd = "ffmpeg -ss {0} -i {1} -frames:v 1 {2}/{3}-{4:.2f}.png".format(
-            pos,
-            video_file,
-            extract_dir,
-            filmtitle,
-            pos,
+        cmd = (
+            f"ffmpeg -ss {pos} -i {video_file} -frames:v 1 "
+            f"{extract_dir}/{filmtitle}-{pos:.2f}.png"
         )
         logger.debug(testvar.get_debug(cmd))
         command.call_shell_cmd(cmd)
-    logger.debug("Extracted {0} to {1}".format(video_file, extract_dir))
+    logger.debug(f"Extracted {video_file} to {extract_dir}")
     return None
 
 
@@ -83,8 +76,8 @@ def get_seconds(timecode):
 def get_framerate(filename):
     """Get framerate from file information."""
     cmd = (
-        "ffprobe -v error -select_streams v -of default=noprint_wrappers=1:nokey=1 "
-        "-show_entries stream=r_frame_rate {0}".format(filename)
+        f"ffprobe -v error -select_streams v -of default=noprint_wrappers=1:nokey=1 "
+        f"-show_entries stream=r_frame_rate {filename}"
     )
     dict_ = command.get_shell_cmd(cmd)
     return eval(dict_["stdout"])

@@ -59,7 +59,7 @@ def get_imagefiles(imgpaths):
                     ):
                         imgs.extend([entry.path])
         else:
-            raise ValueError("Unhandled image path: {0}".format(imgpath))
+            raise ValueError(f"Unhandled image path: {imgpath}")
 
     imgs = sorted(filter_images(list(set(imgs))))
     return imgs

@@ -154,7 +154,7 @@ class Artwork:
         if not isinstance(colorspace, str):
             raise TypeError("colorspace must be a string")
         if colorspace not in ["RGB", "HSV"]:
-            raise ValueError("Invalid value for colorspace: {0}".format(colorspace))
+            raise ValueError(f"Invalid value for colorspace: {colorspace}")
         return colorspace
 
     def _get_img(self):
