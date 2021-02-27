@@ -125,18 +125,18 @@ def run(args):
         time_end = time()
         time_duration = time_end - time_start
 
-        logger.debug("file: {0}".format(os.path.basename(imgfile)))
-        logger.debug("image shape: {0}".format(testvar.get_debug(art.img.shape)))
-        logger.debug("render shape: {0}".format(testvar.get_debug(art.render.shape)))
-        logger.debug("aspect ratio: {0:.2f}".format(art.aspect_ratio))
-        logger.debug("time: {0:.2f}s".format(float(testvar.get_debug(time_duration))))
+        logger.debug(f"file: {imgfile}")
+        logger.debug(f"image shape: {art.img.shape}")
+        logger.debug(f"render shape: {art.render.shape}")
+        logger.debug(f"aspect ratio: {art.aspect_ratio}")
+        logger.debug(f"time: {time_duration:.2f}s")
+
         for algo, h_dict in art.hists.items():
             for h_colorspace, h in h_dict.items():
-                logger.debug("histogram, {0} {1}: {2}".format(
-                    algo,
-                    h_colorspace,
-                    testvar.get_debug(h.hist)
-                ))
+                logger.debug(
+                    f"histogram, {algo} {h_colorspace}: "
+                    f"{testvar.get_debug(h.hist)}"
+                )
         art.show_palettes()
         plt.pause(0.001)
     input("\nPress [Return] to exit.")
