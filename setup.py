@@ -42,6 +42,7 @@ setup(
         ),
         "matplotlib",
         "numpy",
+        "scikit-image",
         "sklearn"
     ],
     entry_points = {
