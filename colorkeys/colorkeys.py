@@ -145,10 +145,9 @@ class ColorKey(Artwork):
         screenshot.imshow(self.render, aspect="equal")
         screenshot.set_title(
             fontdict = titlefont,
-            label = "{0}, {1} x {2} px".format(
-                os.path.basename(self.filename),
-                self.img_width,
-                self.img_height,
+            label = (
+                f"{os.path.basename(self.filename)}, "
+                f"{self.img_width} x {self.img_height} px"
             ),
             loc = "center",
         )
@@ -158,18 +157,14 @@ class ColorKey(Artwork):
         i = 1
         for algo, h_colorspaces in self._hists.items():
             for colorspace, h in h_colorspaces.items():
-                algo_cs = "{0}-{1}".format(algo, colorspace)
+                algo_cs = f"{algo}-{colorspace}"
                 palettes[algo_cs] = canvas.add_subplot(spec[i])
                 palettes[algo_cs].grid(color="red", linestyle="-", linewidth=1)
                 plt.axis("off")
                 palettes[algo_cs].imshow(h.hist_bar, aspect="equal")
                 palettes[algo_cs].set_title(
                     fontdict = titlefont,
-                    label = "{0}, {1}, n_clusters = {2}".format(
-                        algo,
-                        colorspace,
-                        h.num_clusters
-                    ),
+                    label = f"{algo}, {colorspace}, n_clusters = {h.num_clusters}",
                     loc="center"
                 )
                 i += 1
