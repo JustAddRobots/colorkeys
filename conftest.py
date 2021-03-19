@@ -20,7 +20,7 @@ def myargs():
 
 @pytest.fixture(scope="session")
 def myimagepaths():
-    return (["tests"], ["tests/*.png"], ["tests/fixture*"], ["tests/fixture-01.jpg"])
+    return [["tests"], ["tests/*.png"], ["tests/fixture*"], ["tests/fixture-01.jpg"]]
 
 
 @pytest.fixture(scope="session")

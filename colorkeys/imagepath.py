@@ -1,31 +1,12 @@
 #!/usr/bin/env python3
 
-import collections
 import glob
+import itertools
 import logging
 import os
 import os.path
 
 logger = logging.getLogger(__name__)
-
-
-def gen_flat(list_):
-    """Create a flattened generator from list of nested iterables.
-
-    This is useful, for nested lists of files.
-
-    Args:
-        list_ (list): Iterables to flatten.
-
-    Yields:
-        i (generator): Flattened iterator.
-    """
-    for i in list_:
-        if isinstance(i, collections.Iterable) and not isinstance(i, str):
-            for x in gen_flat(i):
-                yield x
-        else:
-            yield i
 
 
 def get_imagefiles(imgpaths):
@@ -35,47 +16,59 @@ def get_imagefiles(imgpaths):
     the shell will automatically expand wildcard arguments without quotes.
 
     Args:
-        imgpaths (list): Wildcards and or lists of files.
+        imgpaths (list): Wildcards and/or lists of files.
 
     Returns:
-        imgs (list): Sorted and expanded file list.
+        imgs (set): Sorted and expanded file list.
     """
-    imgpaths = list(gen_flat(imgpaths))
-    imgs = []
-    for imgpath in imgpaths:
-        if "*" in imgpath:
-            wildfiles = [
-                i for i in (glob.iglob(imgpath, recursive=False)) if os.path.isfile(i)
-            ]
-            imgs.extend(wildfiles)
-        elif os.path.isfile(imgpath) and not os.path.islink(imgpath):
-            imgs.extend([imgpath])
-        elif os.path.isdir(imgpath):
-            with os.scandir(imgpath) as it:
-                for entry in it:
-                    if (
-                        not entry.name.startswith("..")
-                        and entry.is_file(follow_symlinks=False)
-                    ):
-                        imgs.extend([entry.path])
-        else:
-            raise ValueError(f"Unhandled image path: {imgpath}")
-
-    imgs = sorted(filter_images(list(set(imgs))))
+    imgpaths_itr = itertools.chain(imgpaths)
+    unglob_itr = [(unglob(i)) for i in imgpaths_itr]
+    # itr = itertools.filterfalse(not_img, itertools.chain.from_iterable(unglob_itr))
+    itr = {i for i in itertools.chain.from_iterable(unglob_itr) if is_img(i)}
+    imgs = sorted(itr)
     return imgs
 
 
-def filter_images(imgs):
-    """Filter out image filenames based on extension.
+def unglob(imgpath):
+    """Unglobs files and directories to an iterator containing filenames.
 
     Args:
-        imgs (list): Filenames.
+        imgpath (str): Image path
 
     Returns:
-        imgs (list): Image filenames.
+        itr (iterator): iterator containing filenames of expanded path.
+
+    Raises:
+        ValueError: imagepath not file or wildcard.
+    """
+    if isinstance(imgpath, list) and len(imgpath) == 1:
+        imgpath = imgpath[0]
+
+    if os.path.isfile(imgpath):
+        itr = [imgpath]
+    elif "*" in imgpath:
+        itr = [i for i in (glob.iglob(imgpath, recursive=False)) if os.path.isfile(i)]
+    elif os.path.isdir(imgpath):
+        with os.scandir(imgpath) as scan_itr:
+            itr = [i.path for i in scan_itr if (
+                not i.name.startswith("..")
+                and i.is_file(follow_symlinks=False)
+            )]
+    else:
+        raise ValueError(f"Unhandled image path: {imgpath}")
+
+    return itr
+
+
+def is_img(img):
+    """Determine whether a file is an image based on file extension.
+
+    Args:
+        img (str): Filename.
+
+    Returns:
+        is_img (bool): True if file has image extension.
     """
     img_ext = ["png", "jpg"]
-    for img in imgs:
-        if (os.path.splitext(img)[1].lstrip(".")).lower() not in img_ext:
-            imgs.remove(img)
-    return imgs
+    is_img = os.path.splitext(img)[1].lstrip(".").lower() in img_ext
+    return is_img
