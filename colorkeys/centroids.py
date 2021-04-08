@@ -37,10 +37,10 @@ class Clust:
             num_clusters (int): Number of clusters/centroids requested.
         """
         # Convert 2D array to 1D for cluster generation.
-        img_reshape = img.reshape(img.shape[0] * img.shape[1], img.shape[2])
-        self._clust = self._get_clust(img_reshape, algo, num_clusters)
-        self._centroids = self._get_centroids(img_reshape, algo)
         self._num_clusters = num_clusters
+        img_reshape = img.reshape(img.shape[0] * img.shape[1], img.shape[2])
+        self._clust = self._get_clust(img_reshape, algo, self._num_clusters)
+        self._centroids = self._get_centroids(img_reshape, algo)
 
     @property
     def clust(self):
@@ -69,6 +69,8 @@ class Clust:
             clust = cluster.KMeans(n_clusters=n)
         elif algo == "hac":  # Heirarchical Agglomerative Clustering
             clust = cluster.AgglomerativeClustering(n_clusters=n)
+        else:
+            raise ValueError(f"Invalid algorithm: {algo}")
         return clust
 
     def _get_centroids(self, img, algo):
@@ -89,4 +91,6 @@ class Clust:
             clf = neighbors.NearestCentroid()
             clf.fit(img, predict)
             centroids = clf.centroids_
+        else:
+            raise ValueError(f"Invalid algorithm: {algo}")
         return centroids

@@ -23,7 +23,6 @@ def get_imagefiles(imgpaths):
     """
     imgpaths_itr = itertools.chain(imgpaths)
     unglob_itr = [(unglob(i)) for i in imgpaths_itr]
-    # itr = itertools.filterfalse(not_img, itertools.chain.from_iterable(unglob_itr))
     itr = {i for i in itertools.chain.from_iterable(unglob_itr) if is_img(i)}
     imgs = sorted(itr)
     return imgs
