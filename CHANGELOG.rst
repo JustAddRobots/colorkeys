@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.5.3 (2021-03-12)
+------------------
+- ISSUE-042: Added scikit-image to setup.py. (5e09d62) [JustAddRobots]
+- ISSUE-039: Added more fstrings. (784903d) [JustAddRobots]
+- ISSUE-039: Testing fstrings replacement. (af9414b) [JustAddRobots]
+- ISSUE-038: Added docstrings. (f22ab4b) [JustAddRobots]
+- ISSUE-038: Added basic frame extraction. (7199809) [JustAddRobots]
+
 0.5.2 (2021-02-16)
 ------------------
 - ISSUE-033: Update README. (d53a9a5) [JustAddRobots]

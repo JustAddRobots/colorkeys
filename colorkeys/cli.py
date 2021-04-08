@@ -131,12 +131,11 @@ def run(args):
         logger.debug(f"aspect ratio: {art.aspect_ratio:.2f}")
         logger.debug(f"time: {time_duration:.2f}s")
 
-        for algo, h_dict in art.hists.items():
-            for h_colorspace, h in h_dict.items():
-                logger.debug(
-                    f"histogram, {algo} {h_colorspace}: "
-                    f"{testvar.get_debug(h.hist)}"
-                )
+        for _, h in art.hists.items():
+            logger.debug(
+                f"histogram, {h.algo} {h.colorspace}: "
+                f"{testvar.get_debug(h.hist)}"
+            )
         art.show_palettes()
         plt.pause(0.001)
     input("\nPress [Return] to exit.")

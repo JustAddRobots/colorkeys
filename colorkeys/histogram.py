@@ -26,23 +26,22 @@ class Hist(Clust):
     bar.
 
     Attributes:
-        num_clusters (int): Number of clusters/centroids requested.
         hist (numpy.ndarray): Normalized histogram of centroids.
-        hist_colorspace (str): Histogram color space
+        colorspace (str): Histogram color space
         hist_bar (numpy.ndarray): Normalized histogram bar scaled to image width.
         hist_bar_height (int): histogram bar height.
     """
-    def __init__(self, img, algo, num_clusters, h_colorspace, render_width):
+    def __init__(self, img, algo, num_clusters, colorspace, render_width):
         """Init Hist.
 
         Args:
             img (np.ndarray): Image array.
             algo (str): Clustering algorithm requested.
             num_clusters (int): Requested Number of clusters/centroids.
-            h_colorspace (str): Requested color space of histogram.
-            img_width (int): Width of image (used to define width for histogram bar).
+            colorspace (str): Requested color space of histogram.
+            render_width (int): Width of image (used to define width for histogram bar).
         """
-        self._hist_colorspace = self._get_colorspace(h_colorspace)
+        self._colorspace = self._get_colorspace(colorspace)
         img = self._preprocess(img)
         super().__init__(img, algo, num_clusters)
 
@@ -56,9 +55,9 @@ class Hist(Clust):
         return self._hist
 
     @property
-    def hist_colorspace(self):
+    def colorspace(self):
         """Get histogram color space."""
-        return self._hist_colorspace
+        return self._colorspace
 
     @property
     def hist_bar(self):
@@ -72,8 +71,8 @@ class Hist(Clust):
 
     def _get_colorspace(self, colorspace):
         """Get colorspace."""
-        if colorspace not in ["RGB", "HSV"]:
-            raise ValueError(f"Invalid histogram colorspace: {colorspace}")
+        if colorspace not in ("RGB", "HSV"):
+            raise ValueError(f"Invalid colorspace, {colorspace}")
         return colorspace
 
     def _preprocess(self, img):
@@ -88,10 +87,12 @@ class Hist(Clust):
             img (np.ndarray): Image array.
         """
         img = skiutil.img_as_float(img)
-        if self._hist_colorspace == "HSV":
+        if self._colorspace == "HSV":
             img = skicolor.rgb2hsv(img)
-        elif self._hist_colorspace == "RGB":
-            pass
+        elif self._colorspace == "RGB":
+            pass  # default
+        else:
+            raise ValueError(f"Invalid colorspace, {self._colorspace}")
         return img
 
     def _get_hist(self):
@@ -135,10 +136,12 @@ class Hist(Clust):
         )
 
         # Convert cluster to RGB.
-        if self._hist_colorspace == "HSV":
+        if self._colorspace == "HSV":
             cents = skicolor.hsv2rgb(self.centroids)
-        elif self._hist_colorspace == "RGB":
+        elif self._colorspace == "RGB":
             cents = self.centroids
+        else:
+            raise ValueError(f"Invalid colorspace, {self._colorspace}")
 
         # Sort centroids descending by percentage.
         zipped = zip(self._hist, cents)
