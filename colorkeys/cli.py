@@ -116,7 +116,8 @@ def run(args):
     num_clusters = args["num_clusters"]
     algos = args["algos"]
 
-    imgfiles = imagepath.get_imagefiles(imgpaths)
+    # imgfiles = imagepath.get_imagefiles(imgpaths)
+    imgfiles = imagepath.get_imgf(imgpaths)
 
     plt.show()
     for imgfile in imgfiles:

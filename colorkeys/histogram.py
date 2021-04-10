@@ -41,6 +41,7 @@ class Hist(Clust):
             colorspace (str): Requested color space of histogram.
             render_width (int): Width of image (used to define width for histogram bar).
         """
+        self._algo = self._get_algo(algo)
         self._colorspace = self._get_colorspace(colorspace)
         img = self._preprocess(img)
         super().__init__(img, algo, num_clusters)
@@ -53,6 +54,11 @@ class Hist(Clust):
     def hist(self):
         """Get histogram."""
         return self._hist
+
+    @property
+    def algo(self):
+        """Get histogram algorithm."""
+        return self._algo
 
     @property
     def colorspace(self):
@@ -68,6 +74,12 @@ class Hist(Clust):
     def hist_bar_height(self):
         """Get histogram bar."""
         return self._hist_bar_height
+
+    def _get_algo(self, algo):
+        """Get algorithm."""
+        if algo not in ("kmeans", "hac"):
+            raise ValueError(f"Invalid algorithm, {algo}")
+        return algo
 
     def _get_colorspace(self, colorspace):
         """Get colorspace."""
