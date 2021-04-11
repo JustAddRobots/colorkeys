@@ -22,7 +22,7 @@ def extract_frames(video_file, start, end, out_dir, spf=1):
         start (str): Timecode to start the extraction in HH:MM:SS.
         end (str): Timecode to end the extraction in HH:MM:SS.
         out_dir (str): Output directory for extracted frames.
-        spf (int): Seconds per frame; seconds between frame extraction.
+        spf (int): Seconds per frame; seconds between each frame extraction.
 
     Returns:
         None
@@ -40,6 +40,7 @@ def extract_frames(video_file, start, end, out_dir, spf=1):
         np.linspace(secs_start, secs_end, num_frames, endpoint=False),
         decimals = 3
     ).tolist()
+
     filmtitle = os.path.splitext(os.path.basename(video_file))[0]
     extract_dir = f"{out_dir}/{filmtitle}/{timestamp}"
     os.makedirs(extract_dir)
