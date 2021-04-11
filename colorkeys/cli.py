@@ -116,13 +116,14 @@ def run(args):
     num_clusters = args["num_clusters"]
     algos = args["algos"]
 
-    # imgfiles = imagepath.get_imagefiles(imgpaths)
-    imgfiles = imagepath.get_imgf(imgpaths)
+    imgfiles = imagepath.get_imagefiles(imgpaths)
 
     plt.show()
     for imgfile in imgfiles:
         time_start = time()
+
         art = ColorKey(imgfile, algos, num_clusters, colorspace=colorspace)
+
         time_end = time()
         time_duration = time_end - time_start
 

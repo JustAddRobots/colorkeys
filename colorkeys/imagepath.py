@@ -30,8 +30,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_imagefiles(imgpaths):
-    chn = itertools.chain(imgpaths)
-    path_itrs = [unglob(i) for i in chn]
+    path_itrs = [unglob(i) for i in itertools.chain.from_iterable(imgpaths)]
     img_set = {
         f"{p.parent}/{p.name}" for p in itertools.chain.from_iterable(path_itrs)
         if p.suffix in [".jpg", ".png"]
@@ -40,8 +39,6 @@ def get_imagefiles(imgpaths):
 
 
 def unglob(imgpath):
-    if isinstance(imgpath, list):
-        imgpath = imgpath[0]
     p = Path(imgpath)
     if "*" in p.name:
         path_itr = p.parent.glob(p.name)
@@ -49,8 +46,10 @@ def unglob(imgpath):
         path_itr = p.iterdir()
     elif p.is_file():
         path_itr = [p]
+    elif not p.exists():
+        raise ValueError(f"Non-existent path: {imgpath}, cwd: {Path.cwd()}")
     else:
-        raise ValueError(f"Unhandled image path: {imgpath}")
+        raise ValueError(f"Unhandled image path: {imgpath}, cwd: {Path.cwd()}")
     return path_itr
 
 
