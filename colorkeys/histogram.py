@@ -22,8 +22,7 @@ logger = logging.getLogger(__name__)
 
 class Hist(Clust):
     """A class for generating histogram and histogram bar information based on
-    input clusters. In other words, this generates the color palette
-    bar.
+    input clusters. In other words, this generates the color palette bar.
 
     Attributes:
         hist (numpy.ndarray): Normalized histogram of centroids.

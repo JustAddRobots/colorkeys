@@ -27,6 +27,10 @@ mpl_logger.setLevel(logging.WARNING)
 class ColorKey(Artwork):
     """A class for loading, generating, and displaying image color keys.
 
+    Each instance includes a "hist" dict that includes color palette values
+    (histogram, histogram bar, etc.) for each combination of clustering
+    algoritm + colorspace.
+
     Attributes:
         hists (dict): colorkeys.histogram.Hist(s) key is "{algo}_{colorspace}"
         show_palettes (None): Display image(s) and palette(s).
@@ -98,6 +102,25 @@ class ColorKey(Artwork):
     def _show_palettes(self):
         """Show image and palette(s).
 
+        Construct and show image + histogram bar on a grey canvas.
+        Each bar is labelled by its algorithm + colorspace.
+
+            +---------------------------------------+
+            |                                       |
+            |               image                   |
+            |                                       |
+            +---------------------------------------+
+
+            +---------------------------------------+
+            | histogram bar, algorithm, colorspace  |
+            +---------------------------------------+
+                                .
+                                .
+                                .
+            +---------------------------------------+
+            | histogram bar, algorithm, colorspace  |
+            +---------------------------------------+
+
         Args:
             None
 
@@ -118,16 +141,18 @@ class ColorKey(Artwork):
         any_hist = next(iter(self.hists.values()))
         hbar_height = any_hist.hist_bar_height
 
-        # Set height ratios for img and histogram bars.
-        total_hbar_rows = len(self.hists) + len(self.hists.values())
+        # Create height ratios for histogram bars (1 bar / histogram)
+        total_hbar_rows = len(self.hists)
         subplot_height_ratios = [
             (hbar_height / (self.render_height + hbar_height * total_hbar_rows))
         ] * total_hbar_rows
+
+        # Insert image height ratio
         subplot_height_ratios.insert(
             0, (self.render_height / (self.render_height + hbar_height * total_hbar_rows))
         )
 
-        # Create gridspec to include both img and histogram bar palettes.
+        # Create gridspec to include both image and histogram bar palettes.
         spec = gridspec.GridSpec(
             ncols = 1,
             nrows = 1 + total_hbar_rows,
@@ -143,7 +168,7 @@ class ColorKey(Artwork):
         # Add image to canvas.
         screenshot = canvas.add_subplot(spec[0])
         screenshot.grid(color="red", linestyle="-", linewidth=1)
-        plt.axis("off")  # Switch on to troubleshoot layout.
+        plt.axis("off")  # Switch "on" to troubleshoot layout.
         screenshot.imshow(self.render, aspect="equal")
         screenshot.set_title(
             fontdict = titlefont,
