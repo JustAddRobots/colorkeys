@@ -136,7 +136,7 @@ class Artwork:
         """Get image color space.
 
         An image is simply a matrix of data with no embedded color space information.
-        So it is not possible to detect the color space.
+        So it is not possible to detect the color space. "RGB" is the assumed default.
 
         Args:
             None
@@ -149,12 +149,13 @@ class Artwork:
 
         Raises:
             TypeError: colorspace not a string.
+            ValueError: colorspace not valid.
         """
         colorspace = kwargs.setdefault("colorspace", "RGB")
         if not isinstance(colorspace, str):
             raise TypeError("colorspace must be a string")
         if colorspace not in ["RGB", "HSV"]:
-            raise ValueError(f"Invalid value for colorspace: {colorspace}")
+            raise ValueError(f"Invalid colorspace, {colorspace}")
         return colorspace
 
     def _get_img(self):
@@ -167,13 +168,18 @@ class Artwork:
             None
 
         Returns:
-            img (numpy.ndarray): Image matrix.
+            img (numpy.ndarray): Image matrix
+
+        Raises:
+            ValueError: colorspace not valid..
         """
         colorspace = self._colorspace
         if colorspace == "RGB":
             cnv = cv2.COLOR_BGR2RGB
         elif colorspace == "HSV":
             cnv = cv2.COLOR_BGR2HSV
+        else:
+            raise ValueError(f"Invalid colorspace, {colorspace}")
         img_BGR = cv2.imread(self._filename)
         img = cv2.cvtColor(img_BGR, cnv)
         return img

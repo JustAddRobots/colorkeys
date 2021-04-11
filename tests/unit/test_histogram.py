@@ -12,7 +12,7 @@ def test_hist(myhist):
 
 
 def test_hist_colorspace(myhist):
-    assert myhist.hist_colorspace == "RGB"
+    assert myhist.colorspace == "RGB"
 
 
 def test_hist_bar(myhist):
