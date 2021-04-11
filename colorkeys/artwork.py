@@ -149,6 +149,7 @@ class Artwork:
 
         Raises:
             TypeError: colorspace not a string.
+            ValueError: colorspace not valid.
         """
         colorspace = kwargs.setdefault("colorspace", "RGB")
         if not isinstance(colorspace, str):
@@ -167,7 +168,10 @@ class Artwork:
             None
 
         Returns:
-            img (numpy.ndarray): Image matrix.
+            img (numpy.ndarray): Image matrix
+
+        Raises:
+            ValueError: colorspace not valid..
         """
         colorspace = self._colorspace
         if colorspace == "RGB":

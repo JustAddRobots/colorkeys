@@ -64,6 +64,9 @@ class Clust:
 
         Returns:
             clust (sklearn.cluster): Generated cluster.
+
+        Raises:
+            ValueError: algorithm not valid.
         """
         if algo == "kmeans":  # K-Means Clustering
             clust = cluster.KMeans(n_clusters=n)
@@ -82,6 +85,9 @@ class Clust:
 
         Returns:
             centroids (numpy.ndarray): Array of centroids.
+
+        Raises:
+            ValueError: algorithm not valid.
         """
         if algo == "kmeans":
             self._clust.fit(img)

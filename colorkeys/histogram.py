@@ -96,6 +96,9 @@ class Hist(Clust):
 
         Returns:
             img (np.ndarray): Image array.
+
+        Raises:
+            ValueError: colorspace not valid.
         """
         img = skiutil.img_as_float(img)
         if self._colorspace == "HSV":
@@ -138,6 +141,9 @@ class Hist(Clust):
 
         Returns:
             hist_bar (numpy.ndarray): Histogram bar.
+
+        Raises:
+            ValueError: colorspace not valid.
         """
         num_channels = 3
         # Start with zeroed histogram.

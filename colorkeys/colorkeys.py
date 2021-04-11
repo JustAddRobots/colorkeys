@@ -27,12 +27,12 @@ mpl_logger.setLevel(logging.WARNING)
 class ColorKey(Artwork):
     """A class for loading, generating, and displaying image color keys.
 
-    Each instance includes a "hist" dict that includes color palette values
+    Each instance has a "hist" dict that includes color palette values
     (histogram, histogram bar, etc.) for each combination of clustering
-    algoritm + colorspace.
+    algorithm + colorspace.
 
     Attributes:
-        hists (dict): colorkeys.histogram.Hist(s) key is "{algo}_{colorspace}"
+        hists (dict): colorkeys.histogram.Hist(s), key is "{algo}_{colorspace}"
         show_palettes (None): Display image(s) and palette(s).
     """
     def __init__(self, filename, algos, num_clusters, **kwargs):
