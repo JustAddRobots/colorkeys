@@ -11,6 +11,13 @@ from engcommon import testvar
 logger = logging.getLogger(__name__)
 
 
+def check_ffmpeg():
+    """Check if ffpmeg can be called."""
+    cmd = "ffmpeg -version"
+    command.call_shell_cmd(cmd)
+    return None
+
+
 def extract_frames(video_file, start, end, out_dir, spf=1):
     """Extract frames from video file to output directory.
 
@@ -27,6 +34,8 @@ def extract_frames(video_file, start, end, out_dir, spf=1):
     Returns:
         None
     """
+    check_ffmpeg()
+    # Get seek positions based on start/end and seconds per frame
     dt = datetime.datetime.now()
     timestamp = (
         f"{dt.year}.{dt.month:02d}.{dt.day:02d}-"
@@ -41,6 +50,7 @@ def extract_frames(video_file, start, end, out_dir, spf=1):
         decimals = 3
     ).tolist()
 
+    # Extract frames to directory
     filmtitle = os.path.splitext(os.path.basename(video_file))[0]
     extract_dir = f"{out_dir}/{filmtitle}/{timestamp}"
     os.makedirs(extract_dir)
@@ -76,6 +86,7 @@ def get_seconds(timecode):
 
 def get_framerate(filename):
     """Get framerate from file information."""
+    check_ffmpeg()
     cmd = (
         f"ffprobe -v error -select_streams v -of default=noprint_wrappers=1:nokey=1 "
         f"-show_entries stream=r_frame_rate {filename}"

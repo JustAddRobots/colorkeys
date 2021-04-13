@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.5.4 (2021-04-11)
+------------------
+- ISSUE-039: Added comments, fixed docstrings, cleaned up. (690b53b) [JustAddRobots]
+- ISSUE-039: Fixed image file globbing, added comments, fixed tests. (4d9bb31) [JustAddRobots]
+- ISSUE-039: Simplified image file globbing with pathlib. (236e320) [JustAddRobots]
+- ISSUE-039: Flattened nested Hist ["algo"]["cs"] to ["algo_cs"] (f4f81b9) [JustAddRobots]
+- ISSUE-039: Fixed image file path resolution. (384baa8) [JustAddRobots]
+
 0.5.3 (2021-03-12)
 ------------------
 - ISSUE-042: Added scikit-image to setup.py. (5e09d62) [JustAddRobots]
