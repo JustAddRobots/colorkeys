@@ -36,12 +36,12 @@ setup(
         "colorkeys",
     ],
     install_requires = [
-        "opencv-python",
         "engcommon @ git+https://github.com/JustAddRobots/engcommon.git@{0}".format(
             engcommon_branch
         ),
         "matplotlib",
         "numpy",
+        "opencv-python",
         "scikit-image",
         "sklearn"
     ],
