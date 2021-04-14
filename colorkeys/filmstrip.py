@@ -62,12 +62,6 @@ def extract_frames(video_file, start, end, out_dir, spf=1):
             .output(f"{extract_dir}/{filmtitle}-{pos:.2f}.png", vframes=1)
             .run(quiet=True)
         )
-#         cmd = (
-#             f"ffmpeg -ss {pos} -i {video_file} -frames:v 1 "
-#             f"{extract_dir}/{filmtitle}-{pos:.2f}.png"
-#         )
-#         logger.debug(testvar.get_debug(cmd))
-#         command.call_shell_cmd(cmd)
     logger.debug(f"Extracted {video_file} to {extract_dir}")
     return None
 
@@ -98,9 +92,4 @@ def get_framerate(filename):
         (stream for stream in p['streams'] if stream['codec_type'] == 'video'),
         None
     )
-#     cmd = (
-#         f"ffprobe -v error -select_streams v -of default=noprint_wrappers=1:nokey=1 "
-#         f"-show_entries stream=r_frame_rate {filename}"
-#     )
-#     dict_ = command.get_shell_cmd(cmd)
     return eval(v["r_frame_rate"])
