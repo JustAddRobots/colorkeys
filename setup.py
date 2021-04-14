@@ -39,6 +39,7 @@ setup(
         "engcommon @ git+https://github.com/JustAddRobots/engcommon.git@{0}".format(
             engcommon_branch
         ),
+        "ffmeg-python",
         "matplotlib",
         "numpy",
         "opencv-python",
