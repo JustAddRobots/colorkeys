@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.7.0 (2021-04-15)
+------------------
+- ISSUE-056: Added URL as image source. (2395559) [JustAddRobots]
+
 0.6.0 (2021-04-14)
 ------------------
 - ISSUE-038: Cleaned up commented code. (7ffa55f) [JustAddRobots]
