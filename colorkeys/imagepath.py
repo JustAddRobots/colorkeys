@@ -17,14 +17,22 @@ def get_imagefiles(imgpaths):
         imgpaths (list): Wildcards, dirs, and/or lists of files.
 
     Returns:
-        img_set (set): Sorted and expanded file list.
+        imgs (list): Sorted and expanded file list.
     """
-    path_itrs = [unglob(i) for i in itertools.chain.from_iterable(imgpaths)]
-    img_set = {
+    urls = []
+    paths = []
+    for i in itertools.chain.from_iterable(imgpaths):
+        if i.startswith(("http://", "https://")):
+            urls.append(i)
+        else:
+            paths.append([i])
+    path_itrs = [unglob(j) for j in itertools.chain.from_iterable(paths)]
+    path_imgs = {
         f"{p.parent}/{p.name}" for p in itertools.chain.from_iterable(path_itrs)
         if p.suffix in [".jpg", ".png"]
     }
-    return sorted(img_set)
+    imgs = path_imgs.union(set(urls))
+    return sorted(imgs)
 
 
 def unglob(imgpath):

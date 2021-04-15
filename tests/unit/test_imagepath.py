@@ -31,6 +31,11 @@ def test_get_imagefiles_3(myimagepaths):
 
 def test_get_imagefiles(myimagepaths):
     assert imagepath.get_imagefiles(myimagepaths) == [
+        (
+            "https://upload.wikimedia.org/wikipedia/"
+            "commons/thumb/b/b4/Vincent_Willem_van_Gogh_128.jpg/"
+            "192px-Vincent_Willem_van_Gogh_128.jpg"
+        ),
         "tests/fixture-01.jpg",
         "tests/fixture-01.png",
     ]
