@@ -25,6 +25,11 @@ def myimagepaths():
         ["tests/*.png"],
         ["tests/fixture*"],
         ["tests/fixture-01.jpg"],
+        [(
+            "https://upload.wikimedia.org/wikipedia/"
+            "commons/thumb/b/b4/Vincent_Willem_van_Gogh_128.jpg/"
+            "192px-Vincent_Willem_van_Gogh_128.jpg"
+        )],
     ]
 
 

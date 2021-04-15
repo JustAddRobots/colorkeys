@@ -16,6 +16,8 @@ import os.path
 from matplotlib import gridspec
 from matplotlib import pyplot as plt
 
+from urllib.parse import urlparse
+
 from colorkeys.artwork import Artwork
 from colorkeys.histogram import Hist
 
@@ -35,21 +37,25 @@ class ColorKey(Artwork):
         hists (dict): colorkeys.histogram.Hist(s), key is "{algo}_{colorspace}"
         show_palettes (None): Display image(s) and palette(s).
     """
-    def __init__(self, filename, algos, num_clusters, **kwargs):
-        super().__init__(filename, **kwargs)
+    def __init__(self, imgsrc, algos, num_clusters, **kwargs):
+        super().__init__(imgsrc, **kwargs)
         """Init ColorKey.
 
         The number of color keys (palettes) generated for each image:
             len(algos) * len(colorspaces).
 
         Args:
-            filename (str): Image filename.
+            imgsrc (str): Image source.
             num_clusters (int): Number of clusters requested.
             algos (list): Algorithms requested.
         """
         self._hists = self._get_hists(algos, num_clusters)
         self._figure_size = (8.00, 4.50)  # (x100) px
-        self._figure_name = os.path.basename(self.filename)
+        if self.imgsrc.startswith(("http://", "https://")):
+            u = urlparse(self.imgsrc)
+            self._figure_name = u.path.split("/")[-1]
+        else:
+            self._figure_name = os.path.basename(self.imgsrc)
 
     @property
     def hists(self):
@@ -173,7 +179,7 @@ class ColorKey(Artwork):
         screenshot.set_title(
             fontdict = titlefont,
             label = (
-                f"{os.path.basename(self.filename)}, "
+                f"{self._figure_name}, "
                 f"{self.img_width} x {self.img_height} px"
             ),
             loc = "center",

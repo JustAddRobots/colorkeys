@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.6.0 (2021-04-14)
+------------------
+- ISSUE-038: Cleaned up commented code. (7ffa55f) [JustAddRobots]
+- ISSUE-038: Fixed typo in package name. (351bfc1) [JustAddRobots]
+- ISSUE-038: Added ffmpeg-python to setup.py. (b41dd22) [JustAddRobots]
+- ISSUE-038: Replaced ffmpeg with ffmpeg-python bits. (527ff54) [JustAddRobots]
+- ISSUE-038: Added ffmpeg check to filmstrip. (0a91428) [JustAddRobots]
+
 0.5.4 (2021-04-11)
 ------------------
 - ISSUE-039: Added comments, fixed docstrings, cleaned up. (690b53b) [JustAddRobots]
