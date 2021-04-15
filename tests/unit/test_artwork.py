@@ -4,7 +4,7 @@ import numpy as np
 
 
 def test_filename(myartwork):
-    assert myartwork.filename == "tests/fixture-01.png"
+    assert myartwork.imgsrc == "tests/fixture-01.png"
 
 
 def test_colorspace(myartwork):

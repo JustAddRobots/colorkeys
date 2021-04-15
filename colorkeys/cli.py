@@ -116,18 +116,18 @@ def run(args):
     num_clusters = args["num_clusters"]
     algos = args["algos"]
 
-    imgfiles = imagepath.get_imagefiles(imgpaths)
+    imgsrcs = imagepath.get_imagefiles(imgpaths)
 
     plt.show()
-    for imgfile in imgfiles:
+    for imgsrc in imgsrcs:
         time_start = time()
 
-        art = ColorKey(imgfile, algos, num_clusters, colorspace=colorspace)
+        art = ColorKey(imgsrc, algos, num_clusters, colorspace=colorspace)
 
         time_end = time()
         time_duration = time_end - time_start
 
-        logger.debug(f"file: {imgfile}")
+        logger.debug(f"file: {imgsrc}")
         logger.debug(f"image shape: {art.img.shape}")
         logger.debug(f"render shape: {art.render.shape}")
         logger.debug(f"aspect ratio: {art.aspect_ratio:.2f}")

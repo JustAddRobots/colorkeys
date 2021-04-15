@@ -12,7 +12,8 @@ import cv2
 import errno
 import logging
 import os
-import skimage.transform as skitransform
+import skimage.io as skio
+import skimage.transform as sktransform
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,7 @@ class Artwork:
     """A class for loading image data and exposing underliying image properties.
 
     Attributes:
-        filename (str): Image filename.
+        imgsrc (str): Image source.
         colorspace (str): Color space of image.
         img (numpy.ndarray): Matrix of image data.
         img_height (int): Height of image.
@@ -33,23 +34,23 @@ class Artwork:
         render_width (int): Width of display image.
     """
 
-    def __init__(self, filename, **kwargs):
+    def __init__(self, imgsrc, **kwargs):
         """Init Artwork.
 
         Args:
-            filename(str): Image filename.
+            imgsrc (str): Image source.
 
         **kwargs:
             colorspace (str): Color space of image.
         """
-        self._filename = self._get_filename(filename)
+        self._imgsrc = self._get_imgsrc(imgsrc)
         self._colorspace = self._get_colorspace(kwargs)
         self._img = self._get_img()
         self._img_height, self._img_width, self._num_channels = self._img.shape
         self._aspect_ratio = self._img_width / self._img_height
         self._render_height = 400
         self._render_width = int(self.aspect_ratio * self._render_height)
-        self._render = skitransform.rescale(
+        self._render = sktransform.rescale(
             self.img,
             (self.render_width / self.img_width),
             multichannel = True,
@@ -57,9 +58,9 @@ class Artwork:
         )
 
     @property
-    def filename(self):
-        "Image filename"
-        return self._filename
+    def imgsrc(self):
+        "Image source"
+        return self._imgsrc
 
     @property
     def colorspace(self):
@@ -110,27 +111,28 @@ class Artwork:
         "Show class attribute debug information."
         return self._show_debug()
 
-    def _get_filename(self, filename):
-        """Get filename.
+    def _get_imgsrc(self, imgsrc):
+        """Get imgsrc.
 
-        Checks the existence of requested file.
+        Checks the existence of requested img source, if local file.
 
         Args:
-            filename (str): File name.
+            imgsrc (str): Source name.
 
         Returns:
-            filename (str): File name.
+            imgsrc (str): Sourc name.
 
         Raises:
             FileNotFoundError: Requested file not found.
         """
-        if not os.path.exists(filename):
-            raise FileNotFoundError(
-                errno.ENOENT,
-                os.strerror(errno.ENOENT),
-                filename
-            )
-        return filename
+        if not imgsrc.startswith(("http://", "https://")):
+            if not os.path.exists(imgsrc):
+                raise FileNotFoundError(
+                    errno.ENOENT,
+                    os.strerror(errno.ENOENT),
+                    imgsrc
+                )
+        return imgsrc
 
     def _get_colorspace(self, kwargs):
         """Get image color space.
@@ -180,6 +182,10 @@ class Artwork:
             cnv = cv2.COLOR_BGR2HSV
         else:
             raise ValueError(f"Invalid colorspace, {colorspace}")
-        img_BGR = cv2.imread(self._filename)
-        img = cv2.cvtColor(img_BGR, cnv)
+
+        if self._imgsrc.startswith(("http://", "https://")):
+            img = skio.imread(self._imgsrc)
+        else:
+            img_BGR = cv2.imread(self._imgsrc)
+            img = cv2.cvtColor(img_BGR, cnv)
         return img
