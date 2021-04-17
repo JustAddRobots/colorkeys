@@ -161,7 +161,8 @@ class Hist(Clust):
 
         # Sort centroids descending by percentage.
         dictcomp = {i: skiutil.img_as_ubyte(v).tolist() for i, v in zip(self._hist, cents)}
-        hist_cents = dict(sorted(dictcomp.items(), reverse=True))
+        # hist_cents = dict(sorted(dictcomp.items(), reverse=True))
+        hist_cents = dict(sorted(dictcomp.items(), reverse=False))
         return hist_cents
 
 
