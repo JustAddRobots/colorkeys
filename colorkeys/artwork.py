@@ -12,8 +12,8 @@ import cv2
 import errno
 import logging
 import os
-import skimage.io as skio
-import skimage.transform as sktransform
+import skimage.io as skiio
+import skimage.transform as skitransform
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ class Artwork:
         self._aspect_ratio = self._img_width / self._img_height
         self._render_height = 400
         self._render_width = int(self.aspect_ratio * self._render_height)
-        self._render = sktransform.rescale(
+        self._render = skitransform.rescale(
             self.img,
             (self.render_width / self.img_width),
             multichannel = True,
@@ -184,7 +184,7 @@ class Artwork:
             raise ValueError(f"Invalid colorspace, {colorspace}")
 
         if self._imgsrc.startswith(("http://", "https://")):
-            img = skio.imread(self._imgsrc)
+            img = skiio.imread(self._imgsrc)
         else:
             img_BGR = cv2.imread(self._imgsrc)
             img = cv2.cvtColor(img_BGR, cnv)

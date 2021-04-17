@@ -5,16 +5,16 @@ This module facilitates the creating image histogram data.
 
     Typical Usage:
 
-    my_histogram = Hist(img, "kmeans", 5, "RGB", "720")
+    my_histogram = Hist(img, "kmeans", 5, "RGB", 720)
 """
 
 import cv2
 import logging
 import numpy as np
-import operator
 
 from skimage import color as skicolor
 from skimage import util as skiutil
+
 from colorkeys.centroids import Clust
 
 logger = logging.getLogger(__name__)
@@ -26,9 +26,10 @@ class Hist(Clust):
 
     Attributes:
         hist (numpy.ndarray): Normalized histogram of centroids.
+        hist_centroids (dict): RGB values ([R,G,B]) by normalised percentage.
         colorspace (str): Histogram color space
         hist_bar (numpy.ndarray): Normalized histogram bar scaled to image width.
-        hist_bar_height (int): histogram bar height.
+        hist_bar_height (int): Histogram bar height.
     """
     def __init__(self, img, algo, num_clusters, colorspace, render_width):
         """Init Hist.
@@ -47,12 +48,22 @@ class Hist(Clust):
 
         self._hist_bar_height = 30
         self._hist = self._get_hist()
-        self._hist_bar = self._get_hist_bar(render_width)
+        self._hist_centroids = self._get_hist_centroids()
+        self._hist_bar = get_hist_bar(
+            self._hist_centroids,
+            height = self._hist_bar_height,
+            width = render_width
+        )
 
     @property
     def hist(self):
         """Get histogram."""
         return self._hist
+
+    @property
+    def hist_centroids(self):
+        """Get histogram and centroids."""
+        return self._hist_centroids
 
     @property
     def algo(self):
@@ -128,31 +139,19 @@ class Hist(Clust):
         hist /= hist.sum()
         return hist
 
-    def _get_hist_bar(self, render_width):
-        """Get histogram bar from histogram.
-
-        Generate a histogram bar using centroids. The sklearn.cluster-generated
-        centroids (cluster centers) are RGB color values in the image. Use these
-        colors to generate a bar based on relative percentage (scaled by image width)
-        that the centroid occupies in the normalised histogram.
+    def _get_hist_centroids(self):
+        """Get centroid RGB values by percentage in descending order.
 
         Args:
-            render_width (int): Width of rescaled image, used for histogram bar width.
+            None
 
         Returns:
-            hist_bar (numpy.ndarray): Histogram bar.
+            hist_cents (dict): RGB values ([R,G,B]) keyed by percentage.
 
         Raises:
             ValueError: colorspace not valid.
         """
-        num_channels = 3
-        # Start with zeroed histogram.
-        hist_bar = np.zeros(
-            (self._hist_bar_height, render_width, num_channels),
-            dtype = "uint8",
-        )
-
-        # Convert cluster to RGB.
+        # Convert centroids to RGB.
         if self._colorspace == "HSV":
             cents = skicolor.hsv2rgb(self.centroids)
         elif self._colorspace == "RGB":
@@ -161,19 +160,47 @@ class Hist(Clust):
             raise ValueError(f"Invalid colorspace, {self._colorspace}")
 
         # Sort centroids descending by percentage.
-        zipped = zip(self._hist, cents)
-        centroids_sorted = sorted(zipped, key=operator.itemgetter(0), reverse=True)
+        dictcomp = {i: skiutil.img_as_ubyte(v).tolist() for i, v in zip(self._hist, cents)}
+        hist_cents = dict(sorted(dictcomp.items(), reverse=True))
+        return hist_cents
 
-        # Build the bar each centroid color at a time.
-        start_x = 0
-        for (percent, color) in centroids_sorted:
-            end_x = start_x + (percent * render_width)
-            cv2.rectangle(
-                hist_bar,
-                (int(start_x), 0),
-                (int(end_x), self._hist_bar_height),
-                skiutil.img_as_ubyte(color).tolist(),
-                -1,
-            )
-            start_x = end_x
-        return hist_bar
+
+def get_hist_bar(hist_centroids, height, width):
+    """Get histogram bar from histogram.
+
+    Generate a histogram bar using percentage and RGB values. The sklearn.cluster-generated
+    centroids (cluster centers) are RGB color values. Use these colors to generate a
+    bar based on relative percentage (scaled by image width) that the centroid occupies
+    in the normalised histogram.
+
+    Ex: get_hist_bar({0.5: [255,255,255], 0.3: [127,127,127], 0.2: [0,0,0]}, 50, 1000)
+    Will generate a 50x1000 px histogram bar that is 50% white, 30% grey, 20% black.
+
+    Args:
+        hist_centroids (dict): RGB values ([R,G,B]) keyed by normalised percentage.
+        height (int): Height of histogram bar.
+        width (int): Width of histogram bar.
+
+    Returns:
+        hist_bar (numpy.ndarray): Histogram bar.
+    """
+    num_channels = 3
+    # Start with zeroed histogram.
+    hist_bar = np.zeros(
+        (height, width, num_channels),
+        dtype = "uint8",
+    )
+
+    # Build the bar each centroid color at a time.
+    start_x = 0
+    for percent, color in hist_centroids.items():
+        end_x = start_x + (percent * width)
+        cv2.rectangle(
+            hist_bar,
+            (int(start_x), 0),
+            (int(end_x), height),
+            color,
+            -1,
+        )
+        start_x = end_x
+    return hist_bar
