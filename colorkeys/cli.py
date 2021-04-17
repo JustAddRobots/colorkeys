@@ -135,7 +135,7 @@ def run(args):
 
         for _, h in art.hists.items():
             logger.debug(
-                f"histogram: centroids, {h.algo} {h.colorspace}: "
+                f"histogram, {h.algo} {h.colorspace}: "
                 f"{testvar.get_debug(h.hist_centroids)}"
             )
         art.show_palettes()
