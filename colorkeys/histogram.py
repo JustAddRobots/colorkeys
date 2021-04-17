@@ -131,10 +131,10 @@ class Hist(Clust):
     def _get_hist_bar(self, render_width):
         """Get histogram bar from histogram.
 
-        Generate a histogram bar using centroids. The sklearn.cluster generated
-        centroids (cluster centers) are coordinates in the image. Use the color
-        at each centroid to generate a bar based on relative percentage (scaled
-        by image width) that the centroid occupies in the normalised histogram.
+        Generate a histogram bar using centroids. The sklearn.cluster-generated
+        centroids (cluster centers) are RGB color values in the image. Use these
+        colors to generate a bar based on relative percentage (scaled by image width)
+        that the centroid occupies in the normalised histogram.
 
         Args:
             render_width (int): Width of rescaled image, used for histogram bar width.
