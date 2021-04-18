@@ -14,9 +14,9 @@ from matplotlib import pyplot as plt
 from time import time
 
 from colorkeys.colorkeys import ColorKey
+from colorkeys import createjson
 from colorkeys import imagepath
 from engcommon import clihelper
-from engcommon import testvar
 
 
 def get_command(args):
@@ -45,7 +45,7 @@ def get_command(args):
         default = [
             "kmeans",
         ],
-        help = "Set clustering algorithm",
+        help = "Clustering algorithm",
         nargs = "+",
         type = str,
     )
@@ -56,36 +56,46 @@ def get_command(args):
             "RGB",
         ],
         default = "RGB",
-        help = "Set input image color space",
+        help = "Input image color space",
     )
     parser.add_argument(
         "-i", "--images",
         action = "append",
-        help = "set images",
+        help = "Images to process",
         nargs = "+",
         required = True,
         type = str,
     )
     parser.add_argument(
-        "-n", "--num_clusters",
-        action = "store",
-        help = "Set number of clusters to detect",
-        required = True,
-        type = int,
+        "-j", "--json",
+        action = "store_true",
+        help = "Output as JSON",
     )
     parser.add_argument(
         "-l", "--logid",
         action = "store",
-        help = "Set runtime log indentifier",
+        help = "Runtime log indentifier",
         required = False,
         type = str,
+    )
+    parser.add_argument(
+        "-n", "--num_clusters",
+        action = "store",
+        help = "number of clusters to detect",
+        required = True,
+        type = int,
     )
     parser.add_argument(
         "-p", "--prefix",
         action = "store",
         default = "/tmp/logs",
-        help = "set log directory prefix",
+        help = "Log directory prefix",
         type = str,
+    )
+    parser.add_argument(
+        "-t", "--plot",
+        action = "store_true",
+        help = "Plot color keys",
     )
     parser.add_argument(
         "-v", "--version",
@@ -115,32 +125,57 @@ def run(args):
     colorspace = args["colorspace"]
     num_clusters = args["num_clusters"]
     algos = args["algos"]
+    showplot = args["plot"]
+    showjson = args["json"]
 
     imgsrcs = imagepath.get_imagefiles(imgpaths)
+    palettes = []
 
-    plt.show()
     for imgsrc in imgsrcs:
         time_start = time()
-
-        art = ColorKey(imgsrc, algos, num_clusters, colorspace=colorspace)
-
+        palette = ColorKey(imgsrc, algos, num_clusters, colorspace=colorspace)
         time_end = time()
         time_duration = time_end - time_start
-
         logger.debug(f"file: {imgsrc}")
-        logger.debug(f"image shape: {art.img.shape}")
-        logger.debug(f"render shape: {art.render.shape}")
-        logger.debug(f"aspect ratio: {art.aspect_ratio:.2f}")
         logger.debug(f"time: {time_duration:.2f}s")
 
-        for _, h in art.hists.items():
-            logger.debug(
-                f"histogram, {h.algo} {h.colorspace}: "
-                f"{testvar.get_debug(h.hist_centroids)}"
-            )
-        art.show_palettes()
-        plt.pause(0.001)
-    input("\nPress [Return] to exit.")
+        palettes.append(palette)
+        if showplot:
+            plt.show()
+            palette.show_palettes()
+            plt.pause(0.001)
+
+    if showplot:
+        input("\nPress [Return] to exit.")
+
+    palettes_json = createjson.encode(palettes)
+    if showjson:
+        print(palettes_json)
+
+#    plt.show()
+#    for imgsrc in imgsrcs:
+#        time_start = time()
+#
+#        art = ColorKey(imgsrc, algos, num_clusters, colorspace=colorspace)
+#
+#        time_end = time()
+#        time_duration = time_end - time_start
+#
+#        logger.debug(f"file: {imgsrc}")
+#        logger.debug(f"image shape: {art.img.shape}")
+#        logger.debug(f"render shape: {art.render.shape}")
+#        logger.debug(f"aspect ratio: {art.aspect_ratio:.2f}")
+#        logger.debug(f"time: {time_duration:.2f}s")
+#
+#        for _, h in art.hists.items():
+#            logger.debug(
+#                f"histogram, {h.algo} {h.colorspace}: "
+#                f"{testvar.get_debug(h.hist_centroids)}"
+#            )
+#        art.show_palettes()
+#        plt.pause(0.001)
+#    input("\nPress [Return] to exit.")
+
     return None
 
 
