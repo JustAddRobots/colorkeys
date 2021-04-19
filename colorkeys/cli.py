@@ -11,12 +11,12 @@ import pkg_resources
 import sys
 
 from matplotlib import pyplot as plt
-from time import time
 
 from colorkeys.colorkeys import ColorKey
 from colorkeys import createjson
 from colorkeys import imagepath
 from engcommon import clihelper
+from engcommon import testvar
 
 
 def get_command(args):
@@ -86,14 +86,14 @@ def get_command(args):
         type = int,
     )
     parser.add_argument(
-        "-p", "--prefix",
+        "--prefix",
         action = "store",
         default = "/tmp/logs",
         help = "Log directory prefix",
         type = str,
     )
     parser.add_argument(
-        "-t", "--plot",
+        "-p", "--plot",
         action = "store_true",
         help = "Plot color keys to display",
     )
@@ -130,21 +130,16 @@ def run(args):
     showjson = args["json"]
 
     imgsrcs = imagepath.get_imagefiles(imgpaths)
-    palettes = []
+    objs = []
 
     if showplot:
         plt.show()
 
     for imgsrc in imgsrcs:
-        time_start = time()
         palette = ColorKey(imgsrc, algos, num_clusters, colorspace=colorspace)
-        time_end = time()
-        time_duration = time_end - time_start
-        logger.debug(f"file: {imgsrc}")
-        logger.debug(f"time: {time_duration:.2f}s")
-        logger.debug()
-
-        palettes.append(palette)
+        obj = createjson.compile(palette)
+        objs.append(obj)
+        logger.debug(testvar.get_debug(obj))
         if showplot:
             palette.show_palettes()
             plt.pause(0.001)
@@ -152,37 +147,11 @@ def run(args):
     if showplot:
         input("\nPress [Return] to exit.")
 
-    palettes_json = createjson.encode(palettes)
+    objs_json = createjson.encode(objs)
     if showjson:
-        print(palettes_json)
+        print(objs_json)
 
-    return palettes_json
-
-#    plt.show()
-#    for imgsrc in imgsrcs:
-#        time_start = time()
-#
-#        art = ColorKey(imgsrc, algos, num_clusters, colorspace=colorspace)
-#
-#        time_end = time()
-#        time_duration = time_end - time_start
-#
-#        logger.debug(f"file: {imgsrc}")
-#        logger.debug(f"image shape: {art.img.shape}")
-#        logger.debug(f"render shape: {art.render.shape}")
-#        logger.debug(f"aspect ratio: {art.aspect_ratio:.2f}")
-#        logger.debug(f"time: {time_duration:.2f}s")
-#
-#        for _, h in art.hists.items():
-#            logger.debug(
-#                f"histogram, {h.algo} {h.colorspace}: "
-#                f"{testvar.get_debug(h.hist_centroids)}"
-#            )
-#        art.show_palettes()
-#        plt.pause(0.001)
-#    input("\nPress [Return] to exit.")
-
-#    return None
+    return objs_json
 
 
 def main():
