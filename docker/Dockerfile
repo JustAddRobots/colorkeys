@@ -6,6 +6,8 @@ ENV PLOT=""
 ENV N_CLUSTERS=""
 ENV IMAGES=""
 ARG GIT_COMMIT="master"
+ARG ENGCOMMON_BRANCH="${ENGCOMMON_BRANCH}"
+ENV PATH="${PATH}:/root/.local/bin"
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone && \
@@ -15,9 +17,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     python3
     && \
     yum clean all && rm -rm /var/cache/yum && \
-    export PATH=$PATH:/root/.local/bin && \
-    python3 -m pip install --upgrade pip wheel && \
-    python3 -m pip install --user --force-reinstall git+https://github.com/JustAddRobots/colorkeys.git@GIT_COMMIT && \
+    python3 -m pip install --upgrade pip setuptools wheel && \
+    ENGCOMMON_BRANCH=$ENGCOMMON_BRANCH python3 -m pip install --user --force-reinstall git+https://github.com/JustAddRobots/colorkeys.git@GIT_COMMIT && \
     rm -rm ~/.cache/pip
 
 CMD colorkeys $DEBUG $JSON $PLOT $N_CLUSTERS $IMAGES
