@@ -24,6 +24,7 @@ setup(
     url = "https://github.com/JustAddRobots/colorkeys",
     author = "Roderick Constance",
     author_email = "justaddrobots@icloud.com",
+    license = "GPLv3",
     classifiers = [
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
@@ -42,7 +43,6 @@ setup(
         "ffmpeg-python",
         "matplotlib",
         "numpy",
-        "opencv-python",
         "scikit-image",
         "sklearn"
     ],
