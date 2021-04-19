@@ -12,26 +12,29 @@ from engcommon import command
 from engcommon import testvar
 
 
-def encode(palettes):
+def compile(palette):
     pkg_name = vars(sys.modules[__name__])["__package__"]
-    obj = []
-    for p in palettes:
-        hists = []
-        for _, h in p.hists.items():
-            hists.append({
-                "algo": h.algo,
-                "colorspace": h.colorspace,
-                "n_clusters": h.num_clusters,
-                "hist_centroids": h.hist_centroids,
-            })
-        obj.append({
-            "filename": p.imgsrc,
-            "sha1sum": get_sha1(p.imgsrc),
-            "timestamp": get_timestamp(),
-            "version": get_version(pkg_name),
-            "githash": get_githash(pkg_name),
-            "histograms": hists,
+    hists = []
+    for _, h in palette.hists.items():
+        hists.append({
+            "algo": h.algo,
+            "colorspace": h.colorspace,
+            "n_clusters": h.num_clusters,
+            "stopwatch": h.stopwatch,
+            "hist_centroids": h.hist_centroids,
         })
+    obj = {
+        "filename": palette.imgsrc,
+        "sha1sum": get_sha1(palette.imgsrc),
+        "timestamp": get_timestamp(),
+        "version": get_version(pkg_name),
+        "githash": get_githash(pkg_name),
+        "histogram": hists,
+    }
+    return obj
+
+
+def encode(obj):
     return json.dumps(obj, indent=2)
 
 
@@ -62,15 +65,10 @@ def get_githash(pkg_name):
 def get_sha1(fn):
     BLOCK_SIZE = 65536
     sha1sum = hashlib.sha1()
-    with request.urlopen(fn) if fn.startswith(("http://", "https://")) else open(fn, "rb") as f:
+    with request.urlopen(fn) \
+            if fn.startswith(("http://", "https://")) else open(fn, "rb") as f:
         fb = f.read(BLOCK_SIZE)
         while len(fb) > 0:
             sha1sum.update(fb)
             fb = f.read(BLOCK_SIZE)
-
-#    with open(filename, "rb") as f:
-#        fb = f.read(BLOCK_SIZE)
-#        while len(fb) > 0:
-#            sha1.update(fb)
-#            fb = f.read(BLOCK_SIZE)
     return sha1sum.hexdigest()
