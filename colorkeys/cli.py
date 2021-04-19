@@ -45,7 +45,7 @@ def get_command(args):
         default = [
             "kmeans",
         ],
-        help = "Clustering algorithm",
+        help = "Clustering algorithm(s) to use",
         nargs = "+",
         type = str,
     )
@@ -81,7 +81,7 @@ def get_command(args):
     parser.add_argument(
         "-n", "--num_clusters",
         action = "store",
-        help = "number of clusters to detect",
+        help = "Number of clusters to detect",
         required = True,
         type = int,
     )
@@ -95,12 +95,13 @@ def get_command(args):
     parser.add_argument(
         "-t", "--plot",
         action = "store_true",
-        help = "Plot color keys",
+        help = "Plot color keys to display",
     )
     parser.add_argument(
         "-v", "--version",
         action = "version",
-        version = pkg_resources.get_distribution(parser.prog).version
+        version = pkg_resources.get_distribution(parser.prog).version,
+        help = "Show version number and exit",
     )
     args = vars(parser.parse_args(args))
     return args
@@ -131,6 +132,9 @@ def run(args):
     imgsrcs = imagepath.get_imagefiles(imgpaths)
     palettes = []
 
+    if showplot:
+        plt.show()
+
     for imgsrc in imgsrcs:
         time_start = time()
         palette = ColorKey(imgsrc, algos, num_clusters, colorspace=colorspace)
@@ -138,10 +142,10 @@ def run(args):
         time_duration = time_end - time_start
         logger.debug(f"file: {imgsrc}")
         logger.debug(f"time: {time_duration:.2f}s")
+        logger.debug()
 
         palettes.append(palette)
         if showplot:
-            plt.show()
             palette.show_palettes()
             plt.pause(0.001)
 
@@ -151,6 +155,8 @@ def run(args):
     palettes_json = createjson.encode(palettes)
     if showjson:
         print(palettes_json)
+
+    return palettes_json
 
 #    plt.show()
 #    for imgsrc in imgsrcs:
@@ -176,7 +182,7 @@ def run(args):
 #        plt.pause(0.001)
 #    input("\nPress [Return] to exit.")
 
-    return None
+#    return None
 
 
 def main():
