@@ -8,11 +8,11 @@ This module facilitates the creating image histogram data.
     my_histogram = Hist(img, "kmeans", 5, "RGB", 720)
 """
 
-import cv2
 import logging
 import numpy as np
 
 from skimage import color as skicolor
+from skimage import draw as skidraw
 from skimage import util as skiutil
 
 from colorkeys.centroids import Clust
@@ -195,12 +195,18 @@ def get_hist_bar(hist_centroids, height, width):
     start_x = 0
     for percent, color in hist_centroids.items():
         end_x = start_x + (percent * width)
-        cv2.rectangle(
-            hist_bar,
+#         cv2.rectangle(
+#             hist_bar,
+#             (int(start_x), 0),
+#             (int(end_x), height),
+#             color,
+#             -1,
+#         )
+        rr, cc = skidraw.rectangle(
             (int(start_x), 0),
             (int(end_x), height),
-            color,
-            -1,
+            shape = hist_bar.shape,
         )
+        skidraw.set_color(hist_bar, (rr, cc), color)
         start_x = end_x
     return hist_bar
