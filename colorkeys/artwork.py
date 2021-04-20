@@ -8,11 +8,11 @@ This module facilitates creating an image matrix for data analysis.
     my_artwork = Artwork("my_image_file.png")
 """
 
-import cv2
 import errno
 import logging
 import os
 import skimage.io as skiio
+import skimage.color as skicolor
 import skimage.transform as skitransform
 
 logger = logging.getLogger(__name__)
@@ -163,8 +163,7 @@ class Artwork:
     def _get_img(self):
         """Get image matrix for the requested color space.
 
-        cv2 automatically reads the image as BGR, so it must be converted to the
-        correct color space.
+        Read image and convert to correct color space, if necessary.
 
         Args:
             None
@@ -176,16 +175,12 @@ class Artwork:
             ValueError: colorspace not valid..
         """
         colorspace = self._colorspace
+        img = skiio.imread(self._imgsrc)
         if colorspace == "RGB":
-            cnv = cv2.COLOR_BGR2RGB
+            pass
         elif colorspace == "HSV":
-            cnv = cv2.COLOR_BGR2HSV
+            img = skicolor.hsv2rgb(img)
         else:
             raise ValueError(f"Invalid colorspace, {colorspace}")
 
-        if self._imgsrc.startswith(("http://", "https://")):
-            img = skiio.imread(self._imgsrc)
-        else:
-            img_BGR = cv2.imread(self._imgsrc)
-            img = cv2.cvtColor(img_BGR, cnv)
         return img
