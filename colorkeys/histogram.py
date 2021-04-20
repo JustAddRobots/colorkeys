@@ -168,10 +168,10 @@ class Hist(Clust):
 def get_hist_bar(hist_centroids, height, width):
     """Get histogram bar from histogram.
 
-    Generate a histogram bar using percentage and RGB values. The sklearn.cluster-generated
-    centroids (cluster centers) are RGB color values. Use these colors to generate a
-    bar based on relative percentage (scaled by image width) that the centroid occupies
-    in the normalised histogram.
+    Generate a histogram bar using percentage and RGB values. The
+    sklearn.cluster-generated centroids (cluster centers) are RGB color values.
+    Use these colors to generate a bar based on relative percentage (scaled by
+    image width) that the centroid occupies in the normalised histogram.
 
     Ex: get_hist_bar({0.5: [255,255,255], 0.3: [127,127,127], 0.2: [0,0,0]}, 50, 1000)
     Will generate a 50x1000 px histogram bar that is 50% white, 30% grey, 20% black.
@@ -195,16 +195,9 @@ def get_hist_bar(hist_centroids, height, width):
     start_x = 0
     for percent, color in hist_centroids.items():
         end_x = start_x + (percent * width)
-#         cv2.rectangle(
-#             hist_bar,
-#             (int(start_x), 0),
-#             (int(end_x), height),
-#             color,
-#             -1,
-#         )
         rr, cc = skidraw.rectangle(
-            (int(start_x), 0),
-            (int(end_x), height),
+            (0, int(start_x)),
+            (height, int(end_x)),
             shape = hist_bar.shape,
         )
         skidraw.set_color(hist_bar, (rr, cc), color)

@@ -24,7 +24,6 @@ setup(
     url = "https://github.com/JustAddRobots/colorkeys",
     author = "Roderick Constance",
     author_email = "justaddrobots@icloud.com",
-    license = "GPLv3",
     classifiers = [
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
@@ -32,7 +31,8 @@ setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
     ],
-    python_requires=">=3",
+    license = "GPLv3",
+    python_requires = ">=3",
     packages = [
         "colorkeys",
     ],
