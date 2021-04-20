@@ -1,8 +1,8 @@
 FROM centos:7.9.2009
 ENV TZ=America/Los_Angeles
 
-ARG GIT_COMMIT="dev"
-ARG ENGCOMMON_BRANCH="main"
+ARG GIT_COMMIT="{GIT_COMMIT}"
+ARG ENGCOMMON_BRANCH="${ENGCOMMON_BRANCH}"
 ENV DEBUG=""
 ENV JSON=""
 ENV PLOT=""
@@ -14,12 +14,9 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone && \
     yum -y install \
     git \
-    mesa-libGL \
-    opencv \
-    opencv-python \
     python3 \
     && \
-    python3 -m pip install --upgrade pip setuptools && \
+    python3 -m pip install --upgrade pip setuptools wheel && \
     ENGCOMMON_BRANCH=$ENGCOMMON_BRANCH python3 -m pip install --user --force-reinstall git+https://github.com/JustAddRobots/colorkeys.git@$GIT_COMMIT && \
     rm -rf ~/.cache/pip && \
     yum -y remove \
