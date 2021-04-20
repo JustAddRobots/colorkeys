@@ -37,14 +37,15 @@ setup(
         "colorkeys",
     ],
     install_requires = [
-        "engcommon @ git+https://github.com/JustAddRobots/engcommon.git@{0}".format(
-            engcommon_branch
+        (
+            f"engcommon @ "
+            f"git+https://github.com/JustAddRobots/engcommon.git@{engcommon_branch}"
         ),
-        "ffmpeg-python",
-        "matplotlib",
-        "numpy",
-        "scikit-image",
-        "sklearn"
+        "ffmpeg-python==0.2.0",
+        "matplotlib==3.3.4",
+        "numpy==1.19.5",
+        "scikit-image==0.17.2",
+        "scikit-learn==0.24.1"
     ],
     entry_points = {
         "console_scripts": [
