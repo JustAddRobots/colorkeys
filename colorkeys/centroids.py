@@ -9,6 +9,7 @@ This module facilitates cluster creation.
 """
 
 import logging
+from time import time
 
 from sklearn import cluster
 from sklearn import neighbors
@@ -27,6 +28,7 @@ class Clust:
         clust (sklearn.cluster): Cluster generated.
         centroids (numpy.ndarray): Centroids generated.
         num_clusters (int): Number of clusters/centroids requested.
+        stopwatch (time.time): Cluster processing time.
     """
     def __init__(self, img, algo, num_clusters):
         """Init Clust.
@@ -39,8 +41,12 @@ class Clust:
         # Convert 2D array to 1D for cluster generation.
         self._num_clusters = num_clusters
         img_reshape = img.reshape(img.shape[0] * img.shape[1], img.shape[2])
+
+        time_start = time()
         self._clust = self._get_clust(img_reshape, algo, self._num_clusters)
         self._centroids = self._get_centroids(img_reshape, algo)
+        time_end = time()
+        self._stopwatch = time_end - time_start
 
     @property
     def clust(self):
@@ -53,6 +59,10 @@ class Clust:
     @property
     def num_clusters(self):
         return self._num_clusters
+
+    @property
+    def stopwatch(self):
+        return self._stopwatch
 
     def _get_clust(self, img, algo, n):
         """Get cluster.

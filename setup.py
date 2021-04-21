@@ -31,20 +31,21 @@ setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
     ],
-    python_requires=">=3",
+    license = "GPLv3",
+    python_requires = ">=3",
     packages = [
         "colorkeys",
     ],
     install_requires = [
-        "engcommon @ git+https://github.com/JustAddRobots/engcommon.git@{0}".format(
-            engcommon_branch
+        (
+            f"engcommon @ "
+            f"git+https://github.com/JustAddRobots/engcommon.git@{engcommon_branch}"
         ),
         "ffmpeg-python",
         "matplotlib",
         "numpy",
-        "opencv-python",
         "scikit-image",
-        "sklearn"
+        "scikit-learn"
     ],
     entry_points = {
         "console_scripts": [

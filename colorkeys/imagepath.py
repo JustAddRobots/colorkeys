@@ -8,13 +8,13 @@ logger = logging.getLogger(__name__)
 
 
 def get_imagefiles(imgpaths):
-    """Get image filenames from CLI arguments.
+    """Get image resource names from CLI arguments.
 
     Handles globbing of files and directories for quoted CLI arguments. Be aware
     the shell will automatically expand wildcard arguments without quotes.
 
     Args:
-        imgpaths (list): Wildcards, dirs, and/or lists of files.
+        imgpaths (list): Web URLs, Wildcards, dirs, and/or lists of files.
 
     Returns:
         imgs (list): Sorted and expanded file list.

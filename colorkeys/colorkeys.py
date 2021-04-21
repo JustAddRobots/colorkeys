@@ -9,7 +9,6 @@ This module creates and displays color keys (palettes) from a requested image.
     my_colorkey.show_palettes()
 """
 
-import cv2
 import logging
 import os.path
 
@@ -22,8 +21,6 @@ from colorkeys.artwork import Artwork
 from colorkeys.histogram import Hist
 
 logger = logging.getLogger(__name__)
-mpl_logger = logging.getLogger("matplotlib")
-mpl_logger.setLevel(logging.WARNING)
 
 
 class ColorKey(Artwork):
@@ -61,9 +58,6 @@ class ColorKey(Artwork):
     def hists(self):
         return self._hists
 
-    def show_img(self):
-        return self._show_img()
-
     def show_palettes(self):
         return self._show_palettes()
 
@@ -93,17 +87,6 @@ class ColorKey(Artwork):
                     self.render_width,
                 )
         return hists
-
-    def _show_img(self):
-        if self.colorspace == "HSV":
-            img_RGB = cv2.cvtColor(self.img, cv2.COLOR_HSV2RGB)
-        elif self.colorspace == "RGB":
-            img_RGB = self.img
-        else:
-            raise ValueError(f"Invalid colorspace, {self.colorspace}")
-        plt.imshow(img_RGB)
-        plt.show()
-        return None
 
     def _show_palettes(self):
         """Show image and palette(s).
