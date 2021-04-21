@@ -1,6 +1,26 @@
 Changelog
 =========
 
+0.8.0 (2021-04-21)
+------------------
+- ISSUE-075: Cleaning up pre-commit, matplotlib debug logger. (9ca807d) [JustAddRobots]
+- ISSUE-075: Unpinned setup.py versions. (4b38885) [JustAddRobots]
+- ISSUE-075: Added debug_api CLI option. (2506736) [JustAddRobots]
+- ISSUE-061: Added setup.py versions, updated Dockerfile/Makefile. (17cce69) [JustAddRobots]
+- ISSUE-061: Removed commented-out cv2, fixed comments. (3006d9a) [JustAddRobots]
+- ISSUE-061: Removed cv2 calls. (c47688a) [JustAddRobots]
+- ISSUE-061: Updated Dockerfile for centos7 tests. (6e5d5b6) [JustAddRobots]
+- ISSUE-061: Updated Dockerfile for build tests. (df9fd93) [JustAddRobots]
+- ISSUE-061: Added Makefile stub for Docker build. (c07cee8) [JustAddRobots]
+- ISSUE-061: Added Dockerfile. (c11bd51) [JustAddRobots]
+- ISSUE-060: Refactored object compile JSON encode, added stopwatch. (11b9848) [JustAddRobots]
+- ISSUE-060: Fixed help messages, tweaked plot display options. (ca615c4) [JustAddRobots]
+- ISSUE-060: Added JSON encoding output. (e983c0c) [JustAddRobots]
+- ISSUE-062: Fixed hist centroids sorting. (662ffba) [JustAddRobots]
+- ISSUE-062: Changed hist centroids dict sort reverse. (636c288) [JustAddRobots]
+- ISSUE-062: Refactored for hist_centroids and public hist_bar generation. (c391d45) [JustAddRobots]
+- ISSUE-062: Added hist.centroids to stdout, fixed comments. (9f6bdc4) [JustAddRobots]
+
 0.7.0 (2021-04-15)
 ------------------
 - ISSUE-056: Added URL as image source. (2395559) [JustAddRobots]
