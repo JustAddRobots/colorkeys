@@ -41,11 +41,11 @@ setup(
             f"engcommon @ "
             f"git+https://github.com/JustAddRobots/engcommon.git@{engcommon_branch}"
         ),
-        "ffmpeg-python==0.2.0",
-        "matplotlib==3.3.4",
-        "numpy==1.19.5",
-        "scikit-image==0.17.2",
-        "scikit-learn==0.24.1"
+        "ffmpeg-python",
+        "matplotlib",
+        "numpy",
+        "scikit-image",
+        "scikit-learn"
     ],
     entry_points = {
         "console_scripts": [
