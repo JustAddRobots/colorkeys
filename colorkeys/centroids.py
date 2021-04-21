@@ -80,6 +80,8 @@ class Clust:
         """
         if algo == "kmeans":  # K-Means Clustering
             clust = cluster.KMeans(n_clusters=n)
+        elif algo == "mbkmeans":  # MiniBatch K-Means Clustering
+            clust = cluster.MiniBatchKMeans(n_clusters=n)
         elif algo == "hac":  # Heirarchical Agglomerative Clustering
             clust = cluster.AgglomerativeClustering(n_clusters=n)
         else:
@@ -99,7 +101,7 @@ class Clust:
         Raises:
             ValueError: algorithm not valid.
         """
-        if algo == "kmeans":
+        if algo in ["kmeans", "mbkmeans"]:
             self._clust.fit(img)
             centroids = self._clust.cluster_centers_
         elif algo == "hac":
