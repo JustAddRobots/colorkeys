@@ -15,11 +15,11 @@ repos:
     rev: 3.8.3
     hooks:
     -   id: flake8
-# -   repo: local
-#     hooks:
-#     -   id: pytest
-#         name: pytest unit tests
-#         entry: pytest -v
-#         language: system
-#         types: [python]
-#         pass_filenames: false
+-   repo: local
+    hooks:
+    -   id: pytest
+        name: pytest unit tests
+        entry: pytest -v
+        language: system
+        types: [python]
+        pass_filenames: false
