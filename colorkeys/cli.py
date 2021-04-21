@@ -36,6 +36,11 @@ def get_command(args):
         help = "Print debug information",
     )
     parser.add_argument(
+        "--debug-api",
+        action = "store_true",
+        help = "Print API debug information",
+    )
+    parser.add_argument(
         "-a", "--algos",
         action = "store",
         choices = [
@@ -107,6 +112,12 @@ def get_command(args):
     return args
 
 
+def set_API_logger(API, level):
+    lgr = logging.getLogger(API)
+    lgr.setLevel(eval(f"logging.{level}"))
+    return None
+
+
 def run(args):
     """Run.
     Args:
@@ -115,6 +126,15 @@ def run(args):
     Returns:
         None
     """
+    # Set API DEBUG loggers
+    if args["debug_api"]:
+        args["debug"] = True
+        for API in ["matplotlib", "PIL"]:
+            set_API_logger(API, "DEBUG")
+    else:
+        for API in ["matplotlib", "PIL"]:
+            set_API_logger(API, "WARNING")
+
     # Standardised CLI bits.
     project_name = (os.path.dirname(__file__).split("/")[-1])
     my_cli = clihelper.CLI(project_name, args)
@@ -139,7 +159,7 @@ def run(args):
         palette = ColorKey(imgsrc, algos, num_clusters, colorspace=colorspace)
         obj = createjson.compile(palette)
         objs.append(obj)
-        logger.debug(testvar.get_debug(obj))
+        logger.debug(testvar.get_debug(obj, sort_dicts=False))
         if showplot:
             palette.show_palettes()
             plt.pause(0.001)
