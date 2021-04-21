@@ -45,6 +45,7 @@ def get_command(args):
         action = "store",
         choices = [
             "kmeans",
+            "mbkmeans",
             # "hac",  # HAC is too slow in sklearn
         ],
         default = [

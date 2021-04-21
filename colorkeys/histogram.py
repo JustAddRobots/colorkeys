@@ -87,7 +87,7 @@ class Hist(Clust):
 
     def _get_algo(self, algo):
         """Get algorithm."""
-        if algo not in ("kmeans", "hac"):
+        if algo not in ("kmeans", "mbkmeans", "hac"):
             raise ValueError(f"Invalid algorithm, {algo}")
         return algo
 
