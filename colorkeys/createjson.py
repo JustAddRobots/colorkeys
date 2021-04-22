@@ -13,6 +13,17 @@ from engcommon import testvar
 
 
 def compile(palette):
+    """Prepare a ColorKey object for JSON encoding.
+
+    This compiles a palette object with other relevant info into an object
+    to prepare for JSON encoding.
+
+    Args:
+        palette (colorkeys.ColorKey): palette to prepare.
+
+    Retuns:
+        obj (dict): Palette ready for JSON encoding.
+    """
     pkg_name = vars(sys.modules[__name__])["__package__"]
     hists = []
     for _, h in palette.hists.items():
@@ -35,15 +46,17 @@ def compile(palette):
 
 
 def encode(obj):
+    """Encode Python object to JSON."""
     return json.dumps(obj, indent=2)
 
 
 def get_version(pkg_name):
-    version = pkg_resources.get_distribution(pkg_name).version
-    return version
+    """Get package version info."""
+    return pkg_resources.get_distribution(pkg_name).version
 
 
 def get_timestamp():
+    """Get current timestamp."""
     dt = datetime.datetime.now()
     timestamp = (
         f"{dt.year}.{dt.month:02d}.{dt.day:02d}-"
@@ -53,6 +66,17 @@ def get_timestamp():
 
 
 def get_githash(pkg_name):
+    """Get the commit hash of a git package installed via PIP.
+
+    pip packages installed via "git+http" needs "wheel" package installed
+    to list git commit.
+
+    Args:
+        pkg_name (str): PIP package name.
+
+    Returns:
+        githash (str): Git commit hash.
+    """
     d = command.get_shell_cmd(f"python3 -m pip freeze | grep {pkg_name}")
     stdout = d["stdout"]
     regex = f"{pkg_name}.*@([0-9a-f]+)"
@@ -62,11 +86,20 @@ def get_githash(pkg_name):
     return githash
 
 
-def get_sha1(fn):
+def get_sha1(filename):
+    """Get SHA1 of file.
+
+    Args:
+        filename (str): File name.
+
+    Returns:
+        sha1sum (str): SHA1 checksum of file.
+    """
     BLOCK_SIZE = 65536
     sha1sum = hashlib.sha1()
-    with request.urlopen(fn) \
-            if fn.startswith(("http://", "https://")) else open(fn, "rb") as f:
+    prefixes = ("http://", "https://")
+    with request.urlopen(filename) \
+            if filename.startswith(prefixes) else open(filename, "rb") as f:
         fb = f.read(BLOCK_SIZE)
         while len(fb) > 0:
             sha1sum.update(fb)
