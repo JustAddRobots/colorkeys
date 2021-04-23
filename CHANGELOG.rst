@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.9.0 (2021-04-22)
+------------------
+- ISSUE-082: Added docstrings to createjson. (a0d6959) [JustAddRobots]
+- ISSUE-070: Added MiniBatchKMeans (mbkmeans) as algorithm. (1c1c242) [JustAddRobots]
+- ISSUE-070: Added MiniBatchKMeans (mbkmeans) as algorithm. (123aaed) [JustAddRobots]
+
 0.8.0 (2021-04-21)
 ------------------
 - ISSUE-075: Cleaning up pre-commit, matplotlib debug logger. (9ca807d) [JustAddRobots]
