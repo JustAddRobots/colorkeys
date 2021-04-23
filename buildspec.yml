@@ -13,11 +13,11 @@ phases:
       - export IMGLONG=$ECR_REG/$NAME:$TAG-$HASHSHORT-$ARCH
       - export IMGSHORT=$ECR_REG/$NAME:$TAG-$ARCH
       - export DEFAULT=$ECR_REG/$NAME:default-$ARCH
-      - echo "NAME: $NAME"
-      - echo "ARCH: $ARCH"
-      - echo "HASHSHORT: $HASHSHORT"
-      - echo "TAG: $TAG"
-      - echo "IMGSHORT: $IMGSHORT"
+      - echo "NAME=$NAME"
+      - echo "ARCH=$ARCH"
+      - echo "HASHSHORT=$HASHSHORT"
+      - echo "TAG=$TAG"
+      - echo "IMGSHORT=$IMGSHORT"
   build:
     commands:
       - echo "=== Docker build started ==="
