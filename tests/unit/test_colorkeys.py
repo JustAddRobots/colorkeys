@@ -8,4 +8,4 @@ def test_hists(mycolorkey):
 
 
 def test_hist(mycolorkey):
-    assert isinstance(mycolorkey.hists["kmeans_RGB"], colorkeys.histogram.Hist)
+    assert isinstance(mycolorkey.hists["mbkmeans_RGB"], colorkeys.histogram.Hist)
