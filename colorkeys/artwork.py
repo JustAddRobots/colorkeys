@@ -176,6 +176,9 @@ class Artwork:
         """
         colorspace = self._colorspace
         img = skiio.imread(self._imgsrc)
+        if img.shape[2] == 4:
+            img = skicolor.rgba2rgb(img)
+
         if colorspace == "RGB":
             pass
         elif colorspace == "HSV":
