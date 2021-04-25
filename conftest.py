@@ -48,15 +48,15 @@ def myartwork():
 @pytest.fixture(scope="session")
 def myclust():
     a = Artwork(testimg)
-    return Clust(a.img, "kmeans", 5)
+    return Clust(a.img, "mbkmeans", 5)
 
 
 @pytest.fixture(scope="session")
 def myhist():
     a = Artwork(testimg)
-    return Hist(a.img, "kmeans", 5, "RGB", a.img_width)
+    return Hist(a.img, "mbkmeans", 5, "RGB", a.img_width)
 
 
 @pytest.fixture(scope="session")
 def mycolorkey():
-    return ColorKey(testimg, ["kmeans"], 5)
+    return ColorKey(testimg, ["mbkmeans"], 5)

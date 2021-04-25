@@ -49,7 +49,7 @@ def get_command(args):
             # "hac",  # HAC is too slow in sklearn
         ],
         default = [
-            "kmeans",
+            "mbkmeans",
         ],
         help = "Clustering algorithm(s) to use",
         nargs = "+",

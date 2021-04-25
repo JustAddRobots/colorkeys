@@ -4,7 +4,7 @@ from sklearn import cluster
 
 
 def test_clust(myclust):
-    assert isinstance(myclust.clust, cluster._kmeans.KMeans)
+    assert isinstance(myclust.clust, cluster._kmeans.MiniBatchKMeans)
 
 
 def test_num_clusters(myclust):
