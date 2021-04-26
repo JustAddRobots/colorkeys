@@ -163,7 +163,8 @@ class Artwork:
     def _get_img(self):
         """Get image matrix for the requested color space.
 
-        Read image and convert to correct color space, if necessary.
+        Read image and convert to correct color space, if necessary. Disregard alpha
+        channel.
 
         Args:
             None
@@ -176,6 +177,9 @@ class Artwork:
         """
         colorspace = self._colorspace
         img = skiio.imread(self._imgsrc)
+        if img.shape[2] == 4:
+            img = img[:, :, :3]  # Disregard alpha channel
+
         if colorspace == "RGB":
             pass
         elif colorspace == "HSV":

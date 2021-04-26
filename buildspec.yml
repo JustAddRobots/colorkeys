@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo "=== Logging into AWS ECR ==="
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REG
+      - export NAME=colorkeys
+      - export ARCH=$(uname -m)
+      - export HASH=$(git log -1 --pretty=%h --no-merges)
+      - export TAG=$(git describe --tags --abbrev=0)
+      - export IMGLONG=$ECR_REG/$NAME:$TAG-$HASH-$ARCH
+      - export IMGSHORT=$ECR_REG/$NAME:$TAG-$ARCH
+      - export DEFAULT=$ECR_REG/$NAME:default-$ARCH
+  build:
+    commands:
+      - echo "=== Docker build started ==="
+      - docker build --no-cache -t $IMGLONG --build-arg GIT_COMMIT=$HASH --build-arg ENGCOMMON_BRANCH=$ENGCOMMON_BRANCH -f docker/Dockerfile .
+      - docker tag $IMGLONG $IMGSHORT
+      - docker tag $IMGLONG $DEFAULT
+      - echo "=== Docker build completed ==="
+  post_build:
+    commands:
+      - echo "=== Pushing docker image ==="
+      - docker push $IMGLONG
+      - docker push $IMGSHORT

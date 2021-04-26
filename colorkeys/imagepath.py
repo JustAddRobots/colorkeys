@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
 
+import io
 import itertools
 import logging
+import tarfile
+import urllib
 from pathlib import Path
+
+from colorkeys.constants import _const as CONSTANTS
+from colorkeys.createjson import get_timestamp
+from engcommon import testvar
 
 logger = logging.getLogger(__name__)
 
@@ -10,29 +17,68 @@ logger = logging.getLogger(__name__)
 def get_imagefiles(imgpaths):
     """Get image resource names from CLI arguments.
 
-    Handles globbing of files and directories for quoted CLI arguments. Be aware
-    the shell will automatically expand wildcard arguments without quotes.
+    Handles globbing of files / directories for quoted CLI arguments, extracts
+    tar image archives. Be aware the shell will automatically expand wildcard
+    arguments without quotes.
 
     Args:
-        imgpaths (list): Web URLs, Wildcards, dirs, and/or lists of files.
+        imgpaths (list): Web URLs, wildcards, dirs, tar archives, and/or lists of files.
 
-    Returns:
+    eturns:
         imgs (list): Sorted and expanded file list.
     """
     urls = []
+    tars = []
     paths = []
     for i in itertools.chain.from_iterable(imgpaths):
-        if i.startswith(("http://", "https://")):
+        if i.startswith(CONSTANTS().WEB_PREFIXES) and i.endswith(CONSTANTS().IMG_SUFFIXES):
             urls.append(i)
+        elif i.endswith(CONSTANTS().TAR_SUFFIXES):
+            tars.append([i])
         else:
             paths.append([i])
-    path_itrs = [unglob(j) for j in itertools.chain.from_iterable(paths)]
-    path_imgs = {
-        f"{p.parent}/{p.name}" for p in itertools.chain.from_iterable(path_itrs)
+
+    path_unglob = [unglob(j) for j in itertools.chain.from_iterable(paths)]
+    set_unglob = {
+        f"{p.parent}/{p.name}" for p in itertools.chain.from_iterable(path_unglob)
         if p.suffix in [".jpg", ".png"]
     }
-    imgs = path_imgs.union(set(urls))
+    path_untar = [untar(k) for k in itertools.chain.from_iterable(tars)]
+    set_untar = {x for x in itertools.chain.from_iterable(path_untar)}
+    imgs = set_unglob.union(
+        set_untar.union(
+            set(urls)
+        )
+    )
     return sorted(imgs)
+
+
+def untar(filename, **kwargs):
+    """Extract tar image archive and return imagepaths of included files.
+
+    Args:
+        filename (str): TAR filename.
+
+    kwargs:
+        dest_dir (str): Destination direct for extraction.
+            Default is "/tmp/colorkeyes-[TIMESTAMP]"
+
+    Returns:
+        tar_images (list): Pathnames of extracted image files.
+    """
+    dest_dir = kwargs.setdefault("dest_dir", f"/tmp/colorkeys-{get_timestamp()}")
+    if filename.startswith(CONSTANTS().WEB_PREFIXES):
+        with urllib.request.urlopen(filename) as f:
+            tf = tarfile.open(fileobj=io.BytesIO(f.read()))
+    else:
+        logger.debug(testvar.get_debug(filename))
+        tf = tarfile.open(filename)
+    tf.extractall(dest_dir)
+    tar_imgs = [
+        f"{dest_dir}/{i}" for i in tf.getnames()
+        if i.endswith(CONSTANTS().IMG_SUFFIXES)
+    ]
+    return tar_imgs
 
 
 def unglob(imgpath):

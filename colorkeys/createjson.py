@@ -37,6 +37,7 @@ def compile(palette):
     obj = {
         "filename": palette.imgsrc,
         "sha1sum": get_sha1(palette.imgsrc),
+        "shape": palette.img.shape,
         "timestamp": get_timestamp(),
         "version": get_version(pkg_name),
         "githash": get_githash(pkg_name),

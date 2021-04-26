@@ -3,7 +3,7 @@
 
 def test_get_command(myargs):
     assert myargs == {
-        "algos": ["kmeans"],
+        "algos": ["mbkmeans"],
         "colorspace": "RGB",
         "debug": True,
         "debug_api": False,
