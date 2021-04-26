@@ -3,10 +3,13 @@
 import io
 import itertools
 import logging
+import tarfile
 import urllib
 from pathlib import Path
 
 from colorkeys.constants import _const as CONSTANTS
+from colorkeys.createjson import get_timestamp
+from engcommon import testvar
 
 logger = logging.getLogger(__name__)
 
@@ -14,11 +17,12 @@ logger = logging.getLogger(__name__)
 def get_imagefiles(imgpaths):
     """Get image resource names from CLI arguments.
 
-    Handles globbing of files and directories for quoted CLI arguments. Be aware
-    the shell will automatically expand wildcard arguments without quotes.
+    Handles globbing of files / directories for quoted CLI arguments, extracts
+    tar image archives. Be aware the shell will automatically expand wildcard
+    arguments without quotes.
 
     Args:
-        imgpaths (list): Web URLs, wildcards, dirs, and/or lists of files.
+        imgpaths (list): Web URLs, wildcards, dirs, tar archives, and/or lists of files.
 
     eturns:
         imgs (list): Sorted and expanded file list.
@@ -30,7 +34,7 @@ def get_imagefiles(imgpaths):
         if i.startswith(CONSTANTS().WEB_PREFIXES) and i.endswith(CONSTANTS().IMG_SUFFIXES):
             urls.append(i)
         elif i.endswith(CONSTANTS().TAR_SUFFIXES):
-            tars.append(i)
+            tars.append([i])
         else:
             paths.append([i])
 
@@ -49,13 +53,26 @@ def get_imagefiles(imgpaths):
     return sorted(imgs)
 
 
-def untar(tarfile, **kwargs):
-    dest_dir = kwargs.setdefault("dest_dir", "/tmp")
-    if tarfile.startswith(CONSTANTS().WEB_PREFIXES):
-        with urllib.request.urlopen(tarfile) as f:
+def untar(filename, **kwargs):
+    """Extract tar image archive and return imagepaths of included files.
+
+    Args:
+        filename (str): TAR filename.
+
+    kwargs:
+        dest_dir (str): Destination direct for extraction.
+            Default is "/tmp/colorkeyes-[TIMESTAMP]"
+
+    Returns:
+        tar_images (list): Pathnames of extracted image files.
+    """
+    dest_dir = kwargs.setdefault("dest_dir", f"/tmp/colorkeys-{get_timestamp()}")
+    if filename.startswith(CONSTANTS().WEB_PREFIXES):
+        with urllib.request.urlopen(filename) as f:
             tf = tarfile.open(fileobj=io.BytesIO(f.read()))
     else:
-        tf = tarfile.open(tarfile)
+        logger.debug(testvar.get_debug(filename))
+        tf = tarfile.open(filename)
     tf.extractall(dest_dir)
     tar_imgs = [
         f"{dest_dir}/{i}" for i in tf.getnames()
