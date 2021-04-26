@@ -1,6 +1,19 @@
 Changelog
 =========
 
+0.10.0 (2021-04-26)
+-------------------
+- ISSUE-094: Added img.shape to createjson. (6a2731d) [JustAddRobots]
+- ISSUE-090: Fixed tar archive extraction, added comments. (997865e) [JustAddRobots]
+- ISSUE-090: Added image tarball handling. (786c965) [JustAddRobots]
+- ISSUE-089: Changed default algo from kmeans to mbkmeans. (e59b315) [JustAddRobots]
+- ISSUE-089: Removed alpha-blending to simply disregard channel. (4b77ae2) [JustAddRobots]
+- ISSUE-089: Added alpha conversion for scikit imread() (07dd39e) [JustAddRobots]
+- ISSUE-062: Changed HASHLONG/SHORT to just HASH. (c72b237) [JustAddRobots]
+- ISSUE-062: Fixed YAML colon + space syntax. (e6212fe) [JustAddRobots]
+- ISSUE-062: Fixed buildspec var exports. (30d2c25) [JustAddRobots]
+- ISSUE-062: Added AWS CodeBuild buildspec. (b7771bf) [JustAddRobots]
+
 0.9.0 (2021-04-22)
 ------------------
 - ISSUE-082: Added docstrings to createjson. (a0d6959) [JustAddRobots]
