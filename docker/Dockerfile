@@ -13,6 +13,7 @@ ENV PATH="${PATH}:/root/.local/bin"
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone && \
     yum -y install \
+    bzip2 \
     git \
     python3 \
     && \
