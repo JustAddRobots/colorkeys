@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
+import io
 import itertools
 import logging
+import urllib
 from pathlib import Path
+
+from colorkeys.constants import _const as CONSTANTS
 
 logger = logging.getLogger(__name__)
 
@@ -14,25 +18,50 @@ def get_imagefiles(imgpaths):
     the shell will automatically expand wildcard arguments without quotes.
 
     Args:
-        imgpaths (list): Web URLs, Wildcards, dirs, and/or lists of files.
+        imgpaths (list): Web URLs, wildcards, dirs, and/or lists of files.
 
-    Returns:
+    eturns:
         imgs (list): Sorted and expanded file list.
     """
     urls = []
+    tars = []
     paths = []
     for i in itertools.chain.from_iterable(imgpaths):
-        if i.startswith(("http://", "https://")):
+        if i.startswith(CONSTANTS().WEB_PREFIXES) and i.endswith(CONSTANTS().IMG_SUFFIXES):
             urls.append(i)
+        elif i.endswith(CONSTANTS().TAR_SUFFIXES):
+            tars.append(i)
         else:
             paths.append([i])
-    path_itrs = [unglob(j) for j in itertools.chain.from_iterable(paths)]
-    path_imgs = {
-        f"{p.parent}/{p.name}" for p in itertools.chain.from_iterable(path_itrs)
+
+    path_unglob = [unglob(j) for j in itertools.chain.from_iterable(paths)]
+    set_unglob = {
+        f"{p.parent}/{p.name}" for p in itertools.chain.from_iterable(path_unglob)
         if p.suffix in [".jpg", ".png"]
     }
-    imgs = path_imgs.union(set(urls))
+    path_untar = [untar(k) for k in itertools.chain.from_iterable(tars)]
+    set_untar = {x for x in itertools.chain.from_iterable(path_untar)}
+    imgs = set_unglob.union(
+        set_untar.union(
+            set(urls)
+        )
+    )
     return sorted(imgs)
+
+
+def untar(tarfile, **kwargs):
+    dest_dir = kwargs.setdefault("dest_dir", "/tmp")
+    if tarfile.startswith(CONSTANTS().WEB_PREFIXES):
+        with urllib.request.urlopen(tarfile) as f:
+            tf = tarfile.open(fileobj=io.BytesIO(f.read()))
+    else:
+        tf = tarfile.open(tarfile)
+    tf.extractall(dest_dir)
+    tar_imgs = [
+        f"{dest_dir}/{i}" for i in tf.getnames()
+        if i.endswith(CONSTANTS().IMG_SUFFIXES)
+    ]
+    return tar_imgs
 
 
 def unglob(imgpath):
