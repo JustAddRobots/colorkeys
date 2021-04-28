@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import boto3
 import io
 import itertools
 import logging
@@ -57,7 +58,7 @@ def untar(filename, **kwargs):
     """Extract tar image archive and return imagepaths of included files.
 
     Args:
-        filename (str): TAR filename.
+        filename (str): TAR filename, includes HTTP(S) and S3 endpoints.
 
     kwargs:
         dest_dir (str): Destination direct for extraction.
@@ -70,6 +71,13 @@ def untar(filename, **kwargs):
     if filename.startswith(CONSTANTS().WEB_PREFIXES):
         with urllib.request.urlopen(filename) as f:
             tf = tarfile.open(fileobj=io.BytesIO(f.read()))
+    elif filename.startswith(CONSTANTS().S3_PREFIXES):
+        p = Path(filename)
+        my_bucket = p.parts[1]
+        my_key = p.parts[2]
+        s3 = boto3.resource("s3")
+        obj = s3.Object(my_bucket, my_key)
+        tf = tarfile.open(fileobj=io.BytesIO(obj.get()["Body"].read()))
     else:
         logger.debug(testvar.get_debug(filename))
         tf = tarfile.open(filename)
