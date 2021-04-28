@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.11.0 (2021-04-28)
+-------------------
+- ISSUE-101: Added S3 bucket tarball handling. (b16ea86) [JustAddRobots]
+
 0.10.1 (2021-04-28)
 -------------------
 - Stage: Removed sort_dicts for pprint, python < 3.8. (1e7342a) [JustAddRobots]
