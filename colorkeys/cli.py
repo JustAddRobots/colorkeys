@@ -160,7 +160,7 @@ def run(args):
         palette = ColorKey(imgsrc, algos, num_clusters, colorspace=colorspace)
         obj = createjson.compile(palette)
         objs.append(obj)
-        logger.debug(testvar.get_debug(obj, sort_dicts=False))
+        logger.debug(testvar.get_debug(obj))
         if showplot:
             palette.show_palettes()
             plt.pause(0.001)

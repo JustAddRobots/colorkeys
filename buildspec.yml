@@ -24,3 +24,4 @@ phases:
       - echo "=== Pushing docker image ==="
       - docker push $IMGLONG
       - docker push $IMGSHORT
+      - docker push $DEFAULT
