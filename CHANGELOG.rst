@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.10.1 (2021-04-28)
+-------------------
+- Stage: Removed sort_dicts for pprint, python < 3.8. (1e7342a) [JustAddRobots]
+- ISSUE-062: Re-added $DEFAULT docker push, added bzip2 for img tarballs. (9c51706) [JustAddRobots]
+
 0.10.0 (2021-04-26)
 -------------------
 - ISSUE-094: Added img.shape to createjson. (6a2731d) [JustAddRobots]
