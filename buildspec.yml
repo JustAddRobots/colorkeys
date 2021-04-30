@@ -11,17 +11,20 @@ phases:
       - export TAG=$(git describe --tags --abbrev=0)
       - export IMGLONG=$ECR_REG/$NAME:$TAG-$HASH-$ARCH
       - export IMGSHORT=$ECR_REG/$NAME:$TAG-$ARCH
-      - export DEFAULT=$ECR_REG/$NAME:default-$ARCH
+      - export STAGE=$ECR_REG/$NAME:stage-$ARCH
   build:
     commands:
       - echo "=== Docker build started ==="
       - docker build --no-cache -t $IMGLONG --build-arg GIT_COMMIT=$HASH --build-arg ENGCOMMON_BRANCH=$ENGCOMMON_BRANCH -f docker/Dockerfile .
       - docker tag $IMGLONG $IMGSHORT
-      - docker tag $IMGLONG $DEFAULT
+      - docker tag $IMGLONG $STAGE
       - echo "=== Docker build completed ==="
   post_build:
     commands:
       - echo "=== Pushing docker image ==="
       - docker push $IMGLONG
       - docker push $IMGSHORT
-      - docker push $DEFAULT
+      - docker push $STAGE
+      - printf '[{"name":"colorkeys","imageUri":"%s"}]' $STAGE > imagedefinitions.json
+artifacts:
+  files: imagedefinitions.json
