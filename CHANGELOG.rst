@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.11.2 (2021-05-01)
+-------------------
+- Stage: Added python requires >=3.6 to setup.py. (31492cf) [JustAddRobots]
+- ISSUE-062: Updated buildspec to use stage tag, artifact. (13779c6) [JustAddRobots]
+- ISSUE-101: Added S3 bucket tarball handling. (c2f68a1) [JustAddRobots]
+
 0.11.0 (2021-04-28)
 -------------------
 - ISSUE-101: Added S3 bucket tarball handling. (b16ea86) [JustAddRobots]
