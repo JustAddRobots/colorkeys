@@ -17,6 +17,10 @@ def constant(f):
 class _const(object):
 
     @constant
+    def S3_PREFIXES():
+        return ("s3://")
+
+    @constant
     def WEB_PREFIXES():
         return ("http://", "https://")
 

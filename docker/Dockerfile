@@ -18,6 +18,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     python3 \
     && \
     python3 -m pip install --upgrade pip setuptools wheel && \
+    python3 -m pip install boto3 && \
     ENGCOMMON_BRANCH=$ENGCOMMON_BRANCH python3 -m pip install --user --force-reinstall git+https://github.com/JustAddRobots/colorkeys.git@$GIT_COMMIT && \
     rm -rf ~/.cache/pip && \
     yum -y remove \
