@@ -218,7 +218,7 @@ move_tag() {
 # Bump version, commit and tag
 bump_version() {
     if [[ $VERBOSE -eq 1 ]]; then echo "INFO: bump_version"; fi
-    if [[ $BRANCH == "stage" ]]; then
+    if [[ $BRANCH == "stage" || $BRANCH == "dev" ]]; then
         echo -e "\n=== $MSG"
         touch $LOCKFILE
         {
@@ -226,7 +226,7 @@ bump_version() {
             bump2version "$PART"
             git commit -am "$MSG"
             git tag -a "$VER_NEW" -m "$MSG"
-            if [[ $PART == "release" ]]; then add_changelog; fi
+            if [[ $PART == "release" && $BRANCH == "stage" ]]; then add_changelog; fi
             git push origin "$BRANCH" --follow-tags
             set +e
         } 2>&1 | tee -a $LOGFILE

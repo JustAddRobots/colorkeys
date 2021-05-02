@@ -32,7 +32,7 @@ setup(
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
     ],
     license = "GPLv3",
-    python_requires = ">=3",
+    python_requires = ">=3.6",
     packages = [
         "colorkeys",
     ],
