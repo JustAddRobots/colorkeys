@@ -13,6 +13,7 @@ import sys
 from matplotlib import pyplot as plt
 
 from colorkeys.colorkeys import ColorKey
+from colorkeys import aws
 from colorkeys import createjson
 from colorkeys import imagepath
 from engcommon import clihelper
@@ -31,16 +32,6 @@ def get_command(args):
         description = "Colorkeys Palette Analysis Tool"
     )
     parser.add_argument(
-        "-d", "--debug",
-        action = "store_true",
-        help = "Print debug information",
-    )
-    parser.add_argument(
-        "--debug-api",
-        action = "store_true",
-        help = "Print API debug information",
-    )
-    parser.add_argument(
         "-a", "--algos",
         action = "store",
         choices = [
@@ -56,6 +47,12 @@ def get_command(args):
         type = str,
     )
     parser.add_argument(
+        "--aws",
+        action = "store_true",
+        default = False,
+        help = "Access AWS resources for ECS task",
+    )
+    parser.add_argument(
         "-c", "--colorspace",
         action = "store",
         choices = [
@@ -63,6 +60,16 @@ def get_command(args):
         ],
         default = "RGB",
         help = "Input image color space",
+    )
+    parser.add_argument(
+        "-d", "--debug",
+        action = "store_true",
+        help = "Print debug information",
+    )
+    parser.add_argument(
+        "--debug-api",
+        action = "store_true",
+        help = "Print API debug information",
     )
     parser.add_argument(
         "-i", "--images",
@@ -140,6 +147,7 @@ def run(args):
     project_name = (os.path.dirname(__file__).split("/")[-1])
     my_cli = clihelper.CLI(project_name, args)
     logger = my_cli.logger
+    logger_noformat = my_cli.logger_noformat
     my_cli.print_versions()
 
     # Get CLI args.
@@ -149,16 +157,21 @@ def run(args):
     algos = args["algos"]
     showplot = args["plot"]
     showjson = args["json"]
+    is_aws = args["aws"]
+
+    # Get AWS info.
+    if is_aws:
+        my_aws = aws.AWS()
+    else:
+        my_aws = None
 
     imgsrcs = imagepath.get_imagefiles(imgpaths)
-    objs = []
-
     if showplot:
         plt.show()
-
+    objs = []
     for imgsrc in imgsrcs:
         palette = ColorKey(imgsrc, algos, num_clusters, colorspace=colorspace)
-        obj = createjson.compile(palette)
+        obj = createjson.compile(palette, aws=my_aws)
         objs.append(obj)
         logger.debug(testvar.get_debug(obj))
         if showplot:
@@ -170,9 +183,12 @@ def run(args):
 
     objs_json = createjson.encode(objs)
     if showjson:
-        print(objs_json)
+        logger_noformat.info(objs_json)
 
-    return objs_json
+    if is_aws:
+        my_aws.upload_S3(objs_json)
+
+    return None
 
 
 def main():

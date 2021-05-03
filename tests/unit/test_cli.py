@@ -4,6 +4,7 @@
 def test_get_command(myargs):
     assert myargs == {
         "algos": ["mbkmeans"],
+        "aws": False,
         "colorspace": "RGB",
         "debug": True,
         "debug_api": False,
