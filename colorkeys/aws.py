@@ -15,7 +15,7 @@ class AWS():
         self.ecs = boto3.client("ecs")
         self.s3 = boto3.client("s3")
         self._task_arn = self._get_task_arn()
-        self._task_hash = self.get_task_hash()
+        self._task_hash = self._get_task_hash()
         self._task_desc = self._get_task_desc()
         self._container_arn = self._get_container_arn()
 
