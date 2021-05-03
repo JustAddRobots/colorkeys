@@ -194,7 +194,12 @@ def run(args):
 def main():
     args = sys.argv[1:]
     d = get_command(args)
-    run(d)
+    try:
+        run(d)
+    except Exception:
+        logging.exception("Exceptions Detected.")
+        logging.critical("Exiting.")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
@@ -203,4 +208,4 @@ if __name__ == "__main__":
     except Exception:
         logging.exception("Exceptions Detected.")
         logging.critical("Exiting.")
-        sys.exit()
+        sys.exit(1)
