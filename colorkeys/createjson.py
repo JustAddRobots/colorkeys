@@ -12,18 +12,22 @@ from engcommon import command
 from engcommon import testvar
 
 
-def compile(palette):
+def compile(palette, **kwargs):
     """Prepare a ColorKey object for JSON encoding.
 
     This compiles a palette object with other relevant info into an object
-    to prepare for JSON encoding.
+    for JSON encoding.
 
     Args:
         palette (colorkeys.ColorKey): palette to prepare.
 
+    kwargs:
+        my_aws (aws.AWS): Instance including AWS container task info.
+
     Retuns:
         obj (dict): Palette ready for JSON encoding.
     """
+    my_aws = kwargs.setdefault("my_aws", None)
     pkg_name = vars(sys.modules[__name__])["__package__"]
     hists = []
     for _, h in palette.hists.items():
@@ -43,6 +47,9 @@ def compile(palette):
         "githash": get_githash(pkg_name),
         "histogram": hists,
     }
+    if my_aws:
+        obj["cpu"] = my_aws.task_desc["cpu"]
+        obj["memory"] = my_aws.task_desc["memory"]
     return obj
 
 
