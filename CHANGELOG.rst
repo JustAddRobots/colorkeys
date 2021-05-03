@@ -1,6 +1,11 @@
 Changelog
 =========
 
+(unreleased)
+------------
+- ISSUE-109: Added aws class for container/task detection. (3fa0186) [JustAddRobots]
+- ISSUE-106: Added bump2version dev tag. (73325e5) [JustAddRobots]
+
 0.11.2 (2021-05-01)
 -------------------
 - Stage: Added python requires >=3.6 to setup.py. (31492cf) [JustAddRobots]
