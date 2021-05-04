@@ -50,7 +50,6 @@ def compile(palette, **kwargs):
         "githash": get_githash(pkg_name),
         "histogram": hists,
     }
-    logger.debug(f"my_aws: {my_aws}")
     if my_aws:
         obj["cpu"] = my_aws.task_desc["cpu"]
         obj["memory"] = my_aws.task_desc["memory"]

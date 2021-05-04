@@ -26,7 +26,6 @@ class AWS():
     def task_desc(self):
         return self._task_desc
 
-    @property
     def upload_S3(self, obj):
         return self._upload_S3(obj)
 
