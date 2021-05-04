@@ -58,8 +58,9 @@ class AWS():
         return task_hash
 
     def _get_task_desc(self):
-        task_desc = self.ecs.describe_tasks(
+        dict_ = self.ecs.describe_tasks(
             cluster = "workers",
             tasks = [self._task_arn],
         )
+        task_desc = next(i for i in dict_["tasks"])
         return task_desc
