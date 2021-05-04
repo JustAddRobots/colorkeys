@@ -58,7 +58,7 @@ def compile(palette, **kwargs):
 
 def encode(obj):
     """Encode Python object to JSON."""
-    return json.dumps(obj, indent=2)
+    return json.dumps(obj)
 
 
 def get_version(pkg_name):
