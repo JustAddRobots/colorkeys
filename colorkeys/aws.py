@@ -34,11 +34,10 @@ class AWS():
         my_bucket = "colorkeys-tmp"
         my_key = f"{jsonfile}.zip"
         logger.debug(f"my_key: {my_key}")
-        logger.debug(f"my_bucker: {my_bucket}")
+        logger.debug(f"my_bucket: {my_bucket}")
         stream = io.BytesIO()
         zf = zipfile.ZipFile(stream, "w")
         zf.writestr(jsonfile, json.dumps(obj))
-        zf.close()
         self.s3.upload_fileobj(zf, my_bucket, my_key)
         return
 
