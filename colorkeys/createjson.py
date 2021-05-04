@@ -3,6 +3,7 @@
 import datetime
 import hashlib
 import json
+import logging
 import pkg_resources
 import re
 import sys
@@ -10,6 +11,8 @@ from urllib import request
 
 from engcommon import command
 from engcommon import testvar
+
+logger = logging.getLogger(__name__)
 
 
 def compile(palette, **kwargs):
@@ -47,6 +50,7 @@ def compile(palette, **kwargs):
         "githash": get_githash(pkg_name),
         "histogram": hists,
     }
+    logger.debug(f"my_aws: {my_aws}")
     if my_aws:
         obj["cpu"] = my_aws.task_desc["cpu"]
         obj["memory"] = my_aws.task_desc["memory"]

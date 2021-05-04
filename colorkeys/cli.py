@@ -171,7 +171,7 @@ def run(args):
     objs = []
     for imgsrc in imgsrcs:
         palette = ColorKey(imgsrc, algos, num_clusters, colorspace=colorspace)
-        obj = createjson.compile(palette, aws=my_aws)
+        obj = createjson.compile(palette, my_aws=my_aws)
         objs.append(obj)
         logger.debug(testvar.get_debug(obj))
         if showplot:
