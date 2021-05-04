@@ -38,7 +38,8 @@ class AWS():
         stream = io.BytesIO()
         zf = zipfile.ZipFile(stream, "w")
         zf.writestr(jsonfile, json.dumps(obj))
-        self.s3.upload_fileobj(zf, my_bucket, my_key)
+        stream.seek(0)
+        self.s3.upload_fileobj(stream, my_bucket, my_key)
         return
 
     def _get_task_arn(self):
