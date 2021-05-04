@@ -36,7 +36,7 @@ class AWS():
         logger.debug(f"my_key: {my_key}")
         logger.debug(f"my_bucker: {my_bucket}")
         stream = io.BytesIO()
-        zf = zipfile.ZipFile(stream, "wb")
+        zf = zipfile.ZipFile(stream, "w")
         zf.writestr(jsonfile, json.dumps(obj))
         zf.close()
         self.s3.upload_fileobj(zf, my_bucket, my_key)
