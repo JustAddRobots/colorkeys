@@ -17,7 +17,6 @@ class AWS():
         self._task_arn = self._get_task_arn()
         self._task_hash = self._get_task_hash()
         self._task_desc = self._get_task_desc()
-        self._container_arn = self._get_container_arn()
 
     @property
     def task_arn(self):
@@ -28,14 +27,6 @@ class AWS():
         return self._task_desc
 
     @property
-    def container_arn(self):
-        return self._container_arn
-
-    @property
-    def container_runtime_id(self):
-        return self._container_runtime_id
-
-    @property
     def upload_S3(self, obj):
         return self._upload_S3(obj)
 
@@ -43,6 +34,7 @@ class AWS():
         jsonfile = f"{self._task_hash}.colorkeys.json"
         my_bucket = "colorkeys-tmp"
         my_key = f"{jsonfile}.zip"
+        logger.debug(f"my_key: {my_key}")
         stream = io.BytesIO()
         zf = zipfile.Zipfile(stream, "wb")
         zf.writestr(jsonfile, json.dumps(obj))
@@ -71,13 +63,3 @@ class AWS():
             tasks = [self._task_arn],
         )
         return task_desc
-
-    def _get_container_arn(self):
-        dict_ = self.ecs.list_container_instances(
-            cluster = "workers",
-            filter = "task:group == family:colorkeys-deploy",
-            maxResults = 1,
-        )
-        container_arn = next(i for i in dict_["containerInstanceArns"])
-        logger.debug(f"container_arn: {container_arn}")
-        return container_arn
