@@ -1,8 +1,24 @@
 Changelog
 =========
 
-(unreleased)
-------------
+0.11.3 (2021-05-05)
+-------------------
+- Stage: Added comments to aws module. (a5090e9) [JustAddRobots]
+- Stage: Removed json dumps indent (was spawning pprint) (afe4213) [JustAddRobots]
+- Stage: Added zipfile close() before s3 upload. (d1cd1a9) [JustAddRobots]
+- Stage: Added BytesIO seek for S3 zipfile upload. (888a826) [JustAddRobots]
+- Stage: Removed manual close() of zipfile. (8a781d5) [JustAddRobots]
+- Stage: Fixed write mode for ZipFile. (879b987) [JustAddRobots]
+- Stage: Fixed ZipFile typo, shortened jsonfile hash. (2a13c91) [JustAddRobots]
+- Stage: Removed unnecessary @property from method. (7b5e8d4) [JustAddRobots]
+- Stage: Fixed task_desc resolution. (4c14036) [JustAddRobots]
+- Stage: Fixed AWS naming convention. (9c7da99) [JustAddRobots]
+- Stage: Removed unnecessary container ARN bits. (d43f720) [JustAddRobots]
+- Stage: Added cluster option to task description detection. (6edc7fa) [JustAddRobots]
+- Stage: Fixed data type for getting task description. (12ce456) [JustAddRobots]
+- Stage: Fixed typo. (7d843a6) [JustAddRobots]
+- Stage: Added exception handling, exit(1) for console_scripts. (3b8e84e) [JustAddRobots]
+- Stage: Added AWS var to Dockerfile, changed from container to task arn. (1b943bc) [JustAddRobots]
 - ISSUE-109: Added aws class for container/task detection. (3fa0186) [JustAddRobots]
 - ISSUE-106: Added bump2version dev tag. (73325e5) [JustAddRobots]
 
