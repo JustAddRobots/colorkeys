@@ -121,6 +121,15 @@ def get_command(args):
 
 
 def set_API_logger(API, level):
+    """Set the loglevel of dependent APIs.
+
+    Args:
+        API (str): API by Python module name.
+        level (str): Log level.
+
+    Returns:
+        None
+    """
     lgr = logging.getLogger(API)
     lgr.setLevel(eval(f"logging.{level}"))
     return None
