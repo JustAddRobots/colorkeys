@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 
-import datetime
 import hashlib
 import json
+import logging
 import pkg_resources
 import re
 import sys
+from datetime import datetime
+from datetime import timezone
 from urllib import request
 
 from engcommon import command
 from engcommon import testvar
+
+logger = logging.getLogger(__name__)
 
 
 def compile(palette, **kwargs):
@@ -40,7 +44,7 @@ def compile(palette, **kwargs):
         })
     obj = {
         "filename": palette.imgsrc,
-        "sha1sum": get_sha1(palette.imgsrc),
+        "filehash": get_filehash(palette.imgsrc),
         "shape": palette.img.shape,
         "timestamp": get_timestamp(),
         "version": get_version(pkg_name),
@@ -50,12 +54,13 @@ def compile(palette, **kwargs):
     if my_aws:
         obj["cpu"] = my_aws.task_desc["cpu"]
         obj["memory"] = my_aws.task_desc["memory"]
+        obj["task_arn"] = my_aws.task_arn
     return obj
 
 
 def encode(obj):
     """Encode Python object to JSON."""
-    return json.dumps(obj, indent=2)
+    return json.dumps(obj)
 
 
 def get_version(pkg_name):
@@ -65,11 +70,7 @@ def get_version(pkg_name):
 
 def get_timestamp():
     """Get current timestamp."""
-    dt = datetime.datetime.now()
-    timestamp = (
-        f"{dt.year}.{dt.month:02d}.{dt.day:02d}-"
-        f"{dt.hour:02d}{dt.minute:02d}{dt.second:02d}"
-    )
+    timestamp = datetime.now(timezone.utc).astimezone().isoformat()
     return timestamp
 
 
@@ -94,22 +95,22 @@ def get_githash(pkg_name):
     return githash
 
 
-def get_sha1(filename):
-    """Get SHA1 of file.
+def get_filehash(filename):
+    """Get hash of file.
 
     Args:
         filename (str): File name.
 
     Returns:
-        sha1sum (str): SHA1 checksum of file.
+        filehash (str): hash digest of file.
     """
     BLOCK_SIZE = 65536
-    sha1sum = hashlib.sha1()
+    filehash = hashlib.blake2b(digest_size=8)
     prefixes = ("http://", "https://")
     with request.urlopen(filename) \
             if filename.startswith(prefixes) else open(filename, "rb") as f:
         fb = f.read(BLOCK_SIZE)
         while len(fb) > 0:
-            sha1sum.update(fb)
+            filehash.update(fb)
             fb = f.read(BLOCK_SIZE)
-    return sha1sum.hexdigest()
+    return filehash.hexdigest()

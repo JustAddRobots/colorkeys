@@ -121,6 +121,15 @@ def get_command(args):
 
 
 def set_API_logger(API, level):
+    """Set the loglevel of dependent APIs.
+
+    Args:
+        API (str): API by Python module name.
+        level (str): Log level.
+
+    Returns:
+        None
+    """
     lgr = logging.getLogger(API)
     lgr.setLevel(eval(f"logging.{level}"))
     return None
@@ -171,7 +180,7 @@ def run(args):
     objs = []
     for imgsrc in imgsrcs:
         palette = ColorKey(imgsrc, algos, num_clusters, colorspace=colorspace)
-        obj = createjson.compile(palette, aws=my_aws)
+        obj = createjson.compile(palette, my_aws=my_aws)
         objs.append(obj)
         logger.debug(testvar.get_debug(obj))
         if showplot:
@@ -194,7 +203,12 @@ def run(args):
 def main():
     args = sys.argv[1:]
     d = get_command(args)
-    run(d)
+    try:
+        run(d)
+    except Exception:
+        logging.exception("Exceptions Detected.")
+        logging.critical("Exiting.")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
@@ -203,4 +217,4 @@ if __name__ == "__main__":
     except Exception:
         logging.exception("Exceptions Detected.")
         logging.critical("Exiting.")
-        sys.exit()
+        sys.exit(1)

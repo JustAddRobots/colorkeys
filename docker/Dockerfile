@@ -6,6 +6,7 @@ ARG ENGCOMMON_BRANCH="${ENGCOMMON_BRANCH}"
 ENV DEBUG=""
 ENV JSON=""
 ENV PLOT=""
+ENV AWS=""
 ENV N_CLUSTERS=""
 ENV IMAGES=""
 ENV PATH="${PATH}:/root/.local/bin"
@@ -26,4 +27,4 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     && \
     yum clean all && rm -rf /var/cache/yum
 
-CMD colorkeys $DEBUG $JSON $PLOT $N_CLUSTERS $IMAGES
+CMD colorkeys $DEBUG $JSON $PLOT $AWS $N_CLUSTERS $IMAGES
