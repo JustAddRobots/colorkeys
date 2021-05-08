@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.11.4 (2021-05-08)
+-------------------
+- Stage: Updated to use task_hash, basename.ext of file. (d5d3b30) [JustAddRobots]
+- ISSUE-062: Fixed bumpme.sh for changelog release. (bad82b8) [JustAddRobots]
+- ISSUE-062: Added blake2b, task_arn in JSON, ISO-8601 timestamp. (f21f259) [JustAddRobots]
+
 0.11.3 (2021-05-05)
 -------------------
 - Stage: Added comments to aws module. (a5090e9) [JustAddRobots]

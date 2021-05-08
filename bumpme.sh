@@ -226,7 +226,9 @@ bump_version() {
             bump2version "$PART"
             git commit -am "$MSG"
             git tag -a "$VER_NEW" -m "$MSG"
-            if [[ $PART == "release" && $BRANCH == "stage" ]]; then add_changelog; fi
+            if [[ $PART == "release" && $BRANCH == "stage" && $VER_CURRENT == *"rc"* ]]; then
+                add_changelog
+            fi
             git push origin "$BRANCH" --follow-tags
             set +e
         } 2>&1 | tee -a $LOGFILE
