@@ -24,6 +24,7 @@ class AWS():
 
     Attributes:
         task_arn (str): ARN of task running colorkeys.
+        task_hash (str): hash of task running colorkeys.
         task_desc (dict): Task description as defined in ECS.
     """
     def __init__(self):
@@ -42,6 +43,11 @@ class AWS():
     def task_arn(self):
         """Task ARN."""
         return self._task_arn
+
+    @property
+    def task_hash(self):
+        """Task hash."""
+        return self._task_hash
 
     @property
     def task_desc(self):

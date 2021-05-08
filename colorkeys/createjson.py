@@ -8,6 +8,7 @@ import re
 import sys
 from datetime import datetime
 from datetime import timezone
+from pathlib import Path
 from urllib import request
 
 from engcommon import command
@@ -43,7 +44,7 @@ def compile(palette, **kwargs):
             "hist_centroids": h.hist_centroids,
         })
     obj = {
-        "filename": palette.imgsrc,
+        "filename": Path(palette.imgsrc).name,
         "filehash": get_filehash(palette.imgsrc),
         "shape": palette.img.shape,
         "timestamp": get_timestamp(),
@@ -54,7 +55,7 @@ def compile(palette, **kwargs):
     if my_aws:
         obj["cpu"] = my_aws.task_desc["cpu"]
         obj["memory"] = my_aws.task_desc["memory"]
-        obj["task_arn"] = my_aws.task_arn
+        obj["task_hash"] = my_aws.task_hash
     return obj
 
 
