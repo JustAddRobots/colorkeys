@@ -12,7 +12,6 @@ credentials preexisting in the environment.
 import boto3
 import io
 import logging
-import json
 import zipfile
 
 logger = logging.getLogger(__name__)
@@ -75,7 +74,7 @@ class AWS():
         logger.debug(f"my_bucket: {my_bucket}")
         zbuffer = io.BytesIO()
         zf = zipfile.ZipFile(zbuffer, "w")
-        zf.writestr(jsonfile, json.dumps(obj))
+        zf.writestr(jsonfile, obj)
         zf.close()
         zbuffer.seek(0)
         self.s3.upload_fileobj(zbuffer, my_bucket, my_key)

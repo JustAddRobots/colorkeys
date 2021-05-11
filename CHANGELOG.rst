@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.11.5 (2021-05-11)
+-------------------
+- ISSUE-062: Removed extra json.dumps(), renamed vars. (8c898e6) [JustAddRobots]
+
 0.11.4 (2021-05-08)
 -------------------
 - Stage: Updated to use task_hash, basename.ext of file. (d5d3b30) [JustAddRobots]
