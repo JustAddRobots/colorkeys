@@ -87,12 +87,12 @@ def get_githash(pkg_name):
     Returns:
         githash (str): Git commit hash.
     """
-    d = command.get_shell_cmd(f"python3 -m pip freeze | grep {pkg_name}")
-    stdout = d["stdout"]
+    dict_ = command.get_shell_cmd(f"python3 -m pip freeze | grep {pkg_name}")
+    stdout = dict_["stdout"]
     regex = f"{pkg_name}.*@([0-9a-f]+)"
-    m = re.search(regex, stdout)
-    testvar.check_null(m)
-    githash = m.groups()[0]
+    match_0 = re.search(regex, stdout)
+    testvar.check_null(match_0)
+    githash = match_0.groups()[0]
     return githash
 
 
