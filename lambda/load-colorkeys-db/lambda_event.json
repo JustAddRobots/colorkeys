@@ -1,0 +1,34 @@
+{
+  "CodePipeline.job": {
+    "id": "4686fee9-4551-4235-bb5a-1b8c4e0a7034",
+    "accountId": "220262429900",
+    "data": {
+      "actionConfiguration": {
+        "configuration": {
+          "FunctionName": "load-colorkeys-db",
+          "UserParameters": "arn:aws:ecs:us-west-1:220262429900:task/workers/5097158d1ef546e0aed86753150530fc"
+        }
+      },
+      "inputArtifacts": [],
+      "outputArtifacts": [
+        {
+          "name": "output-load-dynamodb-colorkeys",
+          "revision": null,
+          "location": {
+            "type": "S3",
+            "s3Location": {
+              "bucketName": "codepipeline-us-west-1-553478111508",
+              "objectKey": "colorkeys/output-loa/4ibKDwg"
+            }
+          }
+        }
+      ],
+      "artifactCredentials": {
+        "accessKeyId": "ASIATGSFJ6TGEG6LIPLV",
+        "secretAccessKey": "7zxIDHTjhHB9aEN1FaA4y2XGwuWx6KqULx1+JVih",
+        "sessionToken": "IQoJb3JpZ2luX2VjEP7//////////wEaCXVzLXdlc3QtMSJGMEQCIH6VALtGDpiL5y4WdmdVnjfoDrklwSdzJWRlounR2qriAiAxeOpDH41eGE9ePeLHlKYyDeMhzZPyfK5Cd9CLIq5mcCrzBAiH//////////8BEAAaDDIyMDI2MjQyOTkwMCIM4TBoqCzRKmEaS9NcKscE4XE2Y5OBPzUisA4h6rF0jAwO+ixPR7icw6uuPsbj8sHWT+Ei0lnRbzLRLBUVnC/Zl9czj86SiBo2eQp9iw/4zNrTBFbVBS6HrgVI6gH+pD7/OxPzA6JRVesep90wIHuhG9j1qT3WanOznPAaDoXARHkcRd+goLzdewh2JdoVZvsDQ5tjKdp/8D67gD92XfIr3ghaB458pcyAZZPaQUQstjDMHz9ly+dWKfYJgo4p9XgaJ7kV2wmhBn3KM/t9dYNZBgoItGyz7cO05ginO61y0mNwK+DrW0qNd+pgxMmfOBOOx7wNf5qvdbXt/qKR1YolWopsycBkNp/7+gopznKi5Z/8LZTg8rBe3X7wRPEynAK1bjiU8Zc3pahf+GIGFiBZVsqVl9MhBZy4DZfWhFD4h5WvpiixNOdxvJp6CMz3mlFjcDJ/73mkeWqznqrtCvGtcYHa8M3GsWQCsK8gM72rwdzvzGfMKSDjOh5xziPSxJgKWi6yxvItcDwjA/Iov/kozL2ZJpy0OTaWLKhdDZq7d1EGq/zaXvzTeVfmvnYC+N+aplKBN5GFA0d461luY4mVsmQb4NN1uk/qURQRQXeEwISsw2+3esOc8G+aI/UYVfkAzmnyasOc9Msn4Xes0EUqFO4+DwtwRAeBufp50e9exMN65W+pk96RezmC00TfosnLQw/D0DNG7XtJ6Xw8QXXu9xveu8vmR3mWYeAdutD6l8HiA0yhxJbvBTeOUnASMKxEBxbAuftC//uOFvHSZnKOV5wk2AeOtjCGneOEBjrAAVJGUfDJBFSHOSNTeShTDulfWVQWte3AuUDRZrmWR04mR6IP+/v1KKDkCJH2r+M8pG8nqk8XCA/m/44LbMX/nanlS50KrN1OAnaQ17nn2ghUWEPHomWags+x71VJBRtLQLADnEOHeJ5S0oPpAI4BWs/yZ18NtGs9aVuS28bvoOKOV0lG0l4gRaP+q5ynXyKmjTpomH8gJ9L1LyR1YF43q/kl2VYfgdUaVAxXr3F/0nueppd7bGtICxpxJAmEBCNHng==",
+        "expirationTime": 1620627978000
+      }
+    }
+  }
+}

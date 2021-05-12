@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Run colorkeys on Fargate ECS
+Resources:
+  runfargateecscolorkeys:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: run-fargate-ecs-colorkeys.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./lambda/run-fargate-ecs-colorkeys
+      Description: ''
+      MemorySize: 128
+      Timeout: 180
+      Role: 'arn:aws:iam::220262429900:role/lambda-codepipeline-exec'

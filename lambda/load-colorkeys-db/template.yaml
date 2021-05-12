@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Lambda for loading colorkeys S3 JSON to DynamoDB
+Resources:
+  loadcolorkeysdb:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri:  lambda/load-colorkeys-db
+      Handlers: load-colorkeys-db.lambda_handler
+      Runtime: python3.8
+      Description: ''
+      MemorySize: 128
+      Timeout: 10
+      Role: 'arn:aws:iam::220262429900:role/lambda-codepipeline-exec'
