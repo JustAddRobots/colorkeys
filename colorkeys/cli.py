@@ -13,6 +13,7 @@ import sys
 from matplotlib import pyplot as plt
 
 from colorkeys.colorkeys import ColorKey
+from colorkeys.render import Layout
 from colorkeys import aws
 from colorkeys import createjson
 from colorkeys import imagepath
@@ -53,13 +54,16 @@ def get_command(args):
         help = "Access AWS resources for ECS task",
     )
     parser.add_argument(
-        "-c", "--colorspace",
+        "-c", "--colorspaces",
         action = "store",
         choices = [
+            "HSV",
             "RGB",
         ],
-        default = "RGB",
-        help = "Input image color space",
+        default = [
+            "RGB",
+        ],
+        help = "Colorspaces for palette generation",
     )
     parser.add_argument(
         "-d", "--debug",
@@ -161,7 +165,7 @@ def run(args):
 
     # Get CLI args.
     imgpaths = args["images"]
-    colorspace = args["colorspace"]
+    colorspaces = args["colorspaces"]
     num_clusters = args["num_clusters"]
     algos = args["algos"]
     showplot = args["plot"]
@@ -179,12 +183,22 @@ def run(args):
         plt.show()
     objs = []
     for imgsrc in imgsrcs:
-        palette = ColorKey(imgsrc, algos, num_clusters, colorspace=colorspace)
-        obj = createjson.compile(palette, my_aws=my_aws)
-        objs.append(obj)
-        logger.debug(testvar.get_debug(obj))
+        palettes = []
+        for algo in algos:
+            for colorspace in colorspaces:
+                palette = ColorKey(
+                    imgsrc,
+                    algo,
+                    num_clusters,
+                    colorspace = colorspace
+                )
+                palettes.append(palette)
+                obj = createjson.compile(palette, my_aws=my_aws)
+                logger.debug(testvar.get_debug(obj))
+                objs.append(obj)
         if showplot:
-            palette.show_palettes()
+            layout = Layout(palettes)
+            layout.draw_palettes()
             plt.pause(0.001)
 
     if showplot:
