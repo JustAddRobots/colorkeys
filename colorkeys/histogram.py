@@ -16,6 +16,7 @@ from skimage import draw as skidraw
 from skimage import util as skiutil
 
 from colorkeys.centroids import Clust
+from colorkeys.constants import _const as CONSTANTS
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ class Hist(Clust):
         hist_bar (numpy.ndarray): Normalized histogram bar scaled to image width.
         hist_bar_height (int): Histogram bar height.
     """
-    def __init__(self, img, algo, num_clusters, colorspace, render_width):
+    def __init__(self, img, algo, num_clusters, colorspace, rescaled_width):
         """Init Hist.
 
         Args:
@@ -39,20 +40,20 @@ class Hist(Clust):
             algo (str): Clustering algorithm requested.
             num_clusters (int): Requested Number of clusters/centroids.
             colorspace (str): Requested color space of histogram.
-            render_width (int): Width of image (used to define width for histogram bar).
+            rescaled_width (int): Width of image (used to define width for histogram bar).
         """
         self._algo = self._get_algo(algo)
         self._colorspace = self._get_colorspace(colorspace)
         img = self._preprocess(img)
         super().__init__(img, algo, num_clusters)
 
-        self._hist_bar_height = 30
+        self._hist_bar_height = CONSTANTS().HIST_BAR_HEIGHT
         self._hist = self._get_hist()
         self._hist_centroids = self._get_hist_centroids()
         self._hist_bar = get_hist_bar(
             self._hist_centroids,
             height = self._hist_bar_height,
-            width = render_width
+            width = rescaled_width
         )
 
     @property

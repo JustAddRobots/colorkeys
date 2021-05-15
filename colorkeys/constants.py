@@ -31,3 +31,15 @@ class _const(object):
     @constant
     def TAR_SUFFIXES():
         return (".tar.bz2", ".tar.gz")
+
+    @constant
+    def RESCALED_HEIGHT():
+        return 400  # px
+
+    @constant
+    def HIST_BAR_HEIGHT():
+        return 30  # px
+
+    @constant
+    def FIGURE_SIZE():
+        return (8.00, 4.50)  # (x100) px
