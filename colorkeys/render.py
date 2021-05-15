@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 
 import logging
+import os.path
 
 from matplotlib import gridspec
 from matplotlib import pyplot as plt
+from urllib.parse import urlparse
+
+from colorkeys.constants import _const as CONSTANTS
 
 logger = logging.getLogger(__name__)
 
@@ -37,9 +41,16 @@ class Layout():
         Returns:
             canvas (pyplot.figure): Canvas on which layout and plot images.
         """
+        figure_size = CONSTANTS().FIGURE_SIZE
+        if self._any_palette.imgsrc.startswith(("http://", "https://")):
+            u = urlparse(self.imgsrc)
+            figure_name = u.path.split("/")[-1]
+        else:
+            figure_name = os.path.basename(self.imgsrc)
+
         canvas = plt.figure(
-            num = self._any_palette.figure_name,
-            figsize = self._any_palette.figure_size,
+            num = figure_name,
+            figsize = figure_size,
             facecolor = "grey",
             tight_layout = {
                 "rect": (0, 0, 1, 1),

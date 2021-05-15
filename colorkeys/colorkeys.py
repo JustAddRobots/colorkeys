@@ -10,12 +10,8 @@ This module creates and displays color keys (palettes) from a requested image.
 """
 
 import logging
-import os.path
-
-from urllib.parse import urlparse
 
 from colorkeys.artwork import Artwork
-from colorkeys.constants import _const as CONSTANTS
 from colorkeys.histogram import Hist
 
 logger = logging.getLogger(__name__)
@@ -45,19 +41,10 @@ class ColorKey(Artwork):
             algos (list): Algorithms requested.
         """
         self._hist = self._get_hist(algo, num_clusters)
-        self._figure_size = CONSTANTS().FIGURE_SIZE
-        if self.imgsrc.startswith(("http://", "https://")):
-            u = urlparse(self.imgsrc)
-            self._figure_name = u.path.split("/")[-1]
-        else:
-            self._figure_name = os.path.basename(self.imgsrc)
 
     @property
     def hist(self):
         return self._hist
-
-    def show_palettes(self):
-        return self._show_palettes()
 
     def _get_hist(self, algo, num_clusters):
         """Get histogram information for the algorithm requested.
