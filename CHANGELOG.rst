@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.11.6 (2021-05-16)
+-------------------
+- Stage: Added COLORSPACES ENV VAR. (9823ac7) [JustAddRobots]
+- ISSUE-118: Cleaned up added comments. (5891c85) [JustAddRobots]
+- ISSUE-118: Updated for separated img and hist colorspaces. (a2d67b5) [JustAddRobots]
+- ISSUE-118: Moved figure_size, figure_name to render module. (39f8ab1) [JustAddRobots]
+- ISSUE-118: Refactored for 1 histogram per colorkey. (7c42d1d) [JustAddRobots]
+
 0.11.5 (2021-05-11)
 -------------------
 - ISSUE-062: Removed extra json.dumps(), renamed vars. (8c898e6) [JustAddRobots]
