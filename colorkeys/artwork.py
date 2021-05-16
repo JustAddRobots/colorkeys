@@ -25,7 +25,7 @@ class Artwork:
 
     Attributes:
         imgsrc (str): Image source.
-        colorspace (str): Color space of image.
+        img_colorspace (str): Color space of image.
         img (numpy.ndarray): Matrix of image data.
         img_height (int): Height of image.
         img_width (int): Width of image.
@@ -46,7 +46,7 @@ class Artwork:
             colorspace (str): Color space of image.
         """
         self._imgsrc = self._get_imgsrc(imgsrc)
-        self._colorspace = self._get_colorspace(kwargs)
+        self._img_colorspace = self._get_colorspace()
         self._img = self._get_img()
         self._img_height, self._img_width, self._num_channels = self._img.shape
         self._aspect_ratio = self._img_width / self._img_height
@@ -65,9 +65,9 @@ class Artwork:
         return self._imgsrc
 
     @property
-    def colorspace(self):
+    def img_colorspace(self):
         "Image color space"
-        return self._colorspace
+        return self._img_colorspace
 
     @property
     def img(self):
@@ -136,17 +136,14 @@ class Artwork:
                 )
         return imgsrc
 
-    def _get_colorspace(self, kwargs):
+    def _get_colorspace(self):
         """Get image color space.
 
         An image is simply a matrix of data with no embedded color space information.
-        So it is not possible to detect the color space. "RGB" is the assumed default.
+        So it is not possible to detect the color space. Make "RGB" the default.
 
         Args:
             None
-
-        **kwargs:
-            colorspace (str): Color space of requested image.
 
         Returns
             colorspace (str): Color space of requested image.
@@ -155,7 +152,7 @@ class Artwork:
             TypeError: colorspace not a string.
             ValueError: colorspace not valid.
         """
-        colorspace = kwargs.setdefault("colorspace", "RGB")
+        colorspace = CONSTANTS().DEFAULT_COLORSPACE
         if not isinstance(colorspace, str):
             raise TypeError("colorspace must be a string")
         if colorspace not in ["RGB", "HSV"]:
@@ -181,10 +178,10 @@ class Artwork:
         if img.shape[2] == 4:
             img = img[:, :, :3]  # Disregard alpha channel
 
-        if self._colorspace == "RGB":
+        if self._img_colorspace == "RGB":
             pass
-        elif self._colorspace == "HSV":
+        elif self._img_colorspace == "HSV":
             img = skicolor.hsv2rgb(img)
         else:
-            raise ValueError(f"Invalid colorspace, {self.colorspace}")
+            raise ValueError(f"Invalid colorspace, {self._img_colorspace}")
         return img

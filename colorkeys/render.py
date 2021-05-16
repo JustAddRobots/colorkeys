@@ -17,6 +17,8 @@ class Layout():
     def __init__(self, palettes):
         self._palettes = palettes
         self._any_palette = next(iter(self._palettes))
+        self._figure_size = CONSTANTS().FIGURE_SIZE
+        self._figure_name = self._get_figure_name()
         self._canvas = self._create_canvas()
         self._grid = self._create_layout()
         self._titlefont = {
@@ -32,6 +34,14 @@ class Layout():
         self._add_hist_bars_to_canvas()
         return None
 
+    def _get_figure_name(self):
+        if self._any_palette.imgsrc.startswith(("http://", "https://")):
+            u = urlparse(self._any_palette.imgsrc)
+            figure_name = u.path.split("/")[-1]
+        else:
+            figure_name = os.path.basename(self._any_palette.imgsrc)
+        return figure_name
+
     def _create_canvas(self):
         """Create blank grey canvas, using instance palette info.
 
@@ -41,16 +51,9 @@ class Layout():
         Returns:
             canvas (pyplot.figure): Canvas on which layout and plot images.
         """
-        figure_size = CONSTANTS().FIGURE_SIZE
-        if self._any_palette.imgsrc.startswith(("http://", "https://")):
-            u = urlparse(self.imgsrc)
-            figure_name = u.path.split("/")[-1]
-        else:
-            figure_name = os.path.basename(self.imgsrc)
-
         canvas = plt.figure(
-            num = figure_name,
-            figsize = figure_size,
+            num = self._figure_name,
+            figsize = self._figure_size,
             facecolor = "grey",
             tight_layout = {
                 "rect": (0, 0, 1, 1),
@@ -130,7 +133,7 @@ class Layout():
         art.set_title(
             fontdict = self._titlefont,
             label = (
-                f"{self._any_palette.figure_name}, "
+                f"{self._figure_name}, "
                 f"{self._any_palette.img_width} x {self._any_palette.img_height} px"
             ),
             loc = "center",
@@ -153,7 +156,7 @@ class Layout():
             bars[algo_cs] = self._canvas.add_subplot(self._grid[i])
             bars[algo_cs].grid(color="red", linestyle="-", linewidth=1)
             plt.axis("off")
-            bars.imshow(p.hist.hist_bar, aspect="equal")
+            bars[algo_cs].imshow(p.hist.hist_bar, aspect="equal")
             bars[algo_cs].set_title(
                 fontdict = self._titlefont,
                 label = (
