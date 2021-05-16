@@ -33,6 +33,10 @@ class _const(object):
         return (".tar.bz2", ".tar.gz")
 
     @constant
+    def DEFAULT_COLORSPACE():
+        return "RGB"
+
+    @constant
     def RESCALED_HEIGHT():
         return 400  # px
 

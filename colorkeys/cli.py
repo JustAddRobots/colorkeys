@@ -43,7 +43,7 @@ def get_command(args):
         default = [
             "mbkmeans",
         ],
-        help = "Clustering algorithm(s) to use",
+        help = "Clustering algorithm(s) for color detection",
         nargs = "+",
         type = str,
     )
@@ -51,7 +51,7 @@ def get_command(args):
         "--aws",
         action = "store_true",
         default = False,
-        help = "Access AWS resources for ECS task",
+        help = "Access AWS resources for CI/CD",
     )
     parser.add_argument(
         "-c", "--colorspaces",
@@ -63,7 +63,9 @@ def get_command(args):
         default = [
             "RGB",
         ],
-        help = "Colorspaces for palette generation",
+        help = "Colorspaces for color palette analysis",
+        nargs = "+",
+        type = str,
     )
     parser.add_argument(
         "-d", "--debug",
@@ -78,7 +80,7 @@ def get_command(args):
     parser.add_argument(
         "-i", "--images",
         action = "append",
-        help = "Images to process",
+        help = "Image(s) to process",
         nargs = "+",
         required = True,
         type = str,
@@ -86,7 +88,7 @@ def get_command(args):
     parser.add_argument(
         "-j", "--json",
         action = "store_true",
-        help = "Output as JSON",
+        help = "Print JSON information",
     )
     parser.add_argument(
         "-l", "--logid",
@@ -96,7 +98,7 @@ def get_command(args):
         type = str,
     )
     parser.add_argument(
-        "-n", "--num_clusters",
+        "-n", "--num-clusters",
         action = "store",
         help = "Number of clusters to detect",
         required = True,
@@ -112,7 +114,7 @@ def get_command(args):
     parser.add_argument(
         "-p", "--plot",
         action = "store_true",
-        help = "Plot color keys to display",
+        help = "Plot image and color key histogram bar",
     )
     parser.add_argument(
         "-v", "--version",
@@ -190,7 +192,7 @@ def run(args):
                     imgsrc,
                     algo,
                     num_clusters,
-                    colorspace = colorspace
+                    colorspace = colorspace,
                 )
                 palettes.append(palette)
                 obj = createjson.compile(palette, my_aws=my_aws)
@@ -204,12 +206,12 @@ def run(args):
     if showplot:
         input("\nPress [Return] to exit.")
 
-    objs_json = createjson.encode(objs)
-    if showjson:
-        logger_noformat.info(objs_json)
-
-    if is_aws:
-        my_aws.upload_S3(objs_json)
+    if showjson or is_aws:
+        objs_json = createjson.encode(objs)
+        if showjson:
+            logger_noformat.info(objs_json)
+        if is_aws:
+            my_aws.upload_S3(objs_json)
 
     return None
 

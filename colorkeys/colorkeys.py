@@ -40,6 +40,7 @@ class ColorKey(Artwork):
             num_clusters (int): Number of clusters requested.
             algos (list): Algorithms requested.
         """
+        self._hist_colorspace = kwargs["colorspace"]
         self._hist = self._get_hist(algo, num_clusters)
 
     @property
@@ -63,7 +64,7 @@ class ColorKey(Artwork):
             self.img,
             algo,
             num_clusters,
-            self.colorspace,
+            self._hist_colorspace,
             self.rescaled_width,
         )
         return hist
