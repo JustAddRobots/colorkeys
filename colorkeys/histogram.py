@@ -28,7 +28,7 @@ class Hist(Clust):
     Attributes:
         hist (numpy.ndarray): Normalized histogram of centroids.
         hist_centroids (dict): RGB values ([R,G,B]) by normalised percentage.
-        colorspace (str): Histogram color space
+        colorspace (str): Histogram color space.
         hist_bar (numpy.ndarray): Normalized histogram bar scaled to image width.
         hist_bar_height (int): Histogram bar height.
     """
@@ -40,7 +40,7 @@ class Hist(Clust):
             algo (str): Clustering algorithm requested.
             num_clusters (int): Requested Number of clusters/centroids.
             colorspace (str): Requested color space of histogram.
-            rescaled_width (int): Width of image (used to define width for histogram bar).
+            rescaled_width (int): Width of image (defines width for histogram bar).
         """
         self._algo = self._get_algo(algo)
         self._colorspace = self._get_colorspace(colorspace)

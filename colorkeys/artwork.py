@@ -24,7 +24,7 @@ class Artwork:
     """A class for loading image data and exposing underliying image properties.
 
     Attributes:
-        imgsrc (str): Image source.
+        imgsrc (str): Image source location.
         img_colorspace (str): Color space of image.
         img (numpy.ndarray): Matrix of image data.
         img_height (int): Height of image.
@@ -35,15 +35,11 @@ class Artwork:
         rescaled_height (int): Height of display image.
         rescaled_width (int): Width of display image.
     """
-
     def __init__(self, imgsrc, **kwargs):
         """Init Artwork.
 
         Args:
-            imgsrc (str): Image source.
-
-        **kwargs:
-            colorspace (str): Color space of image.
+            imgsrc (str): Image source location.
         """
         self._imgsrc = self._get_imgsrc(imgsrc)
         self._img_colorspace = self._get_colorspace()
@@ -109,10 +105,6 @@ class Artwork:
         "Image width"
         return self._rescaled_width
 
-    def show_debug(self):
-        "Show class attribute debug information."
-        return self._show_debug()
-
     def _get_imgsrc(self, imgsrc):
         """Get imgsrc.
 
@@ -140,13 +132,13 @@ class Artwork:
         """Get image color space.
 
         An image is simply a matrix of data with no embedded color space information.
-        So it is not possible to detect the color space. Make "RGB" the default.
+        So it is not possible to detect the color space. The colorspace must be set.
 
         Args:
             None
 
         Returns
-            colorspace (str): Color space of requested image.
+            colorspace (str): Default "RGB" colorspace.
 
         Raises:
             TypeError: colorspace not a string.
