@@ -5,8 +5,7 @@ This module creates and displays color keys (palettes) from a requested image.
 
     Typical Usage:
 
-    my_colorkey = ColorKey("my_image_file.png", ["kmeans"], 5)
-    my_colorkey.show_palettes()
+    my_colorkey = ColorKey("my_image_file.png", ["kmeans"], 5, colorspace="RGB")
 """
 
 import logging
@@ -25,8 +24,7 @@ class ColorKey(Artwork):
     algorithm + colorspace.
 
     Attributes:
-        hists (dict): colorkeys.histogram.Hist(s), key is "{algo}_{colorspace}"
-        show_palettes (None): Display image(s) and palette(s).
+        hist (colorkeys.histogram.Hist): Histogram information.
     """
     def __init__(self, imgsrc, algo, num_clusters, **kwargs):
         super().__init__(imgsrc, **kwargs)
@@ -37,8 +35,11 @@ class ColorKey(Artwork):
 
         Args:
             imgsrc (str): Image source location.
-            num_clusters (int): Number of clusters requested.
             algos (list): Algorithms requested.
+            num_clusters (int): Number of clusters requested.
+
+        kwargs:
+            colorspace (str): Colorspace for which to generate histogram information.
         """
         self._hist_colorspace = kwargs["colorspace"]
         self._hist = self._get_hist(algo, num_clusters)
@@ -51,14 +52,11 @@ class ColorKey(Artwork):
         """Get histogram information for the algorithm requested.
 
         Args:
-            num_clusters (int): Number of clusters requested.
             algo (str): Algorithm requested.
+            num_clusters (int): Number of clusters requested.
 
         Returns:
-            hist (dict): colorkeys.histogram.Hist object keyed by algorithm
-                and colorspace combined {algo}_{colorspace} string.
-            Ex:
-                hist["kmeans_RGB"] = colorkeys.histogram.Hist
+            hist (colorkeys.histogram.Hist): Histogram information.
         """
         hist = Hist(
             self.img,
