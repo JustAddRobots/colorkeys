@@ -15,6 +15,8 @@ import skimage.io as skiio
 import skimage.color as skicolor
 import skimage.transform as skitransform
 
+from colorkeys.constants import _const as CONSTANTS
+
 logger = logging.getLogger(__name__)
 
 
@@ -22,50 +24,46 @@ class Artwork:
     """A class for loading image data and exposing underliying image properties.
 
     Attributes:
-        imgsrc (str): Image source.
-        colorspace (str): Color space of image.
+        imgsrc (str): Image source location.
+        img_colorspace (str): Color space of image.
         img (numpy.ndarray): Matrix of image data.
         img_height (int): Height of image.
         img_width (int): Width of image.
         num_channels (int): Number of channels in image.
         aspect_ratio (float): Aspect ratio of image.
-        render (numpy.ndarray): Matrix of image rescaled for display.
-        render_height (int): Height of display image.
-        render_width (int): Width of display image.
+        img_rescaled (numpy.ndarray): Matrix of image rescaled for display.
+        rescaled_height (int): Height of display image.
+        rescaled_width (int): Width of display image.
     """
-
     def __init__(self, imgsrc, **kwargs):
         """Init Artwork.
 
         Args:
-            imgsrc (str): Image source.
-
-        **kwargs:
-            colorspace (str): Color space of image.
+            imgsrc (str): Image source location.
         """
         self._imgsrc = self._get_imgsrc(imgsrc)
-        self._colorspace = self._get_colorspace(kwargs)
+        self._img_colorspace = self._get_colorspace()
         self._img = self._get_img()
         self._img_height, self._img_width, self._num_channels = self._img.shape
         self._aspect_ratio = self._img_width / self._img_height
-        self._render_height = 400
-        self._render_width = int(self.aspect_ratio * self._render_height)
-        self._render = skitransform.rescale(
+        self._rescaled_height = CONSTANTS().RESCALED_HEIGHT
+        self._rescaled_width = int(self.aspect_ratio * self._rescaled_height)
+        self._img_rescaled = skitransform.rescale(
             self.img,
-            (self.render_width / self.img_width),
+            (self.rescaled_width / self.img_width),
             multichannel = True,
             anti_aliasing = True,
         )
 
     @property
     def imgsrc(self):
-        "Image source"
+        "Image source location"
         return self._imgsrc
 
     @property
-    def colorspace(self):
+    def img_colorspace(self):
         "Image color space"
-        return self._colorspace
+        return self._img_colorspace
 
     @property
     def img(self):
@@ -93,23 +91,19 @@ class Artwork:
         return self._aspect_ratio
 
     @property
-    def render(self):
-        "Image matrix rescaled and for display"
-        return self._render
+    def img_rescaled(self):
+        "Image matrix rescaled for display"
+        return self._img_rescaled
 
     @property
-    def render_height(self):
+    def rescaled_height(self):
         "Image height"
-        return self._render_height
+        return self._rescaled_height
 
     @property
-    def render_width(self):
+    def rescaled_width(self):
         "Image width"
-        return self._render_width
-
-    def show_debug(self):
-        "Show class attribute debug information."
-        return self._show_debug()
+        return self._rescaled_width
 
     def _get_imgsrc(self, imgsrc):
         """Get imgsrc.
@@ -134,26 +128,23 @@ class Artwork:
                 )
         return imgsrc
 
-    def _get_colorspace(self, kwargs):
+    def _get_colorspace(self):
         """Get image color space.
 
         An image is simply a matrix of data with no embedded color space information.
-        So it is not possible to detect the color space. "RGB" is the assumed default.
+        So it is not possible to detect the color space. The colorspace must be set.
 
         Args:
             None
 
-        **kwargs:
-            colorspace (str): Color space of requested image.
-
         Returns
-            colorspace (str): Color space of requested image.
+            colorspace (str): Default "RGB" colorspace.
 
         Raises:
             TypeError: colorspace not a string.
             ValueError: colorspace not valid.
         """
-        colorspace = kwargs.setdefault("colorspace", "RGB")
+        colorspace = CONSTANTS().DEFAULT_COLORSPACE
         if not isinstance(colorspace, str):
             raise TypeError("colorspace must be a string")
         if colorspace not in ["RGB", "HSV"]:
@@ -175,16 +166,14 @@ class Artwork:
         Raises:
             ValueError: colorspace not valid..
         """
-        colorspace = self._colorspace
         img = skiio.imread(self._imgsrc)
         if img.shape[2] == 4:
             img = img[:, :, :3]  # Disregard alpha channel
 
-        if colorspace == "RGB":
+        if self._img_colorspace == "RGB":
             pass
-        elif colorspace == "HSV":
+        elif self._img_colorspace == "HSV":
             img = skicolor.hsv2rgb(img)
         else:
-            raise ValueError(f"Invalid colorspace, {colorspace}")
-
+            raise ValueError(f"Invalid colorspace, {self._img_colorspace}")
         return img

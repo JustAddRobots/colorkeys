@@ -13,6 +13,7 @@ import sys
 from matplotlib import pyplot as plt
 
 from colorkeys.colorkeys import ColorKey
+from colorkeys.render import Layout
 from colorkeys import aws
 from colorkeys import createjson
 from colorkeys import imagepath
@@ -42,7 +43,7 @@ def get_command(args):
         default = [
             "mbkmeans",
         ],
-        help = "Clustering algorithm(s) to use",
+        help = "Clustering algorithm(s) for color detection",
         nargs = "+",
         type = str,
     )
@@ -50,16 +51,21 @@ def get_command(args):
         "--aws",
         action = "store_true",
         default = False,
-        help = "Access AWS resources for ECS task",
+        help = "Access AWS resources for CI/CD",
     )
     parser.add_argument(
-        "-c", "--colorspace",
+        "-c", "--colorspaces",
         action = "store",
         choices = [
+            "HSV",
             "RGB",
         ],
-        default = "RGB",
-        help = "Input image color space",
+        default = [
+            "RGB",
+        ],
+        help = "Colorspaces for color palette analysis",
+        nargs = "+",
+        type = str,
     )
     parser.add_argument(
         "-d", "--debug",
@@ -74,7 +80,7 @@ def get_command(args):
     parser.add_argument(
         "-i", "--images",
         action = "append",
-        help = "Images to process",
+        help = "Image(s) to process",
         nargs = "+",
         required = True,
         type = str,
@@ -82,7 +88,7 @@ def get_command(args):
     parser.add_argument(
         "-j", "--json",
         action = "store_true",
-        help = "Output as JSON",
+        help = "Print JSON information",
     )
     parser.add_argument(
         "-l", "--logid",
@@ -92,7 +98,7 @@ def get_command(args):
         type = str,
     )
     parser.add_argument(
-        "-n", "--num_clusters",
+        "-n", "--num-clusters",
         action = "store",
         help = "Number of clusters to detect",
         required = True,
@@ -108,7 +114,7 @@ def get_command(args):
     parser.add_argument(
         "-p", "--plot",
         action = "store_true",
-        help = "Plot color keys to display",
+        help = "Plot image and color key histogram bar",
     )
     parser.add_argument(
         "-v", "--version",
@@ -161,7 +167,7 @@ def run(args):
 
     # Get CLI args.
     imgpaths = args["images"]
-    colorspace = args["colorspace"]
+    colorspaces = args["colorspaces"]
     num_clusters = args["num_clusters"]
     algos = args["algos"]
     showplot = args["plot"]
@@ -179,23 +185,33 @@ def run(args):
         plt.show()
     objs = []
     for imgsrc in imgsrcs:
-        palette = ColorKey(imgsrc, algos, num_clusters, colorspace=colorspace)
-        obj = createjson.compile(palette, my_aws=my_aws)
-        objs.append(obj)
-        logger.debug(testvar.get_debug(obj))
+        palettes = []
+        for algo in algos:
+            for colorspace in colorspaces:
+                palette = ColorKey(
+                    imgsrc,
+                    algo,
+                    num_clusters,
+                    colorspace = colorspace,
+                )
+                palettes.append(palette)
+                obj = createjson.compile(palette, my_aws=my_aws)
+                logger.debug(testvar.get_debug(obj))
+                objs.append(obj)
         if showplot:
-            palette.show_palettes()
+            layout = Layout(palettes)
+            layout.draw_palettes()
             plt.pause(0.001)
 
     if showplot:
         input("\nPress [Return] to exit.")
 
-    objs_json = createjson.encode(objs)
-    if showjson:
-        logger_noformat.info(objs_json)
-
-    if is_aws:
-        my_aws.upload_S3(objs_json)
+    if showjson or is_aws:
+        objs_json = createjson.encode(objs)
+        if showjson:
+            logger_noformat.info(objs_json)
+        if is_aws:
+            my_aws.upload_S3(objs_json)
 
     return None
 

@@ -59,4 +59,4 @@ def myhist():
 
 @pytest.fixture(scope="session")
 def mycolorkey():
-    return ColorKey(testimg, ["mbkmeans"], 5)
+    return ColorKey(testimg, "mbkmeans", 5, colorspace="RGB")

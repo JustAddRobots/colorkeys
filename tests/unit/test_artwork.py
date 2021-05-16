@@ -8,7 +8,7 @@ def test_filename(myartwork):
 
 
 def test_colorspace(myartwork):
-    assert myartwork.colorspace == "RGB"
+    assert myartwork.img_colorspace == "RGB"
 
 
 def test_img(myartwork):

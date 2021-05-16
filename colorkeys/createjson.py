@@ -34,15 +34,13 @@ def compile(palette, **kwargs):
     """
     my_aws = kwargs.setdefault("my_aws", None)
     pkg_name = vars(sys.modules[__name__])["__package__"]
-    hists = []
-    for _, h in palette.hists.items():
-        hists.append({
-            "algo": h.algo,
-            "colorspace": h.colorspace,
-            "n_clusters": h.num_clusters,
-            "stopwatch": h.stopwatch,
-            "hist_centroids": h.hist_centroids,
-        })
+    histogram = {
+        "algo": palette.hist.algo,
+        "colorspace": palette.hist.colorspace,
+        "n_clusters": palette.hist.num_clusters,
+        "stopwatch": palette.hist.stopwatch,
+        "hist_centroids": palette.hist.hist_centroids,
+    }
     obj = {
         "filename": Path(palette.imgsrc).name,
         "filehash": get_filehash(palette.imgsrc),
@@ -50,7 +48,7 @@ def compile(palette, **kwargs):
         "timestamp": get_timestamp(),
         "version": get_version(pkg_name),
         "githash": get_githash(pkg_name),
-        "histogram": hists,
+        "histogram": histogram,
     }
     if my_aws:
         obj["cpu"] = my_aws.task_desc["cpu"]

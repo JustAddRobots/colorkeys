@@ -5,7 +5,7 @@ def test_get_command(myargs):
     assert myargs == {
         "algos": ["mbkmeans"],
         "aws": False,
-        "colorspace": "RGB",
+        "colorspaces": ["RGB"],
         "debug": True,
         "debug_api": False,
         "images": [["tests/fixture-01.png"], ["tests/fixture-01.png"]],
