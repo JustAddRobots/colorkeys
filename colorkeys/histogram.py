@@ -11,6 +11,7 @@ This module facilitates the creating image histogram data.
 import logging
 import numpy as np
 
+from operator import itemgetter
 from skimage import color as skicolor
 from skimage import draw as skidraw
 from skimage import util as skiutil
@@ -161,8 +162,13 @@ class Hist(Clust):
             raise ValueError(f"Invalid colorspace, {self._colorspace}")
 
         # Sort centroids descending by percentage.
-        dictcomp = {i: skiutil.img_as_ubyte(v).tolist() for i, v in zip(self._hist, cents)}
-        hist_cents = dict(sorted(dictcomp.items(), reverse=True))
+        listcomp = [
+            {
+                "percent": i,
+                "color": skiutil.img_as_ubyte(v).tolist()
+            } for i, v in zip(self._hist, cents)
+        ]
+        hist_cents = sorted(listcomp, key=itemgetter("percent"), reverse=True)
         return hist_cents
 
 
@@ -174,16 +180,21 @@ def get_hist_bar(hist_centroids, height, width):
     Use these colors to generate a bar based on relative percentage (scaled by
     image width) that the centroid occupies in the normalised histogram.
 
-    Ex: get_hist_bar({0.5: [255,255,255], 0.3: [127,127,127], 0.2: [0,0,0]}, 50, 1000)
-    Will generate a 50x1000 px histogram bar that is 50% white, 30% grey, 20% black.
-
     Args:
-        hist_centroids (dict): RGB values ([R,G,B]) keyed by normalised percentage.
+        hist_centroids (list): Dictionaries with keys "color" for RGB values ([R,G,B])
+            and "percent" for normalised percentage which the color occupies.
         height (int): Height of histogram bar.
         width (int): Width of histogram bar.
 
     Returns:
         hist_bar (numpy.ndarray): Histogram bar.
+
+    Ex: get_hist_bar([
+        {"percent": 0.5, "color": [255,255,255]},
+        {"percent": 0.3, "color": [127,127,127]},
+        {"percent": 0.2, "color": [0,0,0]}
+    ], 50, 1000)
+    Will generate a 50x1000 px histogram bar that is 50% white, 30% grey, 20% black.
     """
     num_channels = 3
     # Start with zeroed histogram.
@@ -194,13 +205,13 @@ def get_hist_bar(hist_centroids, height, width):
 
     # Build the bar each centroid color at a time.
     start_x = 0
-    for percent, color in hist_centroids.items():
-        end_x = start_x + (percent * width)
+    for i in hist_centroids:
+        end_x = start_x + (i["percent"] * width)
         rr, cc = skidraw.rectangle(
             (0, int(start_x)),
             (height, int(end_x)),
             shape = hist_bar.shape,
         )
-        skidraw.set_color(hist_bar, (rr, cc), color)
+        skidraw.set_color(hist_bar, (rr, cc), i["color"])
         start_x = end_x
     return hist_bar
