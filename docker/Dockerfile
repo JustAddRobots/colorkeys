@@ -4,6 +4,7 @@ ENV TZ=America/Los_Angeles
 ARG GIT_COMMIT="${GIT_COMMIT}"
 ARG ENGCOMMON_BRANCH="${ENGCOMMON_BRANCH}"
 ENV DEBUG=""
+ENV COLORSPACES=""
 ENV JSON=""
 ENV PLOT=""
 ENV AWS=""
@@ -27,4 +28,4 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     && \
     yum clean all && rm -rf /var/cache/yum
 
-CMD colorkeys $DEBUG $JSON $PLOT $AWS $N_CLUSTERS $IMAGES
+CMD colorkeys $COLORSPACES $DEBUG $JSON $PLOT $AWS $N_CLUSTERS $IMAGES
