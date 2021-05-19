@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.11.7 (2021-05-19)
+-------------------
+- ISSUE-124: Converted hist_centroids to list of dicts. (0d77feb) [JustAddRobots]
+
 0.11.6 (2021-05-16)
 -------------------
 - Stage: Added COLORSPACES ENV VAR. (9823ac7) [JustAddRobots]
