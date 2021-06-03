@@ -21,7 +21,7 @@ variable "codepipeline_build_projectname" {
 }
 
 variable "codepipeline_build_repo" {
-  default = "stage-colorkeys-build-repo"
+  default = "stage-colorkeys"
 }
 
 variable "codepipeline_run_funcname" {
