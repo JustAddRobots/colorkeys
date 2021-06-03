@@ -1,8 +1,13 @@
-*.py[cod]
 **/__pycache__
+*.py[cod]
 *.pytest_cache
 *.retry
-*.sw*
 *.svn
-venv
+*.sw*
+*.terraform
+*.terraform.*
+*.tfstate
+*.tfstate.*
+*.tfvars
 colorkeys-samples
+venv

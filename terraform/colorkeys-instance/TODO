@@ -1,0 +1,11 @@
+X remote state
+recreate github connection
+recreate dynamodb table
+recreate task definition
+define s3 buckets
+rename ecstaskexecutionrole
+tag everything
+    project = colorkeys
+    environment = stage
+    terraform = true
+    serverless = true
