@@ -4,6 +4,8 @@
 *.retry
 *.svn
 *.sw*
+*.tar
+*.tar.*
 *.terraform
 *.terraform.*
 *.tfstate

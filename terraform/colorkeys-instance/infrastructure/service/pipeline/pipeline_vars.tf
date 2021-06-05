@@ -2,6 +2,22 @@ variable "codepipeline_artifact_bucket" {
   default = "stage-codepipeline-artifact"
 }
 
+variable "codepipeline_samples_bucket" {
+  default = "stage-colorkeys-samples"
+}
+
+variable "codepipeline_samples_key" {
+  default = "stage-colorkeys-samples.tar.bz2"
+}
+
+variable "codepipeline_samples_source" {
+  default = "~/tmp/stage-colorkeys-samples.tar.bz2"
+}
+
+variable "codepipeline_tmp_bucket" {
+  default = "tmp-colorkeys"
+}
+
 variable "codepipeline_source_repo" {
   default = "JustAddRobots/colorkeys"
 }

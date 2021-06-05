@@ -267,3 +267,24 @@ data "aws_iam_policy_document" "codestar_github" {
     ]
   }
 }
+
+
+data "aws_iam_policy_document" "lambda_ecs" {
+  statement {
+    actions = [
+
+    ]
+    resources = [
+      "*"
+    ]
+  }
+
+
+data "aws_iam_policy_document" "ecs_task_exec" {
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+
+data "aws_iam_policy_document" "ecs_service" {
+  arn = "arn:aws:iam::aws:policy/aws-service-role/AmazonECSServiceRolePolicy"
+}

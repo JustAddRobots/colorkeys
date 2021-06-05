@@ -1,9 +1,9 @@
-variable "build_projectname" {
+variable "projectname" {
   description = "Name of build project"
   type        = string
 }
 
-variable "build_ecr_repo" {
+variable "ecr_repo" {
   description = "ECR repo for build artifact"
   type        = string
 }

@@ -59,7 +59,7 @@ resource "aws_iam_role_policy_attachment" "codestar_github" {
 }
 
 resource "aws_codebuild_project" "stage-colorkeys-build" {
-  name          = "${var.build_projectname}"
+  name          = "${var.projectname}"
   description   = "Colorkeys Docker build"
   build_timeout = "5"
   service_role  = "${aws_iam_role.codebuild_service.arn}"
@@ -97,7 +97,7 @@ resource "aws_codebuild_project" "stage-colorkeys-build" {
 
     environment_variable {
       name  = "ECR_REPO"
-      value = "${var.build_ecr_repo}"
+      value = "${var.ecr_repo}"
       type  = "PLAINTEXT"
     }
 
