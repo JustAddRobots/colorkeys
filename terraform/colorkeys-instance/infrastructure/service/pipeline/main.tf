@@ -45,7 +45,7 @@ resource "aws_ecr_repository" "stage_colorkeys_build_repo" {
   tags  = var.default_tags
 }
 
-### pipeline ###
+### IAM ###
 
 resource "aws_iam_policy" "codepipeline_service" {
   name        = "codepipeline-service"
@@ -76,18 +76,22 @@ resource "aws_iam_role_policy_attachment" "codepipeline_service" {
   policy_arn  = "${aws_iam_policy.codepipeline_service.arn}"
 }
 
+### modules ###
+
 module "build" {
-  source      = "../build"
-  projectname = "${var.codepipeline_build_projectname}"
-  ecr_repo    = "${aws_ecr_repository.stage_colorkeys_build_repo.repository_url}"
+  source        = "../build"
+  projectname   = "${var.codepipeline_build_projectname}"
+  ecr_repo      = "${aws_ecr_repository.stage_colorkeys_build_repo.repository_url}"
 }
 
 module "run" {
-  source  = "../run"
-  
+  source    = "../run"
+  image     = module.build.image
+  samples   = "s3://${var.codepipeline_samples_bucket}/${var.codepipeline_samples_key}"
 }
 
-# === codepipeline ===
+### codepipeline ###
+
 resource "aws_codepipeline" "codepipeline" {
   name      = "stage-colorkeys"
   role_arn  = "${aws_iam_role.codepipeline_service.arn}"

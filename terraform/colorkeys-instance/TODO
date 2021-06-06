@@ -1,10 +1,15 @@
 X remote state
-recreate github connection
-recreate dynamodb table
-recreate task definition
-define s3 buckets
-rename ecstaskexecutionrole
-tag everything
+X recreate github connection
+  recreate dynamodb table
+X recreate task definition
+X define s3 buckets
+X rename ecstaskexecutionrole
+X package lambda
+  run outputs
+X run vars
+X s3 samples bucket
+X handle imageUri
+  tag everything
     project = colorkeys
     environment = stage
     terraform = true

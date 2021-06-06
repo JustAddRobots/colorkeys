@@ -269,22 +269,77 @@ data "aws_iam_policy_document" "codestar_github" {
 }
 
 
-data "aws_iam_policy_document" "lambda_ecs" {
+data "aws_iam_policy_document" "lambda_run" {
   statement {
     actions = [
-
+      "dynamodb:ListTables",
+      "codepipeline:PutJobFailureResult",
+      "codepipeline:PutJobSuccessResult"
     ]
     resources = [
       "*"
     ]
   }
 
+  statement {
+    actions = [
+      "s3:PutObject",
+      "s3:GetObject",
+      "iam:PassRole",
+      "dynamodb:PutItem",
+      "ecs:RunTask",
+      "dynamodb:GetItem",
+      "dynamodb:Query",
+      "s3:ListBucket",
+      "ecs:DescribeTasks"
+    ]
+    resources = [
+      "*"
+    ]
+  }
 
-data "aws_iam_policy_document" "ecs_task_exec" {
-  arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+  statement {
+    actions = [
+      "s3:PutObject",
+      "s3:GetObject",
+      "iam:PassRole",
+      "s3:ListBucket"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+
+  statement {
+    actions = [
+      "logs:*",
+    ]
+    resources = [
+      "*"
+    ]
+  }
 }
 
 
-data "aws_iam_policy_document" "ecs_service" {
-  arn = "arn:aws:iam::aws:policy/aws-service-role/AmazonECSServiceRolePolicy"
+data "aws_iam_policy_document" "ecs_task_exec_boto3" {
+  statement {
+    actions = [
+      "ecs:ListTasks",
+      "ecs:ListContainerInstances",
+      "ecs:DescribeTasks"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+
+  statement {
+    actions = [
+      "s3:PutObject",
+      "s3:ListBucket"
+    ]
+    resources = [
+      "*"
+    ]
+  }
 }

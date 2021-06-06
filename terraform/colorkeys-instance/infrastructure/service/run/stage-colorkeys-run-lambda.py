@@ -2,42 +2,76 @@ import boto3
 import io
 import logging
 import json
+import re
 import zipfile
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-FARGATE_CLUSTER = "workers"
-FARGATE_TASK_DEF = "colorkeys-deploy:13"
-FARGATE_SUBNET_ID = "subnet-2c7ff84a"
-FARGATE_SECURITY_GROUP_ID = "sg-0754b7137e6715e16"
-ARTIFACT_FILE = "imagedefinitions.json"
+def get_cluster_name(env):
+    ecs = boto3.client("ecs")
+    cluster = ""
+    for c in ecs.list_clusters()["clusterArns"]:
+        for t in ecs.list_tags_for_resource(c)["tags"]:
+            if t["key"] == "environment" and t["value"] == env:
+                regex = ".*cluster/([a-zA-Z0-9]+)"
+                m = re.search(regex, c)
+                if m:
+                    cluster = m.groups()[0]
+    return cluster
+
+
+def get_subnet_id(env):
+    ec2 = boto3.client("ec2")
+    filters = [{"Name": "tag:environment", "Values": [env]}]
+    subnet = next(i for i in list(ec2.subnets.filter(Filters=filters)))
+    return subnet.id
+
+
+def get_security_group_id(env):
+    ec2 = boto3.client("ec2")
+    filters = [{"Name": "tag:environment", "Values": [env]}]
+    sg = next(i for i in list(ec2.security_groups.filter(Filters=filters)))
+    return sg.id
+
+
+def get_task_definition(env):
+    ecs = boto3.client("ecs")
+    dict_ = ecs.list_task_definitions(
+        familyPrefix = f"{env}-colorkeys-run",
+        status = "ACTIVE",
+        sort = "DESC",
+        maxResults = 1
+    )
+    task_arn = next(i for i in dict_["taskDefinitionArns"])
+    return task_arn
 
 
 def run_fargate_task(img):
+    env = "stage"
     ecs = boto3.client("ecs")
     response = ecs.run_task(
-        cluster = FARGATE_CLUSTER,
+        cluster = get_cluster_name(env),
         count = 1,
         launchType = "FARGATE",
         networkConfiguration = {
             "awsvpcConfiguration": {
                 "subnets": [
-                    FARGATE_SUBNET_ID,
+                    get_subnet_id(env),
                 ],
                 "securityGroups": [
-                    FARGATE_SECURITY_GROUP_ID,
+                    get_security_group_id(env),
                 ],
                 "assignPublicIp": "ENABLED"
             }
         },
-        taskDefinition = FARGATE_TASK_DEF
+        taskDefinition = get_task_definition(env)
     )
     return response
 
 
-def get_input_artifact(job, key):
+def get_input_artifact(job, artifact_file, key):
     logger.info(f"key: {key}")
     s3_input = next(i for i in job["data"]["inputArtifacts"])["location"]["s3Location"]
     bucket = s3_input["bucketName"]
@@ -47,7 +81,7 @@ def get_input_artifact(job, key):
     logger.info(f"objkey: {objkey}")
     s3obj = s3.Object(bucket, objkey)
     with zipfile.ZipFile(io.BytesIO(s3obj.get()["Body"].read())) as zf:
-        with zf.open(ARTIFACT_FILE) as imgdef:
+        with zf.open(artifact_file) as imgdef:
             obj = json.loads(imgdef.read().decode())
     artifact = next(i[key] for i in obj if i["name"] == "colorkeys")
     logger.info(f"artifact: {artifact}")
@@ -59,7 +93,7 @@ def lambda_handler(event, context):
     cp = boto3.client("codepipeline")
     try:
         logger.info(f"job: {job}")
-        img = get_input_artifact(job, "imageUri")
+        img = get_input_artifact(job, "imagedefinitions.json", "imageUri")
         r = run_fargate_task(img)
         task_arn = r["tasks"][0]["taskArn"]
         ecs = boto3.client("ecs")
