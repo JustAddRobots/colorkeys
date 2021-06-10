@@ -269,12 +269,12 @@ data "aws_iam_policy_document" "codestar_github" {
 }
 
 
-data "aws_iam_policy_document" "lambda_run" {
+data "aws_iam_policy_document" "run_lambda" {
   statement {
     actions = [
-      "dynamodb:ListTables",
       "codepipeline:PutJobFailureResult",
-      "codepipeline:PutJobSuccessResult"
+      "codepipeline:PutJobSuccessResult",
+      "dynamodb:ListTables"
     ]
     resources = [
       "*"
@@ -283,15 +283,17 @@ data "aws_iam_policy_document" "lambda_run" {
 
   statement {
     actions = [
-      "s3:PutObject",
-      "s3:GetObject",
-      "iam:PassRole",
-      "dynamodb:PutItem",
-      "ecs:RunTask",
       "dynamodb:GetItem",
+      "dynamodb:PutItem",
       "dynamodb:Query",
+      "ecs:DescribeTasks",
+      "ecs:RunTask",
+      "ecs:*",
+      "ec2:*",
+      "iam:PassRole",
+      "s3:GetObject",
       "s3:ListBucket",
-      "ecs:DescribeTasks"
+      "s3:PutObject"
     ]
     resources = [
       "*"
@@ -300,10 +302,10 @@ data "aws_iam_policy_document" "lambda_run" {
 
   statement {
     actions = [
-      "s3:PutObject",
-      "s3:GetObject",
       "iam:PassRole",
-      "s3:ListBucket"
+      "s3:GetObject",
+      "s3:ListBucket",
+      "s3:PutObject"
     ]
     resources = [
       "*"
@@ -324,9 +326,12 @@ data "aws_iam_policy_document" "lambda_run" {
 data "aws_iam_policy_document" "ecs_task_exec_boto3" {
   statement {
     actions = [
-      "ecs:ListTasks",
+      "ecs:*",
+      "ecs:DescribeTasks",
       "ecs:ListContainerInstances",
-      "ecs:DescribeTasks"
+      "ecs:ListTasks",
+      "ecs:RunTask",
+      "ec2:*"
     ]
     resources = [
       "*"
@@ -337,6 +342,30 @@ data "aws_iam_policy_document" "ecs_task_exec_boto3" {
     actions = [
       "s3:PutObject",
       "s3:ListBucket"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+}
+
+
+data "aws_iam_policy_document" "ecs_task" {
+  statement {
+    actions = [
+      "ecs:DescribeTasks",
+      "ecs:ListTasks",
+      "ecs:ListContainerInstances",
+      "s3:GetObject",
+      "s3:ListAllMyBuckets",
+      "s3:ListBucket",
+      "s3:PutObject",
+      "logs:CreateLogStream",
+      "logs:DescribeLogStreams",
+      "logs:PutLogEvents",
+      "logs:CreateLogGroup",
+      "logs:DescribeLogGroups",
+      "logs:PutRetentionPolicy"
     ]
     resources = [
       "*"

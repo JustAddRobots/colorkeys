@@ -13,27 +13,33 @@ def get_cluster_name(env):
     ecs = boto3.client("ecs")
     cluster = ""
     for c in ecs.list_clusters()["clusterArns"]:
-        for t in ecs.list_tags_for_resource(c)["tags"]:
+        for t in ecs.list_tags_for_resource(resourceArn=c)["tags"]:
             if t["key"] == "environment" and t["value"] == env:
                 regex = ".*cluster/([a-zA-Z0-9]+)"
                 m = re.search(regex, c)
                 if m:
                     cluster = m.groups()[0]
+    logger.info(f"cluster: {cluster}")
     return cluster
 
 
-def get_subnet_id(env):
-    ec2 = boto3.client("ec2")
-    filters = [{"Name": "tag:environment", "Values": [env]}]
-    subnet = next(i for i in list(ec2.subnets.filter(Filters=filters)))
-    return subnet.id
+def get_subnet_ids(env):
+    ec2 = boto3.resource("ec2")
+    filters = [
+        {"Name": "tag:environment", "Values": [env]},
+        {"Name": "tag:type", "Values": ["public"]}
+    ]
+    subnet_ids = [i.id for i in list(ec2.subnets.filter(Filters=filters))]
+    logger.info(f"subnet_ids: {subnet_ids}")
+    return subnet_ids
 
 
-def get_security_group_id(env):
-    ec2 = boto3.client("ec2")
+def get_security_group_ids(env):
+    ec2 = boto3.resource("ec2")
     filters = [{"Name": "tag:environment", "Values": [env]}]
-    sg = next(i for i in list(ec2.security_groups.filter(Filters=filters)))
-    return sg.id
+    sg_ids = [i.id for i in list(ec2.security_groups.filter(Filters=filters))]
+    logger.info(f"sg_ids: {sg_ids}")
+    return sg_ids
 
 
 def get_task_definition(env):
@@ -45,11 +51,13 @@ def get_task_definition(env):
         maxResults = 1
     )
     task_arn = next(i for i in dict_["taskDefinitionArns"])
+    logger.info(f"task_arn: {task_arn}")
     return task_arn
 
 
 def run_fargate_task(img):
     env = "stage"
+    logger.info(f"env: {env}")
     ecs = boto3.client("ecs")
     response = ecs.run_task(
         cluster = get_cluster_name(env),
@@ -57,12 +65,8 @@ def run_fargate_task(img):
         launchType = "FARGATE",
         networkConfiguration = {
             "awsvpcConfiguration": {
-                "subnets": [
-                    get_subnet_id(env),
-                ],
-                "securityGroups": [
-                    get_security_group_id(env),
-                ],
+                "subnets": get_subnet_ids(env),
+                "securityGroups": get_security_group_ids(env),
                 "assignPublicIp": "ENABLED"
             }
         },

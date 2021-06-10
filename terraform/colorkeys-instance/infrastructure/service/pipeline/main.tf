@@ -31,7 +31,7 @@ resource "aws_s3_bucket" "stage_colorkeys_samples" {
 }
 
 resource "aws_s3_bucket_object" "samples" {
-  bucket  = "${var.codepipeline_samples_bucket}"
+  bucket  = "${aws_s3_bucket.stage_colorkeys_samples.id}"
   key     = "${var.codepipeline_samples_key}"
   acl     = "private"
   source  = "${var.codepipeline_samples_source}"
@@ -95,6 +95,7 @@ module "run" {
 resource "aws_codepipeline" "codepipeline" {
   name      = "stage-colorkeys"
   role_arn  = "${aws_iam_role.codepipeline_service.arn}"
+  depends_on  = [aws_iam_role_policy_attachment.codepipeline_service]
   tags      = var.default_tags
 
   artifact_store {

@@ -9,6 +9,7 @@ X package lambda
 X run vars
 X s3 samples bucket
 X handle imageUri
+  permissions issue on apply
   tag everything
     project = colorkeys
     environment = stage
