@@ -1,13 +1,13 @@
 # === run ===
 
-### CloudWatch ###
+# --- CloudWatch ---
 
 resource "aws_cloudwatch_log_group" "stage_colorkeys_run_ecs" {
   name  = "${var.stage_run_log_group}"
   tags  = var.default_tags
 }
 
-### ECS ###
+# --- ECS ---
 
 data "aws_iam_policy" "ecs_task_exec" {
   arn   = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
@@ -150,13 +150,13 @@ resource "aws_ecs_cluster" "workers" {
   tags  = var.default_tags
 }
   
-### Lambda ###
+# --- Lambda ---
 
 resource "aws_iam_policy" "run_lambda" {
   description = "Lambda ECS Policy"
   name        = "stage-run-lambda"
   tags        = var.default_tags
-  policy      = data.aws_iam_policy_document.run_lambda.json
+  policy      = data.aws_iam_policy_document.lambda.json
 }
 
 data "aws_iam_policy" "run_lambda_cloudwatch" {

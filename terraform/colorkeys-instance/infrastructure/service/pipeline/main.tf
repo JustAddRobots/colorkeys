@@ -90,6 +90,10 @@ module "run" {
   samples   = "s3://${var.codepipeline_samples_bucket}/${var.codepipeline_samples_key}"
 }
 
+module "load" {
+  source  = "../load"
+}
+
 ### codepipeline ###
 
 resource "aws_codepipeline" "codepipeline" {
@@ -163,60 +167,24 @@ resource "aws_codepipeline" "codepipeline" {
     }
   }
 
-#   stage {
-#     name = "Load"
-# 
-#     action {
-#       name              = "load-colorkeys"
-#       category          = "Invoke"
-#       owner             = "AWS"
-#       provider          = "Lambda"
-#       input_artifacts   = []
-#       output_artifacts  = ["load_output"]
-#       version           = "1"
-#       namespace         = "codepipeline-load"
-# 
-#       configuration = {
-#         FunctionName    = "${var.codepipeline_load_funcname}"
-#         UserParamaters  = "#${codepipeline_run.task_arn}"
-#       }
-#     }
-#   }
+  stage {
+    name = "Load"
+
+    action {
+      name              = "load-colorkeys"
+      category          = "Invoke"
+      owner             = "AWS"
+      provider          = "Lambda"
+      input_artifacts   = []
+      output_artifacts  = ["load_output"]
+      version           = "1"
+      namespace         = "codepipeline-load"
+
+      configuration = {
+        FunctionName    = "${var.codepipeline_load_funcname}"
+        UserParameters  = "#{codepipeline-run.task_arn}"
+      }
+    }
+  }
 
 }
-
-# === codepipeline_run === 
-# resource "aws_iam_policy" "this" {
-#   name  = "stage-codepipeline-colorkeys-policy"
-#   path  = "/"
-# 
-#   policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Effect  = "Allow",
-#         Action  = [
-#           "codepipeline:PutJobFailureResult",
-#           "codepipeline:PutJobSuccessResult"
-#         ],
-#         Resource  = "*"
-#       },
-#       {
-#         Effect = "Allow",
-#         Action = [
-#           "s3:PutObject",
-#           "s3:GetObject",
-#           "s3:ListBucket",
-#         ],
-#         Resource = [
-#           "arn:aws:s3:::${var.codepipeline_artifact_bucket}",
-#         ]
-#       },
-#       {
-#         Effect = "Allow",
-#         Action = "logs:*",
-#         Resource = "arn:aws:logs:*:*:*"
-#       }
-#     ]
-#   })
-# }

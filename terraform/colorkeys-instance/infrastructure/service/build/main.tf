@@ -1,10 +1,12 @@
-# build
+# === build ===
 
 data "aws_caller_identity" "current" {}
 
 locals {
   aws_account_id  = data.aws_caller_identity.current.account_id
 }
+
+# --- CodeBuild ---
 
 resource "aws_iam_policy" "codebuild_service" {
   name        = "codebuild-service"

@@ -10,6 +10,17 @@ logger.setLevel(logging.INFO)
 
 
 def get_cluster_name(env):
+    """Get cluster name using tags.
+
+    This terraform module creates a cluster for the given environment.
+    Get its name to use for running ECS tasks.
+
+    Args:
+        env (str): Environment name.
+
+    Returns:
+        cluster (str): Cluster name.
+    """
     ecs = boto3.client("ecs")
     cluster = ""
     for c in ecs.list_clusters()["clusterArns"]:
@@ -24,6 +35,17 @@ def get_cluster_name(env):
 
 
 def get_subnet_ids(env):
+    """Get subnet IDs using tags.
+
+    This terraform module creates a VPC and public subnet for ECS tasks.
+    Get the subnet IDs for running ECS tasks.
+
+    Args:
+        env (str): Environment name.
+
+    Returns:
+        subnet_ids (list): Subnet IDs.
+    """
     ec2 = boto3.resource("ec2")
     filters = [
         {"Name": "tag:environment", "Values": [env]},
@@ -35,6 +57,17 @@ def get_subnet_ids(env):
 
 
 def get_security_group_ids(env):
+    """Get security group IDs using tags.
+
+    This terraform module creates a VPC for ECS tasks.
+    Get the security group IDs for running ECS tasks.
+
+    Args:
+        env (str): Environment name.
+
+    Returns:
+        sg_ids (list): Security group IDs.
+    """
     ec2 = boto3.resource("ec2")
     filters = [{"Name": "tag:environment", "Values": [env]}]
     sg_ids = [i.id for i in list(ec2.security_groups.filter(Filters=filters))]
@@ -43,6 +76,14 @@ def get_security_group_ids(env):
 
 
 def get_task_definition(env):
+    """Get the task definition ARN.
+
+    Args:
+        env (str): Environment name.
+
+    Returns:
+        task_arn (str): Task definition ARN.
+    """
     ecs = boto3.client("ecs")
     dict_ = ecs.list_task_definitions(
         familyPrefix = f"{env}-colorkeys-run",
@@ -55,7 +96,18 @@ def get_task_definition(env):
     return task_arn
 
 
-def run_fargate_task(img):
+def run_fargate_task():
+    """Run the ECS task using Fargate.
+
+    This terraform module defines a ECS task. Run this task using Fargate and
+    previously created VPC bits.
+
+    Args:
+        None
+
+    Returns:
+        response (dict): ECS run_task response.
+    """
     env = "stage"
     logger.info(f"env: {env}")
     ecs = boto3.client("ecs")
@@ -76,6 +128,19 @@ def run_fargate_task(img):
 
 
 def get_input_artifact(job, artifact_file, key):
+    """Get input artifact.
+
+    Get the input artifact from the CodePipeline S3 bucket. The S3 object contains
+    an JSON artifact file which is loaded into an artifact object.
+
+    Args:
+        job (dict): CodePipeline job details.
+        artifact_file (str): JSON artifact file.
+        key (str): dict key used for artifact object inside artifact file.
+
+    Returns:
+        artifact (obj): input artifact.
+    """
     logger.info(f"key: {key}")
     s3_input = next(i for i in job["data"]["inputArtifacts"])["location"]["s3Location"]
     bucket = s3_input["bucketName"]
@@ -93,12 +158,19 @@ def get_input_artifact(job, artifact_file, key):
 
 
 def lambda_handler(event, context):
+    """Run CodePipeline stage."""
     job = event["CodePipeline.job"]
     cp = boto3.client("codepipeline")
+
+    # Run Fargate ECS task, wait for completion.
+    # Output task ARN to CodePipeline on success.
+
+    # The colorkeys task uploads result to S3 tmp bucket with key in the format of
+    # task_hash[:8].colorkeys.json.zip.
     try:
         logger.info(f"job: {job}")
-        img = get_input_artifact(job, "imagedefinitions.json", "imageUri")
-        r = run_fargate_task(img)
+        # img = get_input_artifact(job, "imagedefinitions.json", "imageUri")
+        r = run_fargate_task()
         task_arn = r["tasks"][0]["taskArn"]
         ecs = boto3.client("ecs")
         waiter = ecs.get_waiter("tasks_stopped")

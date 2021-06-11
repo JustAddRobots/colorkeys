@@ -9,24 +9,31 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-def get_input_artifact(job, key):
-    logger.info(f"key: {key}")
-    s3_input = next(i for i in job["data"]["inputArtifacts"])["location"]["s3Location"]
-    bucket = s3_input["bucketName"]
-    objkey = s3_input["objectKey"]
-    obj = get_obj_from_s3zip(bucket, objkey, "imagedefinitions.json")
-    artifact = next(i[key] for i in obj if i["name"] == "colorkeys")
-    logger.info(f"artifact: {artifact}")
-    return artifact
+def get_task_arn(job):
+    """Get UserParameters from CodePipeline job.
 
+    Args:
+        job (dict): CodePipeline Job details.
 
-def get_user_param(job, key):
+    Returns:
+        task_arn (str): Task ARN.
+    """
     task_arn = job["data"]["actionConfiguration"]["configuration"]["UserParameters"]
     logger.info(f"task_arn: {task_arn}")
     return task_arn
 
 
 def get_obj_from_s3zip(bucket, objkey, internalfile):
+    """Get object from S3 zip.
+
+    Args:
+        bucket (str): S3 Bucket name.
+        objkey (str): S3 object key.
+        internalfile (str): File inside S3 zip.
+
+    Returns:
+        obj (obj): Object loaded from internal JSON file.
+    """
     s3 = boto3.resource("s3")
     logger.info(f"bucket: {bucket}")
     logger.info(f"objkey: {objkey}")
@@ -37,8 +44,16 @@ def get_obj_from_s3zip(bucket, objkey, internalfile):
     return obj
 
 
-def get_task_obj(task_hash):
-    bucket = "colorkeys-tmp"
+def get_task_obj(bucket, task_hash):
+    """Get task object from S3.
+
+    Args:
+        bucket (str): S3 bucket.
+        task_hash (str): Task hash.
+
+    Returns:
+        obj (object): Task result object.
+    """
     internalfile = f"{task_hash[:8]}.colorkeys.json"
     objkey = f"{internalfile}.zip"
     obj = get_obj_from_s3zip(bucket, objkey, internalfile)
@@ -46,9 +61,18 @@ def get_task_obj(task_hash):
     return obj
 
 
-def load_colorkeys(colorkeys):
+def load_colorkeys(table, colorkeys):
+    """Load colorkeys object into DynamoDB table.
+
+    Args:
+        table (str): table name.
+        colorkeys (list): colorkey objects
+
+    Returns:
+        response (dict): put_item response.
+    """
     db = boto3.resource("dynamodb")
-    tbl = db.Table("colorkeys-stage")
+    tbl = db.Table(table)
     for colorkey in colorkeys:
         h = colorkey["histogram"]
         selector = (
@@ -62,14 +86,19 @@ def load_colorkeys(colorkeys):
 
 
 def lambda_handler(event, context):
+    """Run CodePipeline stage."""
     job = event["CodePipeline.job"]
-    logging.info(job)
     cp = boto3.client("codepipeline")
+    logging.info(job)
+
+    # Get task ARN from the codepipeline-run namespace UserParameters.
+    # Get colorkeys run results from S3 tmp bucket with key task_hash[:8].json.zip.
+    # Load results into DynamoDB table.
     try:
-        task_arn = get_user_param(job, "task_arn")
+        task_arn = get_task_arn(job)
         task_hash = task_arn.split("/")[-1]
-        colorkeys = get_task_obj(task_hash)
-        r = load_colorkeys(colorkeys)
+        colorkeys = get_task_obj("tmp-colorkeys", task_hash)
+        r = load_colorkeys("stage-colorkeys", colorkeys)
     except Exception as e:
         logger.info("Lambda Failure")
         logger.info(str(e))

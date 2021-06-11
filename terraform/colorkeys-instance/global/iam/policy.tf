@@ -269,7 +269,7 @@ data "aws_iam_policy_document" "codestar_github" {
 }
 
 
-data "aws_iam_policy_document" "run_lambda" {
+data "aws_iam_policy_document" "lambda" {
   statement {
     actions = [
       "codepipeline:PutJobFailureResult",
