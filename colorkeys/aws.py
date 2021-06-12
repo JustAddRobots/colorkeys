@@ -53,14 +53,15 @@ class AWS():
         """Task description."""
         return self._task_desc
 
-    def upload_S3(self, obj):
+    def upload_S3(self, bucket, obj):
         """Upload JSON-encoded object to S3."""
-        return self._upload_S3(obj)
+        return self._upload_S3(bucket, obj)
 
-    def _upload_S3(self, obj):
+    def _upload_S3(self, bucket, obj):
         """Upload JSON-encoded object to temporary S3 bucket.
 
         Args:
+            bucket (str): Bucket name.
             obj (str): JSON-encoded object.
 
         Returns:
@@ -68,7 +69,7 @@ class AWS():
 
         """
         jsonfile = f"{self._task_hash[:8]}.colorkeys.json"
-        my_bucket = "colorkeys-tmp"
+        my_bucket = bucket
         my_key = f"{jsonfile}.zip"
         logger.debug(f"my_key: {my_key}")
         logger.debug(f"my_bucket: {my_bucket}")
@@ -84,7 +85,7 @@ class AWS():
         """Get the ARN of task running colorkeys."""
         dict_ = self.ecs.list_tasks(
             cluster = "workers",
-            family = "colorkeys-deploy",
+            family = "stage-colorkeys-run",
             maxResults = 1,
         )
         task_arn = next(i for i in dict_["taskArns"])

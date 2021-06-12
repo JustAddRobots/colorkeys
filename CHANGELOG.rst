@@ -1,6 +1,20 @@
 Changelog
 =========
 
+0.11.8 (2021-06-12)
+-------------------
+- Stage: Migrated terraform to its own separate repo. (54fcbb5) [JustAddRobots]
+- Stage: Changed separators for better visibility. (3f2c648) [JustAddRobots]
+- Stage: Updated TODO, added main.tf in root dir. (ab65118) [JustAddRobots]
+- Stage: Added CodePipeline "load" stage. (d8e7e91) [JustAddRobots]
+- Stage: Added run stage fixes. (a96192f) [JustAddRobots]
+- Stage: Added codepipeline "run" stage to terraform. (7b7d2dd) [JustAddRobots]
+- Stage: Added run stage to codepipeline. (3e14f9b) [JustAddRobots]
+- Stage: Figuring out mod deps. (1074a04) [JustAddRobots]
+- ISSUE-127: Updated ECR repo for buildspec. (70d2d78) [JustAddRobots]
+- ISSUE-127: Fixed vars/tags symlinks, buildspec for ECR_REPO. (b6365fa) [JustAddRobots]
+- ISSUE-127: Updated for CodeBuild git full clone. (c187966) [JustAddRobots]
+
 0.11.7 (2021-05-19)
 -------------------
 - ISSUE-124: Converted hist_centroids to list of dicts. (0d77feb) [JustAddRobots]
