@@ -7,7 +7,7 @@ locals {
   codepipeline_source_connection_arn  = "arn:aws:codestar-connections:${var.aws_region}:${local.aws_account_id}:connection/fdf2d69f-c7cc-4d2c-93f4-0915b85d9c30"
 }
 
-### S3 Buckets ###
+# --- S3 ---
 
 resource "aws_s3_bucket" "this" {
   bucket        = "${var.codepipeline_artifact_bucket}"
@@ -38,14 +38,14 @@ resource "aws_s3_bucket_object" "samples" {
   etag    = filemd5("${var.codepipeline_samples_source}")
 }
 
-### ECR ###
+# --- ECR ---
 
 resource "aws_ecr_repository" "stage_colorkeys_build_repo" {
   name  = "${var.codepipeline_build_repo}"
   tags  = var.default_tags
 }
 
-### IAM ###
+# --- IAM ---
 
 resource "aws_iam_policy" "codepipeline_service" {
   name        = "codepipeline-service"
@@ -76,7 +76,7 @@ resource "aws_iam_role_policy_attachment" "codepipeline_service" {
   policy_arn  = "${aws_iam_policy.codepipeline_service.arn}"
 }
 
-### modules ###
+# --- modules ---
 
 module "build" {
   source        = "../build"
@@ -94,7 +94,7 @@ module "load" {
   source  = "../load"
 }
 
-### codepipeline ###
+# --- codepipeline ---
 
 resource "aws_codepipeline" "codepipeline" {
   name      = "stage-colorkeys"
