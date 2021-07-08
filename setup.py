@@ -41,6 +41,7 @@ setup(
             f"engcommon @ "
             f"git+https://github.com/JustAddRobots/engcommon.git@{engcommon_branch}"
         ),
+        "boto3",
         "ffmpeg-python",
         "matplotlib",
         "numpy",
