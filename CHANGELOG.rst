@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.11.9 (2021-07-09)
+-------------------
+- Stage: Added tag hash to build output artifact for later use. (719bc9d) [Roderick Constance]
+- ISSUE-130: Added boto3 to setup.py. (a0bfb0c) [Roderick Constance]
+
 0.11.8 (2021-06-12)
 -------------------
 - Stage: Migrated terraform to its own separate repo. (54fcbb5) [JustAddRobots]
