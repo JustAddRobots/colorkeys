@@ -8,6 +8,7 @@ phases:
       - export ARCH=$(uname -m)
       - export HASH=$(git log -1 --pretty=%h --no-merges)
       - export TAG=$(git describe --tags --abbrev=0)
+      - export TAGHASH=$TAG-$HASH
       - export IMGLONG=$ECR_REPO:$TAG-$HASH-$ARCH
       - export IMGSHORT=$ECR_REPO:$TAG-$ARCH
       - export DEFAULT=$ECR_REPO:default-$ARCH
@@ -24,6 +25,6 @@ phases:
       - docker push $IMGLONG
       - docker push $IMGSHORT
       - docker push $DEFAULT
-      - printf '[{"name":"colorkeys","imageUri":"%s"}]' $DEFAULT > imagedefinitions.json
+      - printf '[{"name":"colorkeys","imageUri":"%s","taghash":"%s"}]' $DEFAULT $TAGHASH > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
