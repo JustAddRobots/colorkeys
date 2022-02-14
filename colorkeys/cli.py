@@ -211,7 +211,7 @@ def run(args):
         if showjson:
             logger_noformat.info(objs_json)
         if is_aws:
-            my_aws.upload_S3("tmp-colorkeys", objs_json)
+            my_aws.upload_S3("stage-colorkeys-tmp", objs_json)
 
     return None
 
