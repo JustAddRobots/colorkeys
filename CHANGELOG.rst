@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.11.10 (2022-02-15)
+--------------------
+- Stage: Updated for stage-colorkeys-tmp bucket rename. (2d758e4) [Roderick Constance]
+
 0.11.9 (2021-07-09)
 -------------------
 - Stage: Added tag hash to build output artifact for later use. (719bc9d) [Roderick Constance]
