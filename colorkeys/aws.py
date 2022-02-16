@@ -58,7 +58,7 @@ class AWS():
         return self._upload_S3(bucket, obj)
 
     def _upload_S3(self, bucket, obj):
-        """Upload JSON-encoded object to temporary S3 bucket.
+        """Upload JSON-encoded object to S3 bucket.
 
         Args:
             bucket (str): Bucket name.
