@@ -73,7 +73,7 @@ def run(args):
     site = args["site"]
     jsonfiles = filepath.get_files(filepaths, CONSTANTS().JSON_SUFFIXES)
     for filename in jsonfiles:
-        colorkeys = codecjson.get_obj_from_jsonfile(filename)
+        colorkeys = codecjson.get_obj_from_file(filename)
         logger_noformat.info(colorkeys)
         response = aws.load_dynamodb(site, "stage_colorkeys", colorkeys)
         logger.debug(response)
