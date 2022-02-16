@@ -14,6 +14,8 @@ import io
 import logging
 import zipfile
 
+from colorkeys.constants import _const as CONSTANTS
+
 logger = logging.getLogger(__name__)
 
 
@@ -106,3 +108,24 @@ class AWS():
         )
         task_desc = next(i for i in dict_["tasks"])
         return task_desc
+
+
+def load_dynamodb(site, table, colorkeys):
+    if site == "cloud":
+        db = boto3.resource("dynamodb")
+    elif site == "local":
+        db = boto3.resource(
+            "dynamodb",
+            endpoint_url=CONSTANTS().DYNAMODB_URL_LOCAL
+        )
+    tbl = db.Table(table)
+    for colorkey in colorkeys:
+        h = colorkey["histogram"]
+        selector = (
+            f'{h["algo"]}#{h["colorspace"]}#{h["n_clusters"]}#'
+            f'{colorkey["cpu"]}#{colorkey["memory"]}#{colorkey["timestamp"]}'
+        )
+        logger.debug(f"selector: {selector}")
+        colorkey["selector"] = selector
+        response = tbl.put_item(Item=colorkey)
+    return response
