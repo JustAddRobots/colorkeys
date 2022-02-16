@@ -5,16 +5,15 @@ import boto3
 import json
 import logging
 import os
+import pkg_resources
 import sys
-import zipfile
 
-from colorkeys.
+from colorkeys import clihelper
+from colorkeys import filepath
 from colorkeys.constants import _const as CONSTANTS
 
-logger = logging.getLogger(__name__)
 
-
-def get_command(args)
+def get_command(args):
     parser = argparse.ArgumentParser(
         description = "Colorkeys DynamoDB Load Tool"
     )
@@ -53,7 +52,7 @@ def get_command(args)
 def run(args):
     project_name = (os.path.dirname(__file__).split("/")[-1])
     my_cli = clihelper.CLI(project_name, args)
-    logger = my_cli.logger
+    # logger = my_cli.logger
     logger_noformat = my_cli.logger_noformat
     my_cli.print_versions()
 
@@ -63,8 +62,8 @@ def run(args):
     for filename in jsonfiles:
         colorkeys = get_colorkeys_from_json(filename)
         logger_noformat.info(colorkeys)
-        #response = load_dynamodb(site, table, colorkeys)
-        #logger.debug(response)
+        # response = load_dynamodb(site, table, colorkeys)
+        # logger.debug(response)
     return None
 
 
@@ -90,7 +89,7 @@ def load_dynamodb(site, table, colorkeys):
             f'{h["algo"]}#{h["colorspace"]}#{h["n_clusters"]}#'
             f'{colorkey["cpu"]}#{colorkey["memory"]}#{colorkey["timestamp"]}'
         )
-        logger.info(f"selector: {selector}")
+        # logger.info(f"selector: {selector}")
         colorkey["selector"] = selector
         response = tbl.put_item(Item=colorkey)
     return response

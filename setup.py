@@ -51,6 +51,7 @@ setup(
     entry_points = {
         "console_scripts": [
             "colorkeys = colorkeys.cli:main",
+            "dbloader = colorkeys.dbloader:main",
         ]
     },
     zip_safe = False

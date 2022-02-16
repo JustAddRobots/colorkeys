@@ -17,7 +17,7 @@ def constant(f):
 class _const(object):
 
     @constant
-    def DYNAMODB_URL_LOCAL
+    def DYNAMODB_URL_LOCAL():
         return "http://localhost:8000"
 
     @constant
@@ -41,7 +41,7 @@ class _const(object):
         return (".zip", )
 
     @constant
-    def JSON_SUFFIXES();
+    def JSON_SUFFIXES():
         return (".json", )
 
     @constant

@@ -24,8 +24,8 @@ def get_files(filepaths, suffixes):
     arguments without quotes.
 
     Args:
-        filepaths (list): Web URLs, wildcards, dirs, zip/tar archives, 
-			and/or lists of files.
+        filepaths (list): Web URLs, wildcards, dirs, zip/tar archives,
+            and/or lists of files.
 
     Returns:
         files (list): Sorted and expanded file list.
@@ -61,7 +61,7 @@ def unark(filename, suffixes, **kwargs):
 
     Args:
         filename (str): Archive filename, includes HTTP(S) and S3 endpoints.
-		suffix (tuple): File extensions to target.
+        suffix (tuple): File extensions to target.
 
     Kwargs:
         dest_dir (str): Destination direct for extraction.
