@@ -10,6 +10,7 @@ import zipfile
 from pathlib import Path
 
 from colorkeys.constants import _const as CONSTANTS
+from colorkeys.codecjson import get_timestamp
 from engcommon import testvar
 
 logger = logging.getLogger(__name__)
