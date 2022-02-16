@@ -42,7 +42,7 @@ def get_imagefiles(imgpaths):
     path_unglob = [unglob(j) for j in itertools.chain.from_iterable(paths)]
     set_unglob = {
         f"{p.parent}/{p.name}" for p in itertools.chain.from_iterable(path_unglob)
-        if p.suffix in [".jpg", ".png"]
+        if p.suffix in CONSTANTS().IMG_SUFFIXES
     }
     path_untar = [untar(k) for k in itertools.chain.from_iterable(tars)]
     set_untar = {x for x in itertools.chain.from_iterable(path_untar)}
@@ -67,7 +67,10 @@ def untar(filename, **kwargs):
     Returns:
         tar_images (list): Pathnames of extracted image files.
     """
-    dest_dir = kwargs.setdefault("dest_dir", f"/tmp/colorkeys-{get_timestamp()}")
+    dest_dir = kwargs.setdefault(
+        "dest_dir",
+        f"/tmp/colorkeys-images-{get_timestamp()}"
+    )
     if filename.startswith(CONSTANTS().WEB_PREFIXES):
         with urllib.request.urlopen(filename) as f:
             tf = tarfile.open(fileobj=io.BytesIO(f.read()))

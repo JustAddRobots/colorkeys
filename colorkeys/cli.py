@@ -127,7 +127,7 @@ def get_command(args):
 
 
 def set_API_logger(API, level):
-    """Set the loglevel of dependent APIs.
+    """Set the loglevel of dependency APIs.
 
     Args:
         API (str): API by Python module name.
