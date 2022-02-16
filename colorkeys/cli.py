@@ -15,7 +15,7 @@ from matplotlib import pyplot as plt
 from colorkeys.colorkeys import ColorKey
 from colorkeys.render import Layout
 from colorkeys import aws
-from colorkeys import createjson
+from colorkeys import codecjson
 from colorkeys import imagepath
 from engcommon import clihelper
 from engcommon import testvar
@@ -195,7 +195,7 @@ def run(args):
                     colorspace = colorspace,
                 )
                 palettes.append(palette)
-                obj = createjson.compile(palette, my_aws=my_aws)
+                obj = codecjson.compile(palette, my_aws=my_aws)
                 logger.debug(testvar.get_debug(obj))
                 objs.append(obj)
         if showplot:
@@ -207,7 +207,7 @@ def run(args):
         input("\nPress [Return] to exit.")
 
     if showjson or is_aws:
-        objs_json = createjson.encode(objs)
+        objs_json = codecjson.encode(objs)
         if showjson:
             logger_noformat.info(objs_json)
         if is_aws:

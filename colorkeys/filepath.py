@@ -10,7 +10,6 @@ import zipfile
 from pathlib import Path
 
 from colorkeys.constants import _const as CONSTANTS
-from colorkeys.createjson import get_timestamp
 from engcommon import testvar
 
 logger = logging.getLogger(__name__)
@@ -53,11 +52,12 @@ def get_files(filepaths, suffixes):
             set(urls)
         )
     )
+    logger.debug(files)
     return sorted(files)
 
 
 def unark(filename, suffixes, **kwargs):
-    """Extract  archive and return paths of included target files.
+    """Extract archive and return paths of included target files.
 
     Args:
         filename (str): Archive filename, includes HTTP(S) and S3 endpoints.
@@ -79,7 +79,7 @@ def unark(filename, suffixes, **kwargs):
             if filename.endswith(CONSTANTS().TAR_SUFFIXES):
                 cf = tarfile.open(fileobj=io.BytesIO(f.read()))
             elif filename.endswith(CONSTANTS().ZIP_SUFFIXES):
-                cf = zipfile.Zipfile.open(fileobj=io.BytesIO(f.read()))
+                cf = zipfile.ZipFile.open(fileobj=io.BytesIO(f.read()))
     elif filename.startswith(CONSTANTS().S3_PREFIXES):
         p = Path(filename)
         my_bucket = p.parts[1]
@@ -91,7 +91,7 @@ def unark(filename, suffixes, **kwargs):
                 fileobj=io.BytesIO(obj.get()["Body"].read())
             )
         elif filename.endswith(CONSTANTS().ZIP_SUFFIXES):
-            cf = zipfile.Zipfile.open(
+            cf = zipfile.ZipFile.open(
                 fileobj=io.BytesIO(obj.get()["Body"].read())
             )
     else:
@@ -99,8 +99,8 @@ def unark(filename, suffixes, **kwargs):
         if filename.endswith(CONSTANTS().TAR_SUFFIXES):
             cf = tarfile.open(filename)
         elif filename.endswith(CONSTANTS().ZIP_SUFFIXES):
-            cf = zipfile.Zipfile.open(filename)
-    cf.extractall(dest_dir)
+            cf = zipfile.ZipFile(filename)
+    cf.extractall(path=dest_dir)
     if filename.endswith(CONSTANTS().TAR_SUFFIXES):
         namelist = cf.getnames
     elif filename.endswith(CONSTANTS().ZIP_SUFFIXES):

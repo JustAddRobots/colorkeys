@@ -62,6 +62,18 @@ def encode(obj):
     return json.dumps(obj)
 
 
+def decode(str_):
+    """Decode Python object from JSON."""
+    return json.load(str_)
+
+
+def get_obj_from_file(filename):
+    """Get Python object from JSON file."""
+    with open(filename) as f:
+        str_ = f.read()
+    return decode(str_)
+
+
 def get_version(pkg_name):
     """Get package version info."""
     return pkg_resources.get_distribution(pkg_name).version
