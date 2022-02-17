@@ -8,6 +8,7 @@ import re
 import sys
 from datetime import datetime
 from datetime import timezone
+from decimal import Decimal
 from pathlib import Path
 from urllib import request
 
@@ -64,7 +65,7 @@ def encode(obj):
 
 def decode(str_):
     """Decode Python object from JSON."""
-    return json.load(str_)
+    return json.loads(str_, parse_float=Decimal, parse_int=int)
 
 
 def get_obj_from_file(filename):

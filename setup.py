@@ -52,6 +52,7 @@ setup(
         "console_scripts": [
             "colorkeys = colorkeys.cli:main",
             "dbloader = colorkeys.dbloader:main",
+            "dbquery = colorkeys.dbquery:main",
         ]
     },
     zip_safe = False

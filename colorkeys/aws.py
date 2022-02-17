@@ -10,10 +10,12 @@ credentials preexisting in the environment.
 """
 
 import boto3
+import botocore.exceptions
 import io
 import logging
 import zipfile
 
+from boto3.dynamodb.conditions import Key
 from colorkeys.constants import _const as CONSTANTS
 
 logger = logging.getLogger(__name__)
@@ -127,5 +129,32 @@ def load_dynamodb(site, table, colorkeys):
         )
         logger.debug(f"selector: {selector}")
         colorkey["selector"] = selector
-        response = tbl.put_item(Item=colorkey)
+        try:
+            response = tbl.put_item(
+                Item=colorkey,
+                ConditionExpression=(
+                    Key("filehash").not_exists() & Key("selector").not_exists()
+                )
+            )
+        except botocore.exceptions.ClientError as e:
+            if e.response['Error']['Code'] != 'ConditionalCheckFailedException':
+                raise
+    return response
+
+
+def query_dynamodb(site, table, filehash, algo, colorspace, n_clusters, **kwargs):
+    if site == "cloud":
+        db = boto3.resource("dynamodb")
+    elif site == "local":
+        db = boto3.resource(
+            "dynamodb",
+            endpoint_url=CONSTANTS().DYNAMODB_URL_LOCAL
+        )
+    tbl = db.Table(table)
+    selector = f'{algo}#{colorspace}#{n_clusters}'
+    response = tbl.query(
+        KeyConditionExpression=(
+            Key("filehash").eq(filehash) & Key("selector").begins_with(selector)
+        )
+    )
     return response

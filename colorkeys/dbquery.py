@@ -18,14 +18,37 @@ def get_command(args):
         description = "Colorkeys DynamoDB Load Tool"
     )
     parser.add_argument(
+        "-a", "--algo",
+        action = "store",
+        choices = [
+            "kmeans",
+            "mbkmeans",
+            # "hac",  # HAC is too slow in sklearn
+        ],
+        help = "Clustering algorithm(s) for color detection",
+		required = True,
+        type = str,
+    )
+    parser.add_argument(
+        "-c", "--colorspace",
+        action = "store",
+        choices = [
+            "HSV",
+            "RGB",
+        ],
+        help = "Colorspaces for color palette analysis",
+        type = str,
+    )
+    
+    parser.add_argument(
         "-d", "--debug",
         action = "store_true",
         help = "Print debug information",
     )
     parser.add_argument(
-        "-f", "--files",
+        "-i", "--images",
         action = "append",
-        help = "File(s) to process",
+        help = "Image(s) to process",
         nargs = "+",
         required = True,
         type = str,
@@ -36,6 +59,13 @@ def get_command(args):
         help = "Runtime log indentifier",
         required = False,
         type = str,
+    )
+    parser.add_argument(
+        "-n", "--num-clusters",
+        action = "store",
+        help = "Number of clusters to detect",
+        required = True,
+        type = int,
     )
     parser.add_argument(
         "--prefix",
@@ -70,13 +100,22 @@ def run(args):
     my_cli.print_versions()
 
     # Get CLI args.
-    filepaths = args["files"]
+    imgpaths = args["images"]
     site = args["site"]
-    jsonfiles = filepath.get_files(filepaths, CONSTANTS().JSON_SUFFIXES)
-    for filename in jsonfiles:
-        colorkeys = codecjson.get_obj_from_file(filename)
-        logger_noformat.info(colorkeys)
-        response = aws.load_dynamodb(site, "stage-colorkeys", colorkeys)
+	algo = args["algo"]
+	colorspace = args["colorspace"]
+	num_clusters = args["num_clusters"]
+    imgfiles = filepath.get_files(imgpaths, CONSTANTS().IMG_SUFFIXES)
+    for filename in imgfiles:
+		filehash = codecjson.get_filehash(filename)
+		response = aws.query_dynamodb(
+			site,
+			"stage-colorkeys",
+			filehash,
+			algo,
+			colorspace,
+			num_clusters
+		)
         logger.debug(response)
     return None
 
