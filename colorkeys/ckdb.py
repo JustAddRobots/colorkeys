@@ -123,16 +123,16 @@ def get_command(args):
 
 
 def run(args):
+    # Get CLI args.
     project_name = (os.path.dirname(__file__).split("/")[-1])
     my_cli = clihelper.CLI(project_name, args)
     logger = my_cli.logger
     my_cli.print_versions()
-    args.func(args, logger)
+    args["func"](args, logger)
     return None
 
 
 def query(args, logger):
-    # Get CLI args.
     imgpaths = args["images"]
     site = args["site"]
     algo = args["algo"]
@@ -154,14 +154,12 @@ def query(args, logger):
 
 
 def load(args, logger):
-    # Get CLI args.
     filepaths = args["files"]
     site = args["site"]
     jsonfiles = filepath.get_files(filepaths, CONSTANTS().JSON_SUFFIXES)
     for filename in jsonfiles:
         colorkeys = codecjson.get_obj_from_file(filename)
-        response = aws.load_dynamodb(site, "stage-colorkeys", colorkeys)
-        logger.debug(response)
+        aws.load_dynamodb(site, "stage-colorkeys", colorkeys)
     return None
 
 
