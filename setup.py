@@ -51,8 +51,7 @@ setup(
     entry_points = {
         "console_scripts": [
             "colorkeys = colorkeys.cli:main",
-            "dbloader = colorkeys.dbloader:main",
-            "dbquery = colorkeys.dbquery:main",
+            "ckdb = colorkeys.ckdb:main",
         ]
     },
     zip_safe = False
