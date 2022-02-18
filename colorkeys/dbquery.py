@@ -26,7 +26,7 @@ def get_command(args):
             # "hac",  # HAC is too slow in sklearn
         ],
         help = "Clustering algorithm(s) for color detection",
-		required = True,
+        required = True,
         type = str,
     )
     parser.add_argument(
@@ -39,7 +39,6 @@ def get_command(args):
         help = "Colorspaces for color palette analysis",
         type = str,
     )
-    
     parser.add_argument(
         "-d", "--debug",
         action = "store_true",
@@ -96,26 +95,25 @@ def run(args):
     project_name = (os.path.dirname(__file__).split("/")[-1])
     my_cli = clihelper.CLI(project_name, args)
     logger = my_cli.logger
-    logger_noformat = my_cli.logger_noformat
     my_cli.print_versions()
 
     # Get CLI args.
     imgpaths = args["images"]
     site = args["site"]
-	algo = args["algo"]
-	colorspace = args["colorspace"]
-	num_clusters = args["num_clusters"]
+    algo = args["algo"]
+    colorspace = args["colorspace"]
+    num_clusters = args["num_clusters"]
     imgfiles = filepath.get_files(imgpaths, CONSTANTS().IMG_SUFFIXES)
     for filename in imgfiles:
-		filehash = codecjson.get_filehash(filename)
-		response = aws.query_dynamodb(
-			site,
-			"stage-colorkeys",
-			filehash,
-			algo,
-			colorspace,
-			num_clusters
-		)
+        filehash = codecjson.get_filehash(filename)
+        response = aws.query_dynamodb(
+            site,
+            "stage-colorkeys",
+            filehash,
+            algo,
+            colorspace,
+            num_clusters
+        )
         logger.debug(response)
     return None
 
