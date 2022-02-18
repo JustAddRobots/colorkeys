@@ -16,6 +16,7 @@ import logging
 import zipfile
 
 from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Attr
 from colorkeys.constants import _const as CONSTANTS
 
 logger = logging.getLogger(__name__)
@@ -130,16 +131,16 @@ def load_dynamodb(site, table, colorkeys):
         logger.debug(f"selector: {selector}")
         colorkey["selector"] = selector
         try:
-            response = tbl.put_item(
+            tbl.put_item(
                 Item=colorkey,
                 ConditionExpression=(
-                    Key("filehash").not_exists() & Key("selector").not_exists()
+                    Attr("filehash").not_exists() & Attr("selector").not_exists()
                 )
             )
         except botocore.exceptions.ClientError as e:
             if e.response['Error']['Code'] != 'ConditionalCheckFailedException':
                 raise
-    return response
+    return None
 
 
 def query_dynamodb(site, table, filehash, algo, colorspace, n_clusters, **kwargs):
