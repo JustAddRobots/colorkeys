@@ -95,7 +95,6 @@ def run(args):
     project_name = (os.path.dirname(__file__).split("/")[-1])
     my_cli = clihelper.CLI(project_name, args)
     logger = my_cli.logger
-    # logger_noformat = my_cli.logger_noformat
     my_cli.print_versions()
 
     # Get CLI args.
