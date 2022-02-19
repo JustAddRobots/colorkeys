@@ -4,9 +4,11 @@ import argparse
 import logging
 import os
 import pkg_resources
+import pprint
 import sys
 
 from engcommon import clihelper
+from engcommon import log
 from colorkeys import aws
 from colorkeys import codecjson
 from colorkeys import filepath
@@ -137,18 +139,19 @@ def run(args):
     }
     if args["debug_api"]:
         args["debug"] = True
-        loglevels = clihelper.debug_enable(args["debug_api"], loglevels)
+        loglevels = log.debug_enable(args["debug_api"], loglevels)
 
-    clihelper.set_loglevels(loglevels)
+    log.set_loglevels(loglevels)
     project_name = (os.path.dirname(__file__).split("/")[-1])
     my_cli = clihelper.CLI(project_name, args)
     logger = my_cli.logger
+    logger_noformat = my_cli.logger_noformat
     my_cli.print_versions()
-    args["func"](args, logger)
+    args["func"](args, logger, logger_noformat)
     return None
 
 
-def query(args, logger):
+def query(args, logger, logger_noformat):
     imgpaths = args["images"]
     site = args["site"]
     algo = args["algo"]
@@ -165,7 +168,7 @@ def query(args, logger):
             colorspace,
             num_clusters
         )
-        logger.debug(response)
+        logger_noformat.info(pprint.pprint(response))
     return None
 
 
