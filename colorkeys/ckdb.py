@@ -23,6 +23,13 @@ def get_command(args):
         help = "Print debug information",
     )
     parser.add_argument(
+        "--debug-api",
+        action = "store",
+        help = "Print debug information for API",
+        required = False,
+        type = clihelper.csv_str,
+    )
+    parser.add_argument(
         "-l", "--logid",
         action = "store",
         help = "Runtime log indentifier",
@@ -62,7 +69,7 @@ def get_command(args):
     parser_load.add_argument(
         "-f", "--files",
         action = "append",
-        help = "File(s) to process",
+        help = "JSON file(s) to load",
         nargs = "+",
         required = True,
         type = str,
@@ -111,11 +118,11 @@ def get_command(args):
         required = True,
         type = int,
     )
-    # parser_query.add_argument(
-    #     "--stats",
-    #     action = "store_true",
-    #     help = "Generate statistics for query",
-    # )
+#     parser_query.add_argument(
+#         "--stats",
+#         action = "store_true",
+#         help = "Generate statistics for query",
+#     )
     parser_query.set_defaults(func=query)
 
     args = vars(parser.parse_args(args))
@@ -124,6 +131,15 @@ def get_command(args):
 
 def run(args):
     # Get CLI args.
+    loglevels = {
+        "boto3": "WARNING",
+        "botocore": "WARNING",
+    }
+    if args["debug_api"]:
+        args["debug"] = True
+        loglevels = clihelper.debug_enable(args["debug_api"], loglevels)
+
+    clihelper.set_loglevels(loglevels)
     project_name = (os.path.dirname(__file__).split("/")[-1])
     my_cli = clihelper.CLI(project_name, args)
     logger = my_cli.logger

@@ -14,7 +14,7 @@ with open(os.path.dirname(__file__) + "/VERSION") as f:
 if 'ENGCOMMON_BRANCH' in os.environ:
     engcommon_branch = os.getenv("ENGCOMMON_BRANCH")
 else:
-    engcommon_branch = "main"
+    engcommon_branch = "dev"
 
 
 setup(
