@@ -8,13 +8,14 @@ import pkg_resources
 import sys
 
 from pprint import pformat
-from engcommon import clihelper
-from engcommon import log
+
 from colorkeys import aws
 from colorkeys import codecjson
 from colorkeys import filepath
 from colorkeys import statistics as colorstats
 from colorkeys.constants import _const as CONSTANTS
+from engcommon import clihelper
+from engcommon import log
 
 
 def get_command(args):
