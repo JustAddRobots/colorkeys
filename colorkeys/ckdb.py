@@ -12,6 +12,7 @@ from engcommon import log
 from colorkeys import aws
 from colorkeys import codecjson
 from colorkeys import filepath
+from colorkeys import statistics as stats
 from colorkeys.constants import _const as CONSTANTS
 
 
@@ -105,8 +106,16 @@ def get_command(args):
         help = "Colorspaces for color palette analysis",
         type = str,
     )
-    parser_query.add_argument(
-        "-i", "--images",
+    xor_group = parser_query.add_mutually_exclusive_group(required=True)
+    xor_group.add_argument(
+        "--hash",
+        action = "store",
+        help = "Filehash(es) to process, separated by comma",
+        required = False,
+        type = clihelper.csv_str,
+    )
+    xor_group.add_argument(
+        "-i", "--image",
         action = "append",
         help = "Image(s) to process",
         nargs = "+",
@@ -120,11 +129,11 @@ def get_command(args):
         required = True,
         type = int,
     )
-#     parser_query.add_argument(
-#         "--stats",
-#         action = "store_true",
-#         help = "Generate statistics for query",
-#     )
+    parser_query.add_argument(
+        "--stats",
+        action = "store_true",
+        help = "Generate statistics for query",
+    )
     parser_query.set_defaults(func=query)
 
     args = vars(parser.parse_args(args))
@@ -136,6 +145,7 @@ def run(args):
     loglevels = {
         "boto3": "WARNING",
         "botocore": "WARNING",
+        "urllib3": "WARNING",
     }
     if args["debug_api"]:
         args["debug"] = True
@@ -152,14 +162,20 @@ def run(args):
 
 
 def query(args, logger, logger_noformat):
-    imgpaths = args["images"]
     site = args["site"]
     algo = args["algo"]
     colorspace = args["colorspace"]
     num_clusters = args["num_clusters"]
-    imgfiles = filepath.get_files(imgpaths, CONSTANTS().IMG_SUFFIXES)
-    for filename in imgfiles:
-        filehash = codecjson.get_filehash(filename)
+    if args["image"]:
+        imgpaths = args["image"]
+        imgfiles = filepath.get_files(imgpaths, CONSTANTS().IMG_SUFFIXES)
+        filehashes = []
+        for filename in imgfiles:
+            filehashes.append(codecjson.get_filehash(filename))
+    elif args["hash"]:
+        filehashes = args["hash"]
+    colorkeys = []
+    for filehash in filehashes:
         response = aws.query_dynamodb(
             site,
             "stage-colorkeys",
@@ -168,11 +184,20 @@ def query(args, logger, logger_noformat):
             colorspace,
             num_clusters
         )
-        logger_noformat.info(pprint.pprint(response))
+        colorkeys.extend(response["Items"])
+    logger_noformat.debug(colorkeys)
+    centroids = stats.get_centroids(colorkeys)
+    clusters = stats.get_centroids_by_cluster(centroids)
+    cluster_means = stats.get_cluster_means(clusters)
+    cluster_stds = stats.get_cluster_stds(clusters)
+    logger_noformat.debug(centroids)
+    logger_noformat.info(pprint(clusters))
+    logger_noformat.info(pprint(cluster_means))
+    logger_noformat.info(pprint(cluster_stds))
     return None
 
 
-def load(args, logger):
+def load(args, logger, logger_noformat):
     filepaths = args["files"]
     site = args["site"]
     jsonfiles = filepath.get_files(filepaths, CONSTANTS().JSON_SUFFIXES)
