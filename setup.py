@@ -51,7 +51,7 @@ setup(
     entry_points = {
         "console_scripts": [
             "colorkeys = colorkeys.cli:main",
-            "ckdb = colorkeys.ckdb:main",
+            "colordb = colorkeys.colordb:main",
         ]
     },
     zip_safe = False
