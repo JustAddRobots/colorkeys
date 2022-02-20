@@ -15,6 +15,7 @@ import io
 import logging
 import zipfile
 
+from decimal import Decimal
 from boto3.dynamodb.conditions import Key
 from boto3.dynamodb.conditions import Attr
 from colorkeys.constants import _const as CONSTANTS
@@ -128,8 +129,8 @@ def load_dynamodb(site, table, colorkeys):
             f'{h["algo"]}#{h["colorspace"]}#{h["n_clusters"]}#'
             f'{colorkey["cpu"]}#{colorkey["memory"]}#{colorkey["timestamp"]}'
         )
-        logger.debug(f"selector: {selector}")
         colorkey["selector"] = selector
+        logger.debug(f"{colorkey['filehash']} {selector}")
         try:
             tbl.put_item(
                 Item=colorkey,
@@ -159,3 +160,21 @@ def query_dynamodb(site, table, filehash, algo, colorspace, n_clusters, **kwargs
         )
     )
     return response
+
+
+def replace_decimals(obj):
+    if isinstance(obj, list):
+        for i in range(len(obj)):
+            obj[i] = replace_decimals(obj[i])
+        return obj
+    elif isinstance(obj, dict):
+        for k in obj.keys():
+            obj[k] = replace_decimals(obj[k])
+        return obj
+    elif isinstance(obj, Decimal):
+        if obj % 1 == 0:
+            return int(obj)
+        else:
+            return float(obj)
+    else:
+        return obj

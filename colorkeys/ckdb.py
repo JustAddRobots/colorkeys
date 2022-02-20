@@ -4,15 +4,15 @@ import argparse
 import logging
 import os
 import pkg_resources
-import pprint
 import sys
 
+from pprint import pprint
 from engcommon import clihelper
 from engcommon import log
 from colorkeys import aws
 from colorkeys import codecjson
 from colorkeys import filepath
-from colorkeys import statistics as stats
+from colorkeys import statistics as colorstats
 from colorkeys.constants import _const as CONSTANTS
 
 
@@ -111,7 +111,6 @@ def get_command(args):
         "--hash",
         action = "store",
         help = "Filehash(es) to process, separated by comma",
-        required = False,
         type = clihelper.csv_str,
     )
     xor_group.add_argument(
@@ -119,7 +118,6 @@ def get_command(args):
         action = "append",
         help = "Image(s) to process",
         nargs = "+",
-        required = True,
         type = str,
     )
     parser_query.add_argument(
@@ -166,6 +164,7 @@ def query(args, logger, logger_noformat):
     algo = args["algo"]
     colorspace = args["colorspace"]
     num_clusters = args["num_clusters"]
+    stats = args["stats"]
     if args["image"]:
         imgpaths = args["image"]
         imgfiles = filepath.get_files(imgpaths, CONSTANTS().IMG_SUFFIXES)
@@ -185,15 +184,18 @@ def query(args, logger, logger_noformat):
             num_clusters
         )
         colorkeys.extend(response["Items"])
+    colorkeys = aws.replace_decimals(colorkeys)
     logger_noformat.debug(colorkeys)
-    centroids = stats.get_centroids(colorkeys)
-    clusters = stats.get_centroids_by_cluster(centroids)
-    cluster_means = stats.get_cluster_means(clusters)
-    cluster_stds = stats.get_cluster_stds(clusters)
-    logger_noformat.debug(centroids)
-    logger_noformat.info(pprint(clusters))
-    logger_noformat.info(pprint(cluster_means))
-    logger_noformat.info(pprint(cluster_stds))
+    if stats:
+        centroids = colorstats.get_centroids(colorkeys)
+        clusters = colorstats.get_centroids_by_cluster(centroids)
+        cluster_means = colorstats.get_cluster_means(clusters)
+        cluster_stds = colorstats.get_cluster_stds(clusters)
+
+        # logger_noformat.debug(centroids)
+        logger_noformat.info(pprint(clusters))
+        logger_noformat.info(pprint(cluster_means))
+        logger_noformat.info(pprint(cluster_stds))
     return None
 
 
