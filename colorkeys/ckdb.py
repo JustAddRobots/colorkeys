@@ -2,11 +2,12 @@
 
 import argparse
 import logging
+import numpy as np
 import os
 import pkg_resources
 import sys
 
-from pprint import pprint
+from pprint import pformat
 from engcommon import clihelper
 from engcommon import log
 from colorkeys import aws
@@ -185,17 +186,17 @@ def query(args, logger, logger_noformat):
         )
         colorkeys.extend(response["Items"])
     colorkeys = aws.replace_decimals(colorkeys)
-    logger_noformat.debug(colorkeys)
     if stats:
+        np.set_printoptions(precision=3, suppress=True)
         centroids = colorstats.get_centroids(colorkeys)
         clusters = colorstats.get_centroids_by_cluster(centroids)
         cluster_means = colorstats.get_cluster_means(clusters)
         cluster_stds = colorstats.get_cluster_stds(clusters)
 
-        # logger_noformat.debug(centroids)
-        logger_noformat.info(pprint(clusters))
-        logger_noformat.info(pprint(cluster_means))
-        logger_noformat.info(pprint(cluster_stds))
+        logger_noformat.debug(f"centroids:\n{pformat(centroids)}")
+        logger_noformat.debug(f"clusters:\n{pformat(clusters)}")
+        logger_noformat.info(f"means:\n{pformat(cluster_means)}")
+        logger_noformat.info(f"stds:\n{pformat(cluster_stds)}")
     return None
 
 
