@@ -46,7 +46,7 @@ setup(
         "matplotlib",
         "numpy",
         "scikit-image",
-        "scikit-learn"
+        "scikit-learn",
     ],
     entry_points = {
         "console_scripts": [

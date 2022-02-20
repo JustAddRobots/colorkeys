@@ -49,7 +49,7 @@ def get_centroids_by_cluster(centroids):
                 if j not in clusters.keys():
                     clusters[j] = row
                 else:
-                    clusters[j] = np.vstack(clusters[j], row)
+                    clusters[j] = np.vstack((clusters[j], row))
     return clusters
 
 
