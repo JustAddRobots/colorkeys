@@ -15,9 +15,10 @@ import io
 import logging
 import zipfile
 
-from decimal import Decimal
-from boto3.dynamodb.conditions import Key
 from boto3.dynamodb.conditions import Attr
+from boto3.dynamodb.conditions import Key
+from decimal import Decimal
+
 from colorkeys.constants import _const as CONSTANTS
 
 logger = logging.getLogger(__name__)
@@ -115,6 +116,19 @@ class AWS():
 
 
 def load_dynamodb(site, table, colorkeys):
+    """Load colorkey into DynamoDB.
+
+    Args:
+        site (str): Local or cloud DynamoDB instance.
+        table (str): Table in which to load colorkeys.
+        colorkeys (colorkeys.Colorkey): colorkey to load into DynamoDB.
+
+    Returns:
+        None
+
+    Raises:
+        botocore.exceptions.ClientError: put_item failure.
+    """
     if site == "cloud":
         db = boto3.resource("dynamodb")
     elif site == "local":
@@ -131,6 +145,8 @@ def load_dynamodb(site, table, colorkeys):
         )
         colorkey["selector"] = selector
         logger.debug(f"{colorkey['filehash']} {selector}")
+
+        # put_item with "filehash" as partition key, "selector" as range key
         try:
             tbl.put_item(
                 Item=colorkey,
@@ -145,6 +161,18 @@ def load_dynamodb(site, table, colorkeys):
 
 
 def query_dynamodb(site, table, filehash, algo, colorspace, n_clusters, **kwargs):
+    """Query colorkey from DynamoDB.
+
+    Args:
+        site (str): Local or cloud DynamoDB instance.
+        table (str): Table from which to query.
+        algo (str): Clustering algorithm used to generate colorkey entry.
+        colorspace (str): Colormap algorithm (e.g. HSV/RGB).
+        n_clusters (int): Number of clusters used to generate colorkey entry.
+
+    Returns:
+        None
+    """
     if site == "cloud":
         db = boto3.resource("dynamodb")
     elif site == "local":
@@ -154,6 +182,8 @@ def query_dynamodb(site, table, filehash, algo, colorspace, n_clusters, **kwargs
         )
     tbl = db.Table(table)
     selector = f'{algo}#{colorspace}#{n_clusters}'
+
+    # query with "filehash" as primary key, "selector" as range key
     response = tbl.query(
         KeyConditionExpression=(
             Key("filehash").eq(filehash) & Key("selector").begins_with(selector)
@@ -163,6 +193,17 @@ def query_dynamodb(site, table, filehash, algo, colorspace, n_clusters, **kwargs
 
 
 def replace_decimals(obj):
+    """Convert Decimal type to float or int.
+
+    DynamoDB requires storage of numbers in Decimal type. Convert query responses
+    to more human readable format.
+
+    Args:
+        obj (object): Object with Decimal type.
+
+    Returns:
+        obj (object): Object with types converted to float/int.
+    """
     if isinstance(obj, list):
         for i in range(len(obj)):
             obj[i] = replace_decimals(obj[i])

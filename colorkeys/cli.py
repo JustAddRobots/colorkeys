@@ -13,10 +13,11 @@ import sys
 from matplotlib import pyplot as plt
 
 from colorkeys.colorkeys import ColorKey
+from colorkeys.constants import _const as CONSTANTS
 from colorkeys.render import Layout
 from colorkeys import aws
 from colorkeys import codecjson
-from colorkeys import imagepath
+from colorkeys import filepath
 from engcommon import clihelper
 from engcommon import testvar
 
@@ -180,7 +181,7 @@ def run(args):
     else:
         my_aws = None
 
-    imgsrcs = imagepath.get_imagefiles(imgpaths)
+    imgsrcs = filepath.get_files(imgpaths, CONSTANTS().IMG_SUFFIXES)
     if showplot:
         plt.show()
     objs = []
