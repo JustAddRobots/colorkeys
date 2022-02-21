@@ -7,7 +7,10 @@ import logging
 import tarfile
 import urllib
 import zipfile
+
+from hashlib import blake2b
 from pathlib import Path
+from random import random
 
 from colorkeys.constants import _const as CONSTANTS
 from colorkeys.codecjson import get_timestamp
@@ -111,6 +114,23 @@ def unark(filename, suffixes, **kwargs):
         if i.endswith(suffixes)
     ]
     return extracted_paths
+
+
+def ark(obj_json, **kwargs):
+    dest_dir = kwargs.setdefault(
+        "dest_dir",
+        f"/tmp/colorkeys-json-{get_timestamp()}"
+    )
+    k = str(random())
+    random_basename = blake2b(k, digest_size=4).hexdigest()
+    jsonfile = f"{random_basename}.json"
+    jsonzip = f"{dest_dir}/{jsonfile}.zip"
+    ramfile = io.StringIO()
+    with zipfile.Zip(ramfile, mode='w') as zf:
+        zf.writestr(jsonfile, obj_json)
+    with open(jsonzip, "wb") as f:
+        f.write(ramfile.getvalue())
+    return None
 
 
 def unglob(filepath):

@@ -12,6 +12,7 @@ import pkg_resources
 import sys
 
 from matplotlib import pyplot as plt
+from pprint import pformat
 
 from colorkeys.colorkeys import ColorKey
 from colorkeys.constants import _const as CONSTANTS
@@ -79,8 +80,15 @@ def get_command(args):
     )
     parser.add_argument(
         "--debug-api",
-        action = "store_true",
+        action = "store",
         help = "Print API debug information",
+        required = False,
+        type = clihelper.csv_str,
+    )
+    parser.add_argument(
+        "-e", "--export",
+        action = "store_true",
+        help = "Export JSON information to zip file",
     )
     parser.add_argument(
         "-i", "--images",
@@ -163,6 +171,7 @@ def run(args):
     algos = args["algos"]
     showplot = args["plot"]
     showjson = args["json"]
+    exportjson = args["export"]
     is_aws = args["aws"]
 
     # Get AWS info.
@@ -197,10 +206,12 @@ def run(args):
     if showplot:
         input("\nPress [Return] to exit.")
 
-    if showjson or is_aws:
+    if showjson or exportjson or is_aws:
         objs_json = codecjson.encode(objs)
         if showjson:
-            logger_noformat.info(objs_json)
+            logger_noformat.info(pformat(objs_json))
+        if exportjson:
+            filepath.ark(objs_json, dest_dir=clihelper.logdir)
         if is_aws:
             my_aws.upload_S3("stage-colorkeys-tmp", objs_json)
 
