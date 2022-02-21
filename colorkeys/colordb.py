@@ -141,6 +141,14 @@ def get_command(args):
 
 
 def run(args):
+    """Run.
+
+    Args:
+        args (dict): CLI Arguments.
+
+    Returns:
+        None
+    """
     # Get CLI args.
     loglevels = {
         "boto3": "WARNING",
