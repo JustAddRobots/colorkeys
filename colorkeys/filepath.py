@@ -121,8 +121,7 @@ def ark(obj_json, **kwargs):
         "dest_dir",
         f"/tmp/colorkeys-json-{get_timestamp()}"
     )
-    k = str(random())
-    random_basename = blake2b(k, digest_size=4).hexdigest()
+    random_basename = blake2b(str(random()), digest_size=4).hexdigest()
     jsonfile = f"{random_basename}.json"
     jsonzip = f"{dest_dir}/{jsonfile}.zip"
     ramfile = io.StringIO()
