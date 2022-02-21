@@ -45,6 +45,7 @@ setup(
         "ffmpeg-python",
         "matplotlib",
         "numpy",
+        "PyQt5",
         "scikit-image",
         "scikit-learn",
     ],
