@@ -6,6 +6,7 @@ This module is the CLI front-end for the colorkeys analysis tool.
 
 import argparse
 import logging
+import matplotlib
 import os
 import pkg_resources
 import sys
@@ -20,6 +21,8 @@ from colorkeys import codecjson
 from colorkeys import filepath
 from engcommon import clihelper
 from engcommon import testvar
+
+matplotlib.use('Qt5Agg')
 
 
 def get_command(args):
