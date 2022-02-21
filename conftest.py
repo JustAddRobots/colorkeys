@@ -19,7 +19,7 @@ def myargs():
 
 
 @pytest.fixture(scope="session")
-def myimagepaths():
+def myfilepaths():
     return [
         ["tests"],
         ["tests/*.png"],
@@ -34,7 +34,7 @@ def myimagepaths():
 
 
 @pytest.fixture(scope="session")
-def myimagepaths_shell_glob():
+def myfilepaths_shell_glob():
     return [
         ["tests/fixture-01.jpg", "tests/fixture-01.png"]
     ]
