@@ -20,6 +20,7 @@ from colorkeys import aws
 from colorkeys import codecjson
 from colorkeys import filepath
 from engcommon import clihelper
+from engcommon import log
 from engcommon import testvar
 
 matplotlib.use('Qt5Agg')
@@ -130,39 +131,25 @@ def get_command(args):
     return args
 
 
-def set_API_logger(API, level):
-    """Set the loglevel of dependency APIs.
-
-    Args:
-        API (str): API by Python module name.
-        level (str): Log level.
-
-    Returns:
-        None
-    """
-    lgr = logging.getLogger(API)
-    lgr.setLevel(eval(f"logging.{level}"))
-    return None
-
-
 def run(args):
     """Run.
+
     Args:
         args (dict): CLI Arguments.
 
     Returns:
         None
     """
-    # Set API DEBUG loggers
+    # Get CLI args.
+    loglevels = {
+        "matplotlib": "WARNING",
+        "PIL": "WARNING",
+    }
     if args["debug_api"]:
         args["debug"] = True
-        for API in ["matplotlib", "PIL"]:
-            set_API_logger(API, "DEBUG")
-    else:
-        for API in ["matplotlib", "PIL"]:
-            set_API_logger(API, "WARNING")
+        loglevels = log.debug_enable(args["debug_api"], loglevels)
 
-    # Standardised CLI bits.
+    log.set_loglevels(loglevels)
     project_name = (os.path.dirname(__file__).split("/")[-1])
     my_cli = clihelper.CLI(project_name, args)
     logger = my_cli.logger
