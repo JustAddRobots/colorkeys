@@ -95,7 +95,7 @@ def get_timestamp():
 def get_epoch_seconds():
     """Get the UNIX epoch in seconds."""
     ts = datetime.now(timezone.utc).astimezone().timestamp()
-    epoch_seconds = str(ts)[0]
+    epoch_seconds = str(ts).split('.')[0]
     return epoch_seconds
 
 
