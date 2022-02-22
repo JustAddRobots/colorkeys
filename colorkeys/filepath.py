@@ -117,19 +117,34 @@ def unark(filename, suffixes, **kwargs):
 
 
 def ark(obj_json, **kwargs):
+    """Compress to archive and return file path.
+
+    Args:
+        obj_json (str): JSON-encoded object.
+
+    Kwargs:
+        dest_dir (str): Destination directory.
+        basename (str): Basename of archive file path.
+
+    Returns:
+        archive_path (str): Path of archive file.
+    """
     dest_dir = kwargs.setdefault(
         "dest_dir",
         f"/tmp/colorkeys-json-{get_timestamp()}"
     )
-    random_basename = blake2b(str(random()), digest_size=4).hexdigest()
-    jsonfile = f"{random_basename}.json"
+    basename = kwargs.setdefault(
+        "basename",
+        blake2b(str(random()).encode('utf-8'), digest_size=4).hexdigest()
+    )
+    jsonfile = f"{basename}.colorkeys.json"
     jsonzip = f"{dest_dir}/{jsonfile}.zip"
-    ramfile = io.StringIO()
-    with zipfile.Zip(ramfile, mode='w') as zf:
+    ramfile = io.BytesIO()
+    with zipfile.ZipFile(ramfile, mode='w') as zf:
         zf.writestr(jsonfile, obj_json)
     with open(jsonzip, "wb") as f:
         f.write(ramfile.getvalue())
-    return None
+    return jsonzip
 
 
 def unglob(filepath):
