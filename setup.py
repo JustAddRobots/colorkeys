@@ -46,6 +46,7 @@ setup(
         "matplotlib",
         "numpy",
         "PyQt5",
+        "psutil",
         "scikit-image",
         "scikit-learn",
     ],

@@ -4,6 +4,7 @@ import hashlib
 import json
 import logging
 import pkg_resources
+import psutil
 import re
 import sys
 from datetime import datetime
@@ -18,7 +19,7 @@ from engcommon import testvar
 logger = logging.getLogger(__name__)
 
 
-def compile(palette, **kwargs):
+def compile(palette, epoch_seconds, **kwargs):
     """Prepare a ColorKey object for JSON encoding.
 
     This compiles a palette object with other relevant info into an object
@@ -26,6 +27,7 @@ def compile(palette, **kwargs):
 
     Args:
         palette (colorkeys.ColorKey): palette to prepare.
+        epoch_seconds (str): Seconds used for non-AWS task_hash.
 
     kwargs:
         my_aws (aws.AWS): Instance including AWS container task info.
@@ -55,6 +57,10 @@ def compile(palette, **kwargs):
         obj["cpu"] = my_aws.task_desc["cpu"]
         obj["memory"] = my_aws.task_desc["memory"]
         obj["task_hash"] = my_aws.task_hash
+    else:
+        obj["cpu"] = int(psutil.cpu_count(logical=False)) * 1024
+        obj["memory"] = int(psutil.virtual_memory().available / 1024 / 1024)
+        obj["task_hash"] = epoch_seconds
     return obj
 
 
@@ -84,6 +90,13 @@ def get_timestamp():
     """Get current timestamp."""
     timestamp = datetime.now(timezone.utc).astimezone().isoformat()
     return timestamp
+
+
+def get_epoch_seconds():
+    """Get the UNIX epoch in seconds."""
+    ts = datetime.now(timezone.utc).astimezone().timestamp()
+    epoch_seconds = str(ts)[0]
+    return epoch_seconds
 
 
 def get_githash(pkg_name):

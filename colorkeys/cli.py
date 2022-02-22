@@ -180,6 +180,7 @@ def run(args):
     else:
         my_aws = None
 
+    epoch_seconds = codecjson.get_epoch_seconds()[-8:]
     imgsrcs = filepath.get_files(imgpaths, CONSTANTS().IMG_SUFFIXES)
     if showplot:
         plt.show()
@@ -195,7 +196,7 @@ def run(args):
                     colorspace = colorspace,
                 )
                 palettes.append(palette)
-                obj = codecjson.compile(palette, my_aws=my_aws)
+                obj = codecjson.compile(palette, epoch_seconds, my_aws=my_aws)
                 logger.debug(testvar.get_debug(obj))
                 objs.append(obj)
         if showplot:
@@ -209,9 +210,14 @@ def run(args):
     if showjson or exportjson or is_aws:
         objs_json = codecjson.encode(objs)
         if showjson:
-            logger_noformat.info(pformat(objs_json))
+            logger_noformat.info(pformat(objs))
         if exportjson:
-            filepath.ark(objs_json, dest_dir=clihelper.logdir)
+            export_file = filepath.ark(
+                objs_json,
+                dest_dir=my_cli.logdir,
+                basename=epoch_seconds,
+            )
+            logger_noformat.info(f"JSON export: {export_file}")
         if is_aws:
             my_aws.upload_S3("stage-colorkeys-tmp", objs_json)
 
