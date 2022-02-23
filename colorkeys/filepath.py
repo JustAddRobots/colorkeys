@@ -76,7 +76,7 @@ def unark(filename, suffixes, **kwargs):
     """
     dest_dir = kwargs.setdefault(
         "dest_dir",
-        f"/tmp/colorkeys-unark-{get_timestamp()}"
+        f"/tmp/colorkeys/colorkeys-unark-{get_timestamp()}"
     )
     if filename.startswith(CONSTANTS().WEB_PREFIXES):
         with urllib.request.urlopen(filename) as f:
