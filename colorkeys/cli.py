@@ -6,24 +6,21 @@ This module is the CLI front-end for the colorkeys analysis tool.
 
 import argparse
 import logging
-import matplotlib
-matplotlib.use('Qt5Agg')
-import os  # noqa: E402
-import pkg_resources  # noqa: E402
-import sys  # noqa: E402
+import os
+import pkg_resources
+import sys
 
-from matplotlib import pyplot as plt  # noqa: E402
-from pprint import pformat  # noqa: E402
+from pprint import pformat
 
-from colorkeys.colorkeys import ColorKey  # noqa: E402
-from colorkeys.constants import _const as CONSTANTS  # noqa: E402
-from colorkeys.render import Layout  # noqa: E402
-from colorkeys import aws  # noqa: E402
-from colorkeys import codecjson  # noqa: E402
-from colorkeys import filepath  # noqa: E402
-from engcommon import clihelper  # noqa: E402
-from engcommon import log  # noqa: E402
-from engcommon import testvar  # noqa: E402
+from colorkeys.colorkeys import ColorKey
+from colorkeys.constants import _const as CONSTANTS
+from colorkeys.render import Layout
+from colorkeys import aws
+from colorkeys import codecjson
+from colorkeys import filepath
+from engcommon import clihelper
+from engcommon import log
+from engcommon import testvar
 
 
 def get_command(args):
@@ -176,14 +173,19 @@ def run(args):
     # Get AWS info.
     if is_aws:
         my_aws = aws.AWS()
+        showplot = False
     else:
         my_aws = None
 
+    if showplot:
+        import matplotlib
+        matplotlib.use('Qt5Agg')
+        from matplotlib import pyplot as plt
+        plt.show()
+
+    objs = []
     epoch_seconds = codecjson.get_epoch_seconds()[-8:]
     imgsrcs = filepath.get_files(imgpaths, CONSTANTS().IMG_SUFFIXES)
-    if showplot:
-        plt.show()
-    objs = []
     for imgsrc in imgsrcs:
         palettes = []
         for algo in algos:
