@@ -45,15 +45,16 @@ Colorkeys Palette Analysis Tool
 
 optional arguments:
   -h, --help            show this help message and exit
-  -a {kmeans,mbkmeans} [{kmeans,mbkmeans} ...], --algos {kmeans,mbkmeans} [{kmeans,mbkme
-ans} ...]
+  -a {kmeans,mbkmeans} [{kmeans,mbkmeans} ...], --algos {kmeans,mbkmeans} [{kmeans,mbkmeans} ...]
                         Clustering algorithm(s) for color detection
   --aws                 Access AWS resources for CI/CD
   -c {HSV,RGB} [{HSV,RGB} ...], --colorspaces {HSV,RGB} [{HSV,RGB} ...]
                         Colorspaces for color palette analysis
   -d, --debug           Print debug information
-  --debug-api DEBUG_API                                                                                         Print API debug information
-  -e, --export          Export JSON information to zip file                               -i IMAGES [IMAGES ...], --images IMAGES [IMAGES ...]                                                          Image(s) to process
+  --debug-api DEBUG_API Print API debug information
+  -e, --export          Export JSON information to zip file
+  -i IMAGES [IMAGES ...], --images IMAGES [IMAGES ...]
+						Image(s) to process
   -j, --json            Print JSON information
   -l LOGID, --logid LOGID
                         Runtime log indentifier
