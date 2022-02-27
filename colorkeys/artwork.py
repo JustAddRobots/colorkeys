@@ -131,8 +131,9 @@ class Artwork:
     def _get_colorspace(self):
         """Get image color space.
 
-        An image is simply a matrix of data with no embedded color space information.
-        So it is not possible to detect the color space. The colorspace must be set.
+        An image is simply a matrix of data with no embedded color space
+        information. So it is not possible to detect the color space. The
+        colorspace must be set.
 
         Args:
             None
@@ -161,10 +162,10 @@ class Artwork:
             None
 
         Returns:
-            img (numpy.ndarray): Image matrix
+            img (numpy.ndarray): Image matrix.
 
         Raises:
-            ValueError: colorspace not valid..
+            ValueError: colorspace not valid.
         """
         img = skiio.imread(self._imgsrc)
         if img.shape[2] == 4:

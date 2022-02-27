@@ -10,9 +10,16 @@ credentials preexisting in the environment.
 """
 
 import boto3
+import botocore.exceptions
 import io
 import logging
 import zipfile
+
+from boto3.dynamodb.conditions import Attr
+from boto3.dynamodb.conditions import Key
+from decimal import Decimal
+
+from colorkeys.constants import _const as CONSTANTS
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +65,7 @@ class AWS():
         return self._upload_S3(bucket, obj)
 
     def _upload_S3(self, bucket, obj):
-        """Upload JSON-encoded object to temporary S3 bucket.
+        """Upload JSON-encoded object to S3 bucket.
 
         Args:
             bucket (str): Bucket name.
@@ -106,3 +113,109 @@ class AWS():
         )
         task_desc = next(i for i in dict_["tasks"])
         return task_desc
+
+
+def load_dynamodb(site, table, colorkeys):
+    """Load colorkey into DynamoDB.
+
+    Args:
+        site (str): Local or cloud DynamoDB instance.
+        table (str): Table in which to load colorkeys.
+        colorkeys (colorkeys.Colorkey): colorkey to load into DynamoDB.
+
+    Returns:
+        None
+
+    Raises:
+        botocore.exceptions.ClientError: put_item failure.
+    """
+    if site == "cloud":
+        db = boto3.resource("dynamodb")
+    elif site == "local":
+        db = boto3.resource(
+            "dynamodb",
+            endpoint_url=CONSTANTS().DYNAMODB_URL_LOCAL
+        )
+    tbl = db.Table(table)
+    for colorkey in colorkeys:
+        h = colorkey["histogram"]
+        selector = (
+            f'{h["algo"]}#{h["colorspace"]}#{h["n_clusters"]}#'
+            f'{colorkey["cpu"]}#{colorkey["memory"]}#{colorkey["timestamp"]}'
+        )
+        colorkey["selector"] = selector
+        logger.debug(f"{colorkey['filehash']} {selector}")
+
+        # put_item with "filehash" as partition key, "selector" as range key
+        try:
+            tbl.put_item(
+                Item=colorkey,
+                ConditionExpression=(
+                    Attr("filehash").not_exists() & Attr("selector").not_exists()
+                )
+            )
+        except botocore.exceptions.ClientError as e:
+            if e.response['Error']['Code'] != 'ConditionalCheckFailedException':
+                raise
+    return None
+
+
+def query_dynamodb(site, table, filehash, algo, colorspace, n_clusters, **kwargs):
+    """Query colorkey from DynamoDB.
+
+    Args:
+        site (str): Local or cloud DynamoDB instance.
+        table (str): Table from which to query.
+        algo (str): Clustering algorithm used to generate colorkey entry.
+        colorspace (str): Colormap algorithm (e.g. HSV/RGB).
+        n_clusters (int): Number of clusters used to generate colorkey entry.
+
+    Returns:
+        None
+    """
+    if site == "cloud":
+        db = boto3.resource("dynamodb")
+    elif site == "local":
+        db = boto3.resource(
+            "dynamodb",
+            endpoint_url=CONSTANTS().DYNAMODB_URL_LOCAL
+        )
+    tbl = db.Table(table)
+    selector = f'{algo}#{colorspace}#{n_clusters}'
+
+    # query with "filehash" as primary key, "selector" as range key
+    response = tbl.query(
+        KeyConditionExpression=(
+            Key("filehash").eq(filehash) & Key("selector").begins_with(selector)
+        )
+    )
+    return response
+
+
+def replace_decimals(obj):
+    """Convert Decimal type to float or int.
+
+    DynamoDB requires storage of numbers in Decimal type. Convert query responses
+    to more human readable format.
+
+    Args:
+        obj (object): Object with Decimal type.
+
+    Returns:
+        obj (object): Object with types converted to float/int.
+    """
+    if isinstance(obj, list):
+        for i in range(len(obj)):
+            obj[i] = replace_decimals(obj[i])
+        return obj
+    elif isinstance(obj, dict):
+        for k in obj.keys():
+            obj[k] = replace_decimals(obj[k])
+        return obj
+    elif isinstance(obj, Decimal):
+        if obj % 1 == 0:
+            return int(obj)
+        else:
+            return float(obj)
+    else:
+        return obj

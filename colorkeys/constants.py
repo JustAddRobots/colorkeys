@@ -17,8 +17,12 @@ def constant(f):
 class _const(object):
 
     @constant
+    def DYNAMODB_URL_LOCAL():
+        return "http://localhost:8000"
+
+    @constant
     def S3_PREFIXES():
-        return ("s3://")
+        return ("s3://", )
 
     @constant
     def WEB_PREFIXES():
@@ -31,6 +35,14 @@ class _const(object):
     @constant
     def TAR_SUFFIXES():
         return (".tar.bz2", ".tar.gz")
+
+    @constant
+    def ZIP_SUFFIXES():
+        return (".zip", )
+
+    @constant
+    def JSON_SUFFIXES():
+        return (".json", )
 
     @constant
     def DEFAULT_COLORSPACE():

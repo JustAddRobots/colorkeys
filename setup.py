@@ -45,12 +45,15 @@ setup(
         "ffmpeg-python",
         "matplotlib",
         "numpy",
+        "PyQt5",
+        "psutil",
         "scikit-image",
-        "scikit-learn"
+        "scikit-learn",
     ],
     entry_points = {
         "console_scripts": [
             "colorkeys = colorkeys.cli:main",
+            "colordb = colorkeys.colordb:main",
         ]
     },
     zip_safe = False

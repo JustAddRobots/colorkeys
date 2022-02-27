@@ -10,14 +10,16 @@ import os
 import pkg_resources
 import sys
 
-from matplotlib import pyplot as plt
+from pprint import pformat
 
 from colorkeys.colorkeys import ColorKey
+from colorkeys.constants import _const as CONSTANTS
 from colorkeys.render import Layout
 from colorkeys import aws
-from colorkeys import createjson
-from colorkeys import imagepath
+from colorkeys import codecjson
+from colorkeys import filepath
 from engcommon import clihelper
+from engcommon import log
 from engcommon import testvar
 
 
@@ -74,8 +76,15 @@ def get_command(args):
     )
     parser.add_argument(
         "--debug-api",
-        action = "store_true",
+        action = "store",
         help = "Print API debug information",
+        required = False,
+        type = clihelper.csv_str,
+    )
+    parser.add_argument(
+        "-e", "--export",
+        action = "store_true",
+        help = "Export JSON information to zip file",
     )
     parser.add_argument(
         "-i", "--images",
@@ -126,39 +135,25 @@ def get_command(args):
     return args
 
 
-def set_API_logger(API, level):
-    """Set the loglevel of dependent APIs.
-
-    Args:
-        API (str): API by Python module name.
-        level (str): Log level.
-
-    Returns:
-        None
-    """
-    lgr = logging.getLogger(API)
-    lgr.setLevel(eval(f"logging.{level}"))
-    return None
-
-
 def run(args):
     """Run.
+
     Args:
         args (dict): CLI Arguments.
 
     Returns:
         None
     """
-    # Set API DEBUG loggers
+    # Get CLI args.
+    loglevels = {
+        "matplotlib": "WARNING",
+        "PIL": "WARNING",
+    }
     if args["debug_api"]:
         args["debug"] = True
-        for API in ["matplotlib", "PIL"]:
-            set_API_logger(API, "DEBUG")
-    else:
-        for API in ["matplotlib", "PIL"]:
-            set_API_logger(API, "WARNING")
+        loglevels = log.debug_enable(args["debug_api"], loglevels)
 
-    # Standardised CLI bits.
+    log.set_loglevels(loglevels)
     project_name = (os.path.dirname(__file__).split("/")[-1])
     my_cli = clihelper.CLI(project_name, args)
     logger = my_cli.logger
@@ -172,18 +167,25 @@ def run(args):
     algos = args["algos"]
     showplot = args["plot"]
     showjson = args["json"]
+    exportjson = args["export"]
     is_aws = args["aws"]
 
     # Get AWS info.
     if is_aws:
         my_aws = aws.AWS()
+        showplot = False
     else:
         my_aws = None
 
-    imgsrcs = imagepath.get_imagefiles(imgpaths)
     if showplot:
+        import matplotlib
+        matplotlib.use('Qt5Agg')
+        from matplotlib import pyplot as plt
         plt.show()
+
     objs = []
+    epoch_seconds = codecjson.get_epoch_seconds()[-8:]
+    imgsrcs = filepath.get_files(imgpaths, CONSTANTS().IMG_SUFFIXES)
     for imgsrc in imgsrcs:
         palettes = []
         for algo in algos:
@@ -195,7 +197,7 @@ def run(args):
                     colorspace = colorspace,
                 )
                 palettes.append(palette)
-                obj = createjson.compile(palette, my_aws=my_aws)
+                obj = codecjson.compile(palette, epoch_seconds, my_aws=my_aws)
                 logger.debug(testvar.get_debug(obj))
                 objs.append(obj)
         if showplot:
@@ -206,10 +208,17 @@ def run(args):
     if showplot:
         input("\nPress [Return] to exit.")
 
-    if showjson or is_aws:
-        objs_json = createjson.encode(objs)
+    if showjson or exportjson or is_aws:
+        objs_json = codecjson.encode(objs)
         if showjson:
-            logger_noformat.info(objs_json)
+            logger_noformat.info(pformat(objs))
+        if exportjson:
+            export_file = filepath.ark(
+                objs_json,
+                dest_dir=my_cli.logdir,
+                basename=epoch_seconds,
+            )
+            logger_noformat.info(f"JSON export: {export_file}")
         if is_aws:
             my_aws.upload_S3("stage-colorkeys-tmp", objs_json)
 
