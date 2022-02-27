@@ -36,53 +36,79 @@ https://en.wikipedia.org/wiki/K-means_clustering
 ## Usage
 
 ```
-usage: colorkeys [-h] [-d] [-a {kmeans} [{kmeans} ...]] [-c {RGB}] -i IMAGES [IMAGES ...] -n
-                 NUM_CLUSTERS [-l LOGID] [-p PREFIX] [-v]
+usage: colorkeys [-h] [-a {kmeans,mbkmeans} [{kmeans,mbkmeans} ...]] [--aws]
+                 [-c {HSV,RGB} [{HSV,RGB} ...]] [-d] [--debug-api DEBUG_API] [-e] -i
+                 IMAGES [IMAGES ...] [-j] [-l LOGID] -n NUM_CLUSTERS [--prefix PREFIX]
+                 [-p] [-v]
 
 Colorkeys Palette Analysis Tool
 
 optional arguments:
   -h, --help            show this help message and exit
+  -a {kmeans,mbkmeans} [{kmeans,mbkmeans} ...], --algos {kmeans,mbkmeans} [{kmeans,mbkme
+ans} ...]
+                        Clustering algorithm(s) for color detection
+  --aws                 Access AWS resources for CI/CD
+  -c {HSV,RGB} [{HSV,RGB} ...], --colorspaces {HSV,RGB} [{HSV,RGB} ...]
+                        Colorspaces for color palette analysis
   -d, --debug           Print debug information
-  -a {kmeans} [{kmeans} ...], --algos {kmeans} [{kmeans} ...]
-                        Set clustering algorithm
-  -c {RGB}, --colorspace {RGB}
-                        Set input image color space
-  -i IMAGES [IMAGES ...], --images IMAGES [IMAGES ...]
-                        set images
-  -n NUM_CLUSTERS, --num_clusters NUM_CLUSTERS
-                        Set number of clusters to detect
+  --debug-api DEBUG_API                                                                                         Print API debug information
+  -e, --export          Export JSON information to zip file                               -i IMAGES [IMAGES ...], --images IMAGES [IMAGES ...]                                                          Image(s) to process
+  -j, --json            Print JSON information
   -l LOGID, --logid LOGID
-                        Set runtime log indentifier
-  -p PREFIX, --prefix PREFIX
-                        set log directory prefix
-  -v, --version         show program's version number and exit
+                        Runtime log indentifier
+  -n NUM_CLUSTERS, --num-clusters NUM_CLUSTERS
+                        Number of clusters to detect
+  --prefix PREFIX       Log directory prefix
+  -p, --plot            Plot image and color key histogram bar
+  -v, --version         Show version number and exit
 ```
 
 ## Example
+
 ```
-❯ colorkeys -d -n 7 -i vlcsnap-Oblivion.mkv-00_05_13-2021-02-15-22h39m50s388.png
-2021-02-16 12:59:35 - INFO [clihelper]: colorkeys v: 0.5.1
-2021-02-16 12:59:35 - DEBUG [clihelper]: engcommon v: 0.6.3
-2021-02-16 12:59:35 - DEBUG [clihelper]: {'algos': ['kmeans'],
- 'colorspace': 'RGB',
+❯ colorkeys -d -n7 -i vlcsnap-Contagion.m4v-01_35_02-2021-02-16-12h00m40s115.png
+2022-02-27 00:31:52 - DEBUG [clihelper]: colorkeys v: 0.12.0
+2022-02-27 00:31:52 - DEBUG [clihelper]: engcommon v: 0.7.0
+2022-02-27 00:31:52 - DEBUG [clihelper]: {'algos': ['mbkmeans'],
+ 'aws': False,
+ 'colorspaces': ['RGB'],
  'debug': True,
- 'images': [['vlcsnap-Oblivion.mkv-00_05_13-2021-02-15-22h39m50s388.png']],
+ 'debug_api': None,
+ 'export': False,
+ 'images': [['vlcsnap-Contagion.m4v-01_35_02-2021-02-16-12h00m40s115.png']],
+ 'json': False,
  'log_id': None,
  'num_clusters': 7,
+ 'plot': False,
  'prefix': '/tmp/logs'}
-2021-02-16 12:59:47 - DEBUG [cli]: file: vlcsnap-Oblivion.mkv-00_05_13-2021-02-15-22h39m50s388.png
-2021-02-16 12:59:47 - DEBUG [cli]: image shape: (804, 1920, 3)
-2021-02-16 12:59:47 - DEBUG [cli]: render shape: (400, 955, 3)
-2021-02-16 12:59:47 - DEBUG [cli]: aspect ratio: 2.39
-2021-02-16 12:59:47 - DEBUG [cli]: time: 12.56s
-2021-02-16 12:59:47 - DEBUG [cli]: histogram, kmeans RGB: array([0.15495242, 0.1548993 , 0.08119378, 0.16197588, 0.15542078,
-       0.09826723, 0.19329059])
-2021-02-16 12:59:47 - DEBUG [cli]: histogram, kmeans HSV: array([0.18257013, 0.19726421, 0.13087948, 0.23403794, 0.05324505,
-       0.11968548, 0.08231772])
+2022-02-27 00:31:52 - DEBUG [filepath]: {'./vlcsnap-Contagion.m4v-01_35_02-2021-02-16-12h00m40s115.png'}
+2022-02-27 00:31:53 - DEBUG [cli]: {'cpu': 16384,
+ 'filehash': 'fe0855c85bf4f657',
+ 'filename': 'vlcsnap-Contagion.m4v-01_35_02-2021-02-16-12h00m40s115.png',
+ 'githash': '798fb6aa3e9852e4d77c0b06a2d61f0379bbf69b',
+ 'histogram': {'algo': 'mbkmeans',
+               'colorspace': 'RGB',
+               'hist_centroids': [{'color': [117, 149, 94], 'percent': 0.21011284722222223}, {'color': [75, 98, 54], 'percent': 0.18639130015432098},
+                                  {'color': [55, 62, 27], 'percent': 0.1737326388888889}, {'color': [97, 125, 73], 'percent': 0.16056134259259258},
+                                  {'color': [148, 173, 110], 'percent': 0.1332788387345679}, {'color': [149, 41, 5], 'percent': 0.07251736111111111},
+                                  {'color': [189, 196, 124], 'percent': 0.06340567129629629}],
+               'n_clusters': 7,
+               'stopwatch': 0.13350391387939453},
+ 'memory': 217946,
+ 'shape': (1080, 1920, 3),
+ 'task_hash': '45950712',
+ 'timestamp': '2022-02-27T00:31:52.940597-08:00',
+ 'version': '0.12.0'}
 
-Press [Return] to exit.
 ```
+
+## In Action
+
+<P align="center">
+	<IMG src="https://user-images.githubusercontent.com/59129905/155873292-d7004279-7cbf-46f5-a815-e947c1386c04.mp4" />
+</P>
+
 
 ## Challenges
 
