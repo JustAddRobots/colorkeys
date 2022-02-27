@@ -51,7 +51,7 @@ class Artwork:
         self._img_rescaled = skitransform.rescale(
             self.img,
             (self.rescaled_width / self.img_width),
-            channel_axis = -1,
+            multichannel = True,
             anti_aliasing = True,
         )
 

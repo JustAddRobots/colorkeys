@@ -6,12 +6,10 @@ This module is the CLI front-end for the colorkeys analysis tool.
 
 import argparse
 import logging
-import matplotlib
 import os
 import pkg_resources
 import sys
 
-from matplotlib import pyplot as plt
 from pprint import pformat
 
 from colorkeys.colorkeys import ColorKey
@@ -23,8 +21,6 @@ from colorkeys import filepath
 from engcommon import clihelper
 from engcommon import log
 from engcommon import testvar
-
-matplotlib.use('Qt5Agg')
 
 
 def get_command(args):
@@ -177,14 +173,19 @@ def run(args):
     # Get AWS info.
     if is_aws:
         my_aws = aws.AWS()
+        showplot = False
     else:
         my_aws = None
 
+    if showplot:
+        import matplotlib
+        matplotlib.use('Qt5Agg')
+        from matplotlib import pyplot as plt
+        plt.show()
+
+    objs = []
     epoch_seconds = codecjson.get_epoch_seconds()[-8:]
     imgsrcs = filepath.get_files(imgpaths, CONSTANTS().IMG_SUFFIXES)
-    if showplot:
-        plt.show()
-    objs = []
     for imgsrc in imgsrcs:
         palettes = []
         for algo in algos:
