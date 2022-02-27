@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.13.0 (2022-02-27)
+-------------------
+- ISSUE-163: Fixed usage whitespace. (4d21669) [Roderick Constance]
+- ISSUE-163: Updated usage, example, added demo video. (17c4f11) [Roderick Constance]
+
 0.12.0 (2022-02-27)
 -------------------
 - Stage: Changed channel_axis back to multichannel for older scikit version. (91b1b47) [Roderick Constance]
