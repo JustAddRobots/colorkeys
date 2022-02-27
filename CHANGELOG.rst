@@ -1,6 +1,43 @@
 Changelog
 =========
 
+0.12.0 (2022-02-27)
+-------------------
+- Stage: Changed channel_axis back to multichannel for older scikit version. (91b1b47) [Roderick Constance]
+- Stage: Switched transform.rescale() kwargs order "channel_axis" (3cebe98) [Roderick Constance]
+- Stage: Moved matplotlib to conditional import for non-AWS. (37a06c2) [Roderick Constance]
+- Stage: Moved matplotlib backened to fix qt binding error after pyplot import. (bbc7b0e) [Roderick Constance]
+- ISSUE-158: Added /tmp/colorkeys subdir to unark function. (1377798) [Roderick Constance]
+- ISSUE-158: Fixed get_epoch_seconds. (0d5a042) [Roderick Constance]
+- ISSUE-158: Added cpu, memory, epoch_seconds for task_arn. (3a2cf80) [Roderick Constance]
+- ISSUE-158: Removed imagepath module, filepath replaces it. (cb44144) [Roderick Constance]
+- ISSUE-158: Changed imagepath tests to filepath. (5599c85) [Roderick Constance]
+- ISSUE-158: Fixed random blake2b hash generation. (07dc107) [Roderick Constance]
+- ISSUE-158: Added JSON export. (3fdabfe) [Roderick Constance]
+- ISSUE-154: Added channel_axis to image rescale. (f84a8be) [Roderick Constance]
+- ISSUE-154: Switched to standardised debug-api logger. (de4097e) [Roderick Constance]
+- ISSUE-154: Removed deprecated "multichannel" for rescale, fixed comments. (963fef6) [Roderick Constance]
+- ISSUE-154: Added PyQt5 backend for pyplot. (aee56e6) [Roderick Constance]
+- ISSUE-133: Added comments, docstrings, changed imagepath -> filepath. (c19b760) [Roderick Constance]
+- ISSUE-133: Renamed ckdb->colordb. (61ca188) [Roderick Constance]
+- ISSUE-133: Renamed ckdb -> colordb. (05b0a94) [Roderick Constance]
+- ISSUE-133: Replaced pprint with pformat for logger. (10b22fb) [Roderick Constance]
+- ISSUE-133: Added Decimal conversion from dynamodb. (b23318a) [Roderick Constance]
+- ISSUE-133: Added xor_group, mean/std analytics, back to engcommon@main. (ee13d2b) [Roderick Constance]
+- ISSUE-133: Updated for logger_noformat. (a117f75) [Roderick Constance]
+- ISSUE-133: Added setting debug_api loglevels, updated to engcommon@dev. (1c90fec) [Roderick Constance]
+- ISSUE-142: Removed dbquery, dbloader after ckdb converge. (cf8595e) [Roderick Constance]
+- ISSUE-142: Fixed push_item exeception handling for duplicates. (3dd6f1e) [Roderick Constance]
+- ISSUE-142: Condensed db subcommands into single module. (36e2c0f) [Roderick Constance]
+- ISSUE-134: Fixed miscellaneous for dbquery. (8884399) [Roderick Constance]
+- ISSUE-134: Added precommit install, fixed whitespace. (eed6207) [Roderick Constance]
+- ISSUE-134: Added dbloader and dbquery. (1a0c458) [Roderick Constance]
+- ISSUE-134: Fixed wrong method name. (6aad579) [Roderick Constance]
+- ISSUE-134: Readded get_timestamp. (954ba61) [Roderick Constance]
+- ISSUE-134: Added DynamoDB loader, renamed codecjson. (f722700) [Roderick Constance]
+- ISSUE-134: Updated for pre-commit fixes. (8030526) [Roderick Constance]
+- ISSUE-134: Added generic filepath, local dynamodb loader. (9453a02) [Roderick Constance]
+
 0.11.10 (2022-02-15)
 --------------------
 - Stage: Updated for stage-colorkeys-tmp bucket rename. (2d758e4) [Roderick Constance]
